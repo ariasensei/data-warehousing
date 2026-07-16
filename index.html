@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Data Warehousing | BS Computer Science</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+html{
+scroll-behavior:smooth;
+}
+
+body{
+
+font-family:'Poppins',sans-serif;
+background:#030712;
+color:#ffffff;
+overflow-x:hidden;
+
+}
+
+/****************************************************/
+/* Animated Background */
+/****************************************************/
+
+body::before{
+
+content:"";
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:-3;
+
+background:
+
+linear-gradient(rgba(0,255,255,.05) 1px,transparent 1px),
+linear-gradient(90deg,rgba(0,255,255,.05) 1px,transparent 1px);
+
+background-size:45px 45px;
+
+animation:gridMove 18s linear infinite;
+
+}
+
+@keyframes gridMove{
+
+0%{
+transform:translateY(0);
+}
+
+100%{
+transform:translateY(45px);
+}
+
+}
+
+/****************************************************/
+
+body::after{
+
+content:"";
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:-2;
+
+background:
+
+radial-gradient(circle at 20% 15%,rgba(0,255,255,.15),transparent 28%),
+radial-gradient(circle at 80% 20%,rgba(0,170,255,.15),transparent 25%),
+radial-gradient(circle at 70% 80%,rgba(0,255,255,.08),transparent 35%),
+radial-gradient(circle at 10% 90%,rgba(0,255,255,.12),transparent 25%);
+
+animation:floatGlow 14s ease-in-out infinite alternate;
+
+}
+
+@keyframes floatGlow{
+
+0%{
+
+transform:translateY(-20px);
+
+}
+
+100%{
+
+transform:translateY(25px);
+
+}
+
+}
+
+/****************************************************/
+
+header{
+
+padding:90px 20px 50px;
+text-align:center;
+
+}
+
+.logo{
+
+font-family:'Orbitron',sans-serif;
+font-size:58px;
+font-weight:700;
+color:#4cf7ff;
+
+text-shadow:
+
+0 0 10px cyan,
+0 0 25px cyan,
+0 0 40px cyan;
+
+margin-bottom:20px;
+
+}
+
+.subtitle{
+
+font-size:28px;
+font-weight:300;
+
+}
+
+.instructor{
+
+margin-top:15px;
+font-size:20px;
+color:#9defff;
+
+}
+
+.hero{
+
+width:90%;
+max-width:1200px;
+margin:50px auto;
+
+background:rgba(255,255,255,.05);
+
+backdrop-filter:blur(18px);
+
+border:1px solid rgba(0,255,255,.25);
+
+border-radius:25px;
+
+padding:45px;
+
+box-shadow:
+
+0 0 25px rgba(0,255,255,.15);
+
+}
+
+.hero h2{
+
+font-family:'Orbitron';
+color:#4cf7ff;
+
+margin-bottom:25px;
+
+font-size:32px;
+
+}
+
+.hero p{
+
+font-size:18px;
+
+line-height:2;
+
+color:#d8f8ff;
+
+text-align:justify;
+
+}
+
+/****************************************************/
+
+.stats{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+gap:25px;
+
+margin-top:40px;
+
+}
+
+.stat{
+
+padding:30px;
+
+border-radius:18px;
+
+background:rgba(255,255,255,.05);
+
+border:1px solid rgba(0,255,255,.18);
+
+text-align:center;
+
+transition:.35s;
+
+}
+
+.stat:hover{
+
+transform:translateY(-8px);
+
+box-shadow:0 0 25px cyan;
+
+}
+
+.stat h3{
+
+font-family:'Orbitron';
+
+font-size:38px;
+
+color:#4cf7ff;
+
+margin-bottom:12px;
+
+}
+
+.stat p{
+
+font-size:16px;
+
+color:#cfefff;
+
+}
+
+/****************************************************/
+
+.container{
+
+width:92%;
+max-width:1400px;
+
+margin:auto;
+
+padding-bottom:80px;
+
+}
+
+.section-title{
+
+font-family:'Orbitron';
+
+font-size:40px;
+
+margin:70px 0 35px;
+
+color:#4cf7ff;
+
+text-shadow:0 0 18px cyan;
+
+}
+
+/****************************************************/
+
+.lesson-grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+
+gap:28px;
+
+}
+
+.card{
+
+background:rgba(255,255,255,.05);
+
+border:1px solid rgba(0,255,255,.15);
+
+border-radius:22px;
+
+padding:30px;
+
+transition:.4s;
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.card::before{
+
+content:"";
+
+position:absolute;
+
+width:220px;
+
+height:220px;
+
+border-radius:50%;
+
+background:rgba(0,255,255,.08);
+
+top:-100px;
+
+right:-100px;
+
+transition:.5s;
+
+}
+
+.card:hover::before{
+
+transform:scale(2);
+
+}
+
+.card:hover{
+
+transform:translateY(-10px);
+
+box-shadow:
+
+0 0 30px cyan;
+
+border-color:cyan;
+
+}
+
+.card h3{
+
+font-family:'Orbitron';
+
+color:#4cf7ff;
+
+margin-bottom:15px;
+
+}
+
+.card p{
+
+line-height:1.8;
+
+color:#d9f6ff;
+
+margin-bottom:25px;
+
+}
+
+.card a{
+
+display:inline-block;
+
+padding:12px 24px;
+
+background:cyan;
+
+color:#031018;
+
+text-decoration:none;
+
+font-weight:bold;
+
+border-radius:10px;
+
+transition:.3s;
+
+}
+
+.card a:hover{
+
+background:white;
+
+}
+
+/****************************************************/
+
+.lab-section{
+
+margin-top:90px;
+
+}
+
+.lab-grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+
+gap:30px;
+
+}
+
+.lab{
+
+background:#081826;
+
+padding:30px;
+
+border-radius:20px;
+
+border-left:5px solid cyan;
+
+box-shadow:0 0 20px rgba(0,255,255,.15);
+
+}
+
+.lab h3{
+
+font-family:'Orbitron';
+
+color:#4cf7ff;
+
+margin-bottom:18px;
+
+}
+
+.lab ul{
+
+padding-left:20px;
+
+line-height:2;
+
+color:#d9f6ff;
+
+}
+
+/****************************************************/
+
+footer{
+
+margin-top:100px;
+
+padding:35px;
+
+text-align:center;
+
+border-top:1px solid rgba(255,255,255,.08);
+
+color:#88d7e6;
+
+}
+
+@media(max-width:768px){
+
+.logo{
+
+font-size:38px;
+
+}
+
+.subtitle{
+
+font-size:22px;
+
+}
+
+.hero{
+
+padding:25px;
+
+}
+
+.hero p{
+
+text-align:left;
+
+}
+
+.section-title{
+
+font-size:30px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+DATA WAREHOUSING
+</div>
+
+<div class="subtitle">
+Bachelor of Science in Computer Science
+</div>
+
+<div class="instructor">
+Instructor : <strong>MKDB</strong>
+</div>
+
+<div class="hero">
+
+<h2>Course Description</h2>
+
+<p>
+
+Data Warehousing is a CHED-aligned Computer Science course that introduces students to the principles, architecture, design, implementation, optimization, and management of enterprise data warehouses. Students learn how organizations collect, integrate, transform, and analyze data from multiple operational systems to support Business Intelligence (BI), Decision Support Systems (DSS), and advanced analytics.
+
+Throughout the semester, students will design dimensional models, build ETL pipelines, develop OLAP solutions, create Business Intelligence dashboards, optimize query performance, explore cloud data warehouse platforms, and implement an enterprise-grade data warehouse solution using industry-standard and open-source tools.
+
+</p>
+
+<div class="stats">
+
+<div class="stat">
+<h3>15</h3>
+<p>Lecture Modules</p>
+</div>
+
+<div class="stat">
+<h3>9</h3>
+<p>Major Laboratory Activities</p>
+</div>
+
+<div class="stat">
+<h3>1</h3>
+<p>Enterprise Final Project</p>
+</div>
+
+<div class="stat">
+<h3>100%</h3>
+<p>Hands-on Learning</p>
+</div>
+
+</div>
+
+</div>
+
+</header>
+
+<div class="container">
+
+<h2 class="section-title">
+PRELIMS
+</h2>
+
+<div class="lesson-grid">
+
+<div class="card">
+<h3>Lesson 1</h3>
+<p>Introduction to Data Warehousing</p>
+<a href="p1.html">Open Lesson</a>
+</div>
+
+<div class="card">
+<h3>Lesson 2</h3>
+<p>Data Warehouse Architecture</p>
+<a href="p2.html">Open Lesson</a>
+</div>
+
+<div class="card">
+<h3>Lesson 3</h3>
+<p>Dimensional Modeling</p>
+<a href="p3.html">Open Lesson</a>
+</div>
+
+<div class="card">
+<h3>Lesson 4</h3>
+<p>Data Integration and Source Systems</p>
+<a href="p4.html">Open Lesson</a>
+</div>
+
+<div class="card">
+<h3>Lesson 5</h3>
+<p>Introduction to ETL</p>
+<a href="p5.html">Open Lesson</a>
+</div>
+
+</div>
+<!-- ================= MIDTERMS ================= -->
+
+<h2 class="section-title">
+MIDTERMS
+</h2>
+
+<div class="lesson-grid">
+
+<div class="card">
+<h3>Lesson 1</h3>
+<p>Advanced ETL Design</p>
+<a href="m1.html">Open Lesson</a>
+</div>
+
+<div class="card">
+<h3>Lesson 2</h3>
+<p>Data Quality and Data Cleansing</p>
+<a href="m2.html">Open Lesson</a>
+</div>
+
+<div class="card">
+<h3>Lesson 3</h3>
+<p>OLAP and Multidimensional Analysis</p>
+<a href="m3.html">Open Lesson</a>
+</div>
+
+<div class="card">
+<h3>Lesson 4</h3>
+<p>Business Intelligence Systems</p>
+<a href="m4.html">Open Lesson</a>
+</div>
+
+<div class="card">
+<h3>Lesson 5</h3>
+<p>Performance Optimization</p>
+<a href="m5.html">Open Lesson</a>
+</div>
+
+</div>
+
+<!-- ================= FINALS ================= -->
+
+<h2 class="section-title">
+FINALS
+</h2>
+
+<div class="lesson-grid">
+
+<div class="card">
+<h3>Lesson 1</h3>
+<p>Cloud Data Warehousing</p>
+<a href="f1.html">Open Lesson</a>
+</div>
+
+<div class="card">
+<h3>Lesson 2</h3>
+<p>Big Data and Modern Data Warehouses</p>
+<a href="f2.html">Open Lesson</a>
+</div>
+
+<div class="card">
+<h3>Lesson 3</h3>
+<p>Data Warehouse Security and Governance</p>
+<a href="f3.html">Open Lesson</a>
+</div>
+
+<div class="card">
+<h3>Lesson 4</h3>
+<p>Project Development and Deployment</p>
+<a href="f4.html">Open Lesson</a>
+</div>
+
+<div class="card">
+<h3>Lesson 5</h3>
+<p>Enterprise Data Warehouse Final Project</p>
+<a href="f5.html">Open Lesson</a>
+</div>
+
+</div>
+
+<!-- ================= LABORATORY ================= -->
+
+<div class="lab-section">
+
+<h2 class="section-title">
+LABORATORY ACTIVITIES
+</h2>
+
+<div class="lab-grid">
+
+<div class="lab">
+
+<h3>🧪 PRELIMS LABORATORY</h3>
+
+<ul>
+
+<li><strong>Laboratory Activity 1</strong><br>
+Design a Data Warehouse Architecture for a real-world organization.</li>
+
+<br>
+
+<li><strong>Laboratory Activity 2</strong><br>
+Create a Star Schema using Fact and Dimension Tables.</li>
+
+<br>
+
+<li><strong>Laboratory Activity 3</strong><br>
+Implement the Data Warehouse Database using PostgreSQL or MySQL.</li>
+
+</ul>
+
+</div>
+
+<div class="lab">
+
+<h3>📊 MIDTERM LABORATORY</h3>
+
+<ul>
+
+<li><strong>Laboratory Activity 1</strong><br>
+Develop a complete ETL Pipeline using Pentaho or Talend.</li>
+
+<br>
+
+<li><strong>Laboratory Activity 2</strong><br>
+Develop Interactive Business Intelligence Dashboards using Apache Superset or Metabase.</li>
+
+<br>
+
+<li><strong>Laboratory Activity 3</strong><br>
+Optimize the Data Warehouse using Indexing, Partitioning and Query Optimization.</li>
+
+</ul>
+
+</div>
+
+<div class="lab">
+
+<h3>🏆 FINALS LABORATORY</h3>
+
+<ul>
+
+<li><strong>Laboratory Activity 1</strong><br>
+Enterprise Data Warehouse Project Proposal.</li>
+
+<br>
+
+<li><strong>Laboratory Activity 2</strong><br>
+Enterprise Data Warehouse Development.</li>
+
+<br>
+
+<li><strong>Laboratory Activity 3</strong><br>
+Final Project Presentation and Oral Defense.</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ================= FINAL PROJECT ================= -->
+
+<h2 class="section-title">
+ENTERPRISE FINAL PROJECT
+</h2>
+
+<div class="hero">
+
+<h2>Enterprise Data Warehouse System</h2>
+
+<p>
+
+Students will design, develop, implement, optimize, document, and defend a complete Enterprise Data Warehouse solution for a real-world organization.
+
+The project must integrate concepts learned throughout the semester, including Data Warehouse Architecture, ETL Pipelines, Dimensional Modeling, Business Intelligence, Performance Optimization, Cloud Technologies, and Data Governance.
+
+</p>
+
+<div class="stats">
+
+<div class="stat">
+<h3>8+</h3>
+<p>Dimension Tables</p>
+</div>
+
+<div class="stat">
+<h3>2+</h3>
+<p>Fact Tables</p>
+</div>
+
+<div class="stat">
+<h3>5000+</h3>
+<p>Warehouse Records</p>
+</div>
+
+<div class="stat">
+<h3>6+</h3>
+<p>Interactive Dashboards</p>
+</div>
+
+</div>
+
+</div>
+
+<footer>
+
+<h2 style="font-family:Orbitron;color:#4cf7ff;margin-bottom:15px;">
+DATA WAREHOUSING
+</h2>
+
+<p>
+Bachelor of Science in Computer Science
+</p>
+
+<p style="margin-top:10px;">
+Instructor: <strong>MKDB</strong>
+</p>
+
+<p style="margin-top:25px;font-size:14px;color:#8fd9e9;">
+
+© 2026 Data Warehousing Course Portal<br>
+
+Designed for BS Computer Science Students
+
+</p>
+
+</footer>
+
+<script>
+
+// Smooth fade animation
+
+const cards=document.querySelectorAll('.card,.lab,.stat');
+
+const observer=new IntersectionObserver(entries=>{
+
+entries.forEach(entry=>{
+
+if(entry.isIntersecting){
+
+entry.target.animate([
+
+{opacity:0,transform:'translateY(40px)'},
+
+{opacity:1,transform:'translateY(0)'}
+
+],{
+
+duration:700,
+
+fill:'forwards'
+
+});
+
+}
+
+});
+
+});
+
+cards.forEach(card=>observer.observe(card));
+
+// Floating title glow
+
+setInterval(()=>{
+
+document.querySelector('.logo').style.textShadow=
+`0 0 ${10+Math.random()*20}px cyan,
+0 0 ${30+Math.random()*30}px cyan`;
+
+},1200);
+
+</script>
+
+</body>
+</html>

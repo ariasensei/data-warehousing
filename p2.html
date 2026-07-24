@@ -1,2023 +1,346 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Data Warehouse Architecture Lesson</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    scroll-behavior:smooth;
-}
-
-body{
-
-    font-family:'Poppins',sans-serif;
-    background:#eef4fb;
-    color:#233142;
-
-}
-
-/* ------------------------- */
-
-header{
-
-background:linear-gradient(135deg,#09203f,#1c4c7d);
-
-color:white;
-
-padding:80px 8%;
-
-position:relative;
-
-overflow:hidden;
-
-}
-
-/* decorative circles */
-
-header::before{
-
-content:"";
-
-width:300px;
-height:300px;
-
-background:rgba(255,255,255,.08);
-
-border-radius:50%;
-
-position:absolute;
-
-right:-120px;
-top:-120px;
-
-}
-
-header::after{
-
-content:"";
-
-width:220px;
-height:220px;
-
-background:rgba(255,255,255,.05);
-
-border-radius:50%;
-
-position:absolute;
-
-left:-80px;
-bottom:-80px;
-
-}
-
-/* ----------------------- */
-
-nav{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-flex-wrap:wrap;
-
-margin-bottom:60px;
-
-}
-
-.logo{
-
-font-size:28px;
-
-font-weight:bold;
-
-}
-
-.logo span{
-
-color:#ffe66d;
-
-}
-
-nav ul{
-
-display:flex;
-
-gap:20px;
-
-list-style:none;
-
-}
-
-nav a{
-
-text-decoration:none;
-
-color:white;
-
-transition:.3s;
-
-}
-
-nav a:hover{
-
-color:#ffe66d;
-
-}
-
-/* ----------------------- */
-
-.hero{
-
-display:grid;
-
-grid-template-columns:1fr 1fr;
-
-gap:60px;
-
-align-items:center;
-
-}
-
-.hero h1{
-
-font-size:52px;
-
-margin-bottom:20px;
-
-line-height:1.2;
-
-}
-
-.hero p{
-
-font-size:18px;
-
-line-height:1.8;
-
-opacity:.95;
-
-margin-bottom:25px;
-
-}
-
-.button{
-
-display:inline-block;
-
-padding:15px 30px;
-
-background:#ffe66d;
-
-color:#233142;
-
-font-weight:bold;
-
-text-decoration:none;
-
-border-radius:12px;
-
-transition:.3s;
-
-}
-
-.button:hover{
-
-transform:translateY(-4px);
-
-}
-
-/* -------------------------- */
-
-.diagram{
-
-background:white;
-
-color:#233142;
-
-padding:30px;
-
-border-radius:20px;
-
-font-family:monospace;
-
-box-shadow:0 10px 30px rgba(0,0,0,.15);
-
-white-space:pre;
-
-font-size:14px;
-
-overflow:auto;
-
-}
-
-/* ------------------------ */
-
-section{
-
-padding:80px 8%;
-
-}
-
-.section-title{
-
-font-size:40px;
-
-margin-bottom:20px;
-
-color:#0b3558;
-
-}
-
-.section-sub{
-
-color:#666;
-
-margin-bottom:40px;
-
-line-height:1.8;
-
-}
-
-/* ------------------------ */
-
-.grid{
-
-display:grid;
-
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-
-gap:25px;
-
-}
-
-.card{
-
-background:white;
-
-padding:25px;
-
-border-radius:20px;
-
-box-shadow:0 10px 20px rgba(0,0,0,.08);
-
-transition:.3s;
-
-}
-
-.card:hover{
-
-transform:translateY(-8px);
-
-}
-
-.card h3{
-
-margin-bottom:15px;
-
-color:#0b3558;
-
-}
-
-/* ------------------------- */
-
-.flow{
-
-background:#0b3558;
-
-color:white;
-
-padding:40px;
-
-border-radius:25px;
-
-font-family:monospace;
-
-overflow:auto;
-
-font-size:15px;
-
-line-height:1.5;
-
-}
-
-/* -------------------------- */
-
-.activity{
-
-background:white;
-
-padding:25px;
-
-margin-top:25px;
-
-border-radius:20px;
-
-box-shadow:0 5px 20px rgba(0,0,0,.08);
-
-}
-
-.activity button{
-
-margin-top:20px;
-
-padding:12px 20px;
-
-border:none;
-
-background:#0b3558;
-
-color:white;
-
-cursor:pointer;
-
-border-radius:10px;
-
-}
-
-.answer{
-
-display:none;
-
-margin-top:20px;
-
-background:#edf8ff;
-
-padding:15px;
-
-border-left:5px solid #0b3558;
-
-border-radius:10px;
-
-}
-
-/* -------------------------- */
-
-.quiz{
-
-background:white;
-
-padding:30px;
-
-border-radius:20px;
-
-box-shadow:0 10px 20px rgba(0,0,0,.08);
-
-margin-top:30px;
-
-}
-
-.question{
-
-margin-bottom:30px;
-
-}
-
-.question h4{
-
-margin-bottom:15px;
-
-}
-
-.option{
-
-display:block;
-
-margin-bottom:10px;
-
-padding:12px;
-
-border-radius:10px;
-
-background:#f3f6fa;
-
-cursor:pointer;
-
-transition:.3s;
-
-}
-
-.option:hover{
-
-background:#d9efff;
-
-}
-
-button#submitQuiz{
-
-padding:15px 30px;
-
-background:#0b3558;
-
-color:white;
-
-border:none;
-
-border-radius:12px;
-
-cursor:pointer;
-
-font-size:16px;
-
-}
-
-#result{
-
-margin-top:30px;
-
-font-size:22px;
-
-font-weight:bold;
-
-}
-
-/* ------------------------- */
-
-footer{
-
-background:#09203f;
-
-color:white;
-
-padding:40px;
-
-text-align:center;
-
-margin-top:80px;
-
-}
-
-/* ------------------------- */
-
-@media(max-width:900px){
-
-.hero{
-
-grid-template-columns:1fr;
-
-}
-
-.hero h1{
-
-font-size:38px;
-
-}
-
-nav{
-
-justify-content:center;
-
-gap:20px;
-
-}
-
-}
-
-</style>
-
-</head>
-
-<body>
-
-<header>
-
-<nav>
-
-<div class="logo">
-📊 <span>Data Warehouse</span>
-</div>
-
-<ul>
-
-<li><a href="#overview">Overview</a></li>
-
-<li><a href="#architecture">Architecture</a></li>
-
-<li><a href="#activities">Activities</a></li>
-
-<li><a href="#quiz">Quiz</a></li>
-
-</ul>
-
-</nav>
-
-<div class="hero">
-
-<div>
-
-<h1>Data Warehouse Architecture</h1>
-
-<p>
-
-Learn how data travels from different systems into one centralized warehouse where it can be analyzed to support business decisions.
-
-</p>
-
-<a href="#overview" class="button">
-Start Learning
-</a>
-
-</div>
-
-<div class="diagram">
-
-+------------+
-
-| Excel |
-
-+------------+
-
-|
-
-v
-
-+------------+
-
-| Website |
-
-+------------+
-
-|
-
-v
-
-+------------+
-
-| MySQL |
-
-+------------+
-
-|
-
-v
-
-=====================
-
-ETL PROCESS
-
-Extract
-
-Transform
-
-Load
-
-=====================
-
-|
-
-v
-
-+------------------+
-
-| DATA WAREHOUSE |
-
-+------------------+
-
-|
-
-+--------+--------+
-
-| |
-
-v v
-
-Reports Dashboards
-
-</div>
-
-</div>
-
-</header>
-
- <!-- ========================= -->
-<!-- OVERVIEW -->
-<!-- ========================= -->
-
-<section id="overview">
-
-<h2 class="section-title">Lesson Overview</h2>
-
-<p class="section-sub">
-
-A <b>Data Warehouse</b> is a large storage system designed to collect information
-from many different sources into one central location. Instead of looking at
-multiple databases separately, organizations analyze everything from one place,
-making reporting faster and easier.
-
-</p>
-
-<div class="grid">
-
-<div class="card">
-
-<h3>🎯 Learning Objectives</h3>
-
-<ul>
-
-<li>✔ Understand what a Data Warehouse is.</li>
-
-<li>✔ Explain why businesses use Data Warehouses.</li>
-
-<li>✔ Describe the ETL Process.</li>
-
-<li>✔ Identify the architecture layers.</li>
-
-<li>✔ Compare Operational Databases vs Data Warehouses.</li>
-
-</ul>
-
-</div>
-
-<div class="card">
-
-<h3>💡 Why is it Important?</h3>
-
-<p>
-
-Imagine every department in a company stores information in different
-computers. A Data Warehouse gathers all of those records into one place,
-making it easier to generate reports and discover business trends.
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>🏢 Real World Examples</h3>
-
-<ul>
-
-<li>🏦 Banks</li>
-
-<li>🛒 Online Shopping</li>
-
-<li>🏥 Hospitals</li>
-
-<li>🎓 Universities</li>
-
-<li>📱 Mobile Apps</li>
-
-</ul>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- ========================= -->
-<!-- LESSON ROADMAP -->
-<!-- ========================= -->
-
-<section>
-
-<h2 class="section-title">
-
-2-Hour Lesson Roadmap
-
-</h2>
-
-<p class="section-sub">
-
-This lesson is designed to fit one classroom meeting.
-
-</p>
-
-<div class="grid">
-
-<div class="card">
-
-<h3>15 Minutes</h3>
-
-<p>
-
-Introduction
-
-<br><br>
-
-• What is a Data Warehouse?
-
-<br>
-
-• Why do companies use it?
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>30 Minutes</h3>
-
-<p>
-
-Architecture
-
-<br><br>
-
-• Source Systems
-
-<br>
-
-• ETL
-
-<br>
-
-• Data Warehouse
-
-<br>
-
-• Analytics
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>30 Minutes</h3>
-
-<p>
-
-Architecture Layers
-
-<br><br>
-
-Understand every layer and what happens inside each one.
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>20 Minutes</h3>
-
-<p>
-
-Hands-on Activities
-
-<br><br>
-
-Students analyze scenarios and identify architecture components.
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>25 Minutes</h3>
-
-<p>
-
-Interactive Quiz
-
-<br><br>
-
-5-item assessment with automatic checking.
-
-</p>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- ========================= -->
-<!-- ARCHITECTURE -->
-<!-- ========================= -->
-
-<section id="architecture">
-
-<h2 class="section-title">
-
-Data Warehouse Architecture
-
-</h2>
-
-<p class="section-sub">
-
-Think of the architecture as a factory.
-
-Raw materials come in,
-
-they are cleaned,
-
-organized,
-
-stored,
-
-and finally used to create valuable products.
-
-</p>
-
-<div class="flow">
-
-DATA SOURCES
-
-┌───────────────┐
-
-│ Excel Files │
-
-└───────────────┘
-
-┌───────────────┐
-
-│ MySQL │
-
-└───────────────┘
-
-┌───────────────┐
-
-│ Website │
-
-└───────────────┘
-
-┌───────────────┐
-
-│ Mobile App │
-
-└───────────────┘
-
-↓
-
-========================
-
-STAGING AREA
-
-========================
-
-↓
-
-========================
-
-ETL PROCESS
-
-Extract
-
-↓
-
-Transform
-
-↓
-
-Load
-
-========================
-
-↓
-
-========================
-
-DATA WAREHOUSE
-
-========================
-
-↓
-
-+-----------+ +-----------+
-
-| Reports | | Dashboard |
-
-+-----------+ +-----------+
-
-↓
-
-Business Decisions
-
-</div>
-
-</section>
-
-<!-- ========================= -->
-<!-- SIMPLE ANALOGY -->
-<!-- ========================= -->
-
-<section>
-
-<h2 class="section-title">
-
-Easy Analogy
-
-</h2>
-
-<div class="card">
-
-<h3>🍳 Think of Cooking</h3>
-
-<p>
-
-Source Systems are the ingredients.
-
-</p>
-
-<p>
-
-The ETL Process is washing, cutting and cooking the ingredients.
-
-</p>
-
-<p>
-
-The Data Warehouse is the refrigerator where everything is stored neatly.
-
-</p>
-
-<p>
-
-Reports and Dashboards are the meals served to customers.
-
-</p>
-
-</div>
-
-</section>
-
-<!-- ========================= -->
-<!-- FIVE LAYERS -->
-<!-- ========================= -->
-
-<section>
-
-<h2 class="section-title">
-
-The Five Layers
-
-</h2>
-
-<div class="grid">
-
-<div class="card">
-
-<h3>1️⃣ Data Sources</h3>
-
-<p>
-
-Original data from websites,
-
-apps,
-
-files,
-
-or databases.
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>2️⃣ Staging Area</h3>
-
-<p>
-
-Temporary storage where data is checked and cleaned.
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>3️⃣ ETL Layer</h3>
-
-<p>
-
-Extract,
-
-Transform,
-
-and Load the information.
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>4️⃣ Data Warehouse</h3>
-
-<p>
-
-The central storage where cleaned data is kept.
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>5️⃣ Analytics Layer</h3>
-
-<p>
-
-Business Intelligence,
-
-Dashboards,
-
-Reports,
-
-Machine Learning,
-
-and Decision Making.
-
-</p>
-
-</div>
-
-</div>
-
-</section>
-<!-- ===================================================== -->
-<!-- PART 3 : COMPARISON + SVG + ACTIVITIES -->
-<!-- ===================================================== -->
-
-<section>
-
-<h2 class="section-title">
-Visual Architecture
-</h2>
-
-<p class="section-sub">
-This diagram shows how information moves inside a Data Warehouse.
-</p>
-
-<div class="card" style="text-align:center;">
-
-<svg width="100%" height="450" viewBox="0 0 900 450">
-
-<defs>
-
-<marker id="arrow" markerWidth="10" markerHeight="10"
-refX="6" refY="3" orient="auto">
-
-<path d="M0,0 L0,6 L9,3 z"
-fill="#0b3558"/>
-
-</marker>
-
-</defs>
-
-<!-- Sources -->
-
-<rect x="20" y="40" width="130" height="55"
-rx="10"
-fill="#6EC6FF"/>
-
-<text x="85" y="72"
-text-anchor="middle"
-font-size="18"
-fill="white">
-
-Excel Files
-
-</text>
-
-<rect x="20" y="130"
-width="130"
-height="55"
-rx="10"
-fill="#26A69A"/>
-
-<text x="85"
-y="163"
-text-anchor="middle"
-font-size="18"
-fill="white">
-
-MySQL
-
-</text>
-
-<rect x="20"
-y="220"
-width="130"
-height="55"
-rx="10"
-fill="#FF7043"/>
-
-<text x="85"
-y="253"
-text-anchor="middle"
-font-size="18"
-fill="white">
-
-Website
-
-</text>
-
-<rect x="20"
-y="310"
-width="130"
-height="55"
-rx="10"
-fill="#AB47BC"/>
-
-<text x="85"
-y="343"
-text-anchor="middle"
-font-size="18"
-fill="white">
-
-Mobile App
-
-</text>
-
-<!-- ETL -->
-
-<rect x="330"
-y="140"
-width="220"
-height="120"
-rx="15"
-fill="#0B3558"/>
-
-<text x="440"
-y="170"
-fill="white"
-font-size="22"
-text-anchor="middle">
-
-ETL PROCESS
-
-</text>
-
-<text x="440"
-y="205"
-fill="white"
-font-size="18"
-text-anchor="middle">
-
-Extract
-
-</text>
-
-<text x="440"
-y="230"
-fill="white"
-font-size="18"
-text-anchor="middle">
-
-Transform
-
-</text>
-
-<text x="440"
-y="255"
-fill="white"
-font-size="18"
-text-anchor="middle">
-
-Load
-
-</text>
-
-<!-- Warehouse -->
-
-<rect x="680"
-y="140"
-width="180"
-height="120"
-rx="15"
-fill="#FFD54F"/>
-
-<text x="770"
-y="190"
-font-size="22"
-font-weight="bold"
-text-anchor="middle">
-
-DATA
-
-</text>
-
-<text x="770"
-y="220"
-font-size="22"
-font-weight="bold"
-text-anchor="middle">
-
-WAREHOUSE
-
-</text>
-
-<!-- Reports -->
-
-<rect x="680"
-y="320"
-width="150"
-height="60"
-rx="10"
-fill="#66BB6A"/>
-
-<text x="755"
-y="356"
-fill="white"
-text-anchor="middle"
-font-size="18">
-
-Reports
-
-</text>
-
-<!-- Dashboard -->
-
-<rect x="500"
-y="320"
-width="150"
-height="60"
-rx="10"
-fill="#42A5F5"/>
-
-<text x="575"
-y="356"
-fill="white"
-text-anchor="middle"
-font-size="18">
-
-Dashboard
-
-</text>
-
-<!-- Lines -->
-
-<line x1="150"
-y1="70"
-x2="330"
-y2="170"
-stroke="#0b3558"
-stroke-width="3"
-marker-end="url(#arrow)"/>
-
-<line x1="150"
-y1="160"
-x2="330"
-y2="190"
-stroke="#0b3558"
-stroke-width="3"
-marker-end="url(#arrow)"/>
-
-<line x1="150"
-y1="250"
-x2="330"
-y2="210"
-stroke="#0b3558"
-stroke-width="3"
-marker-end="url(#arrow)"/>
-
-<line x1="150"
-y1="340"
-x2="330"
-y2="230"
-stroke="#0b3558"
-stroke-width="3"
-marker-end="url(#arrow)"/>
-
-<line x1="550"
-y1="200"
-x2="680"
-y2="200"
-stroke="#0b3558"
-stroke-width="4"
-marker-end="url(#arrow)"/>
-
-<line x1="770"
-y1="260"
-x2="770"
-y2="320"
-stroke="#0b3558"
-stroke-width="3"
-marker-end="url(#arrow)"/>
-
-<line x1="720"
-y1="260"
-x2="620"
-y2="320"
-stroke="#0b3558"
-stroke-width="3"
-marker-end="url(#arrow)"/>
-
-</svg>
-
-</div>
-
-</section>
-
-
-<!-- ==================================== -->
-<!-- COMPARISON TABLE -->
-<!-- ==================================== -->
-
-<section>
-
-<h2 class="section-title">
-Operational Database vs Data Warehouse
-</h2>
-
-<table style="width:100%;border-collapse:collapse;background:white;border-radius:20px;overflow:hidden;box-shadow:0 5px 15px rgba(0,0,0,.1);">
-
-<tr style="background:#0b3558;color:white;">
-
-<th style="padding:20px;">Feature</th>
-
-<th>Operational Database</th>
-
-<th>Data Warehouse</th>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;"><b>Main Purpose</b></td>
-
-<td>Daily Transactions</td>
-
-<td>Analysis & Reports</td>
-
-</tr>
-
-<tr style="background:#f5f5f5;">
-
-<td style="padding:15px;"><b>Updates</b></td>
-
-<td>Every Minute</td>
-
-<td>Scheduled</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;"><b>Data</b></td>
-
-<td>Current</td>
-
-<td>Historical</td>
-
-</tr>
-
-<tr style="background:#f5f5f5;">
-
-<td style="padding:15px;"><b>Users</b></td>
-
-<td>Cashiers / Employees</td>
-
-<td>Managers / Executives</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;"><b>Example</b></td>
-
-<td>ATM Machine</td>
-
-<td>Monthly Sales Report</td>
-
-</tr>
-
-</table>
-
-</section>
-
-
-<!-- ==================================== -->
-<!-- ACTIVITIES -->
-<!-- ==================================== -->
-
-<section id="activities">
-
-<h2 class="section-title">
-Class Activities
-</h2>
-
-<p class="section-sub">
-
-Try answering before revealing the solution.
-
-</p>
-
-<div class="activity">
-
-<h3>
-Activity 1
-</h3>
-
-<p>
-
-A supermarket has information stored in
-
-Excel,
-
-Cash Registers,
-
-Online Orders,
-
-and Mobile Apps.
-
-Where should all of this information go before managers generate reports?
-
-</p>
-
-<button onclick="toggleAnswer('a1')">
-
-Show Answer
-
-</button>
-
-<div class="answer" id="a1">
-
-<b>Answer:</b>
-
-All data should go through the ETL Process and then be stored inside the Data Warehouse.
-
-</div>
-
-</div>
-
-
-
-<div class="activity">
-
-<h3>
-
-Activity 2
-
-</h3>
-
-<p>
-
-Identify whether each belongs to the Operational Database or Data Warehouse.
-
-<ul>
-
-<li>Monthly Sales Report</li>
-
-<li>ATM Withdrawal</li>
-
-<li>Business Dashboard</li>
-
-<li>Cash Register Transaction</li>
-
-</ul>
-
-</p>
-
-<button onclick="toggleAnswer('a2')">
-
-Show Answer
-
-</button>
-
-<div class="answer" id="a2">
-
-Monthly Sales Report →
-Data Warehouse
-
-<br><br>
-
-ATM Withdrawal →
-Operational Database
-
-<br><br>
-
-Dashboard →
-Data Warehouse
-
-<br><br>
-
-Cash Register →
-Operational Database
-
-</div>
-
-</div>
-
-
-
-<div class="activity">
-
-<h3>
-
-Activity 3
-
-</h3>
-
-<p>
-
-Arrange these in the correct order.
-
-<ul>
-
-<li>Reports</li>
-
-<li>ETL</li>
-
-<li>Data Sources</li>
-
-<li>Warehouse</li>
-
-</ul>
-
-</p>
-
-<button onclick="toggleAnswer('a3')">
-
-Show Answer
-
-</button>
-
-<div class="answer" id="a3">
-
-Data Sources
-
-↓
-
-ETL
-
-↓
-
-Data Warehouse
-
-↓
-
-Reports & Dashboards
-
-</div>
-
-</div>
-
-</section>
-
- <!-- ========================================= -->
-<!-- QUIZ -->
-<!-- ========================================= -->
-
-<section id="quiz">
-
-<h2 class="section-title">
-Practice Quiz
-</h2>
-
-<p class="section-sub">
-Choose the best answer for each question.
-</p>
-
-<div class="quiz">
-
-<div class="question">
-
-<h4>
-1. What is the main purpose of a Data Warehouse?
-</h4>
-
-<label class="option">
-<input type="radio" name="q1" value="A">
-Store temporary files
-</label>
-
-<label class="option">
-<input type="radio" name="q1" value="B">
-Analyze business data
-</label>
-
-<label class="option">
-<input type="radio" name="q1" value="C">
-Replace websites
-</label>
-
-</div>
-
-
-<div class="question">
-
-<h4>
-2. ETL stands for?
-</h4>
-
-<label class="option">
-<input type="radio" name="q2" value="A">
-Extract Transform Load
-</label>
-
-<label class="option">
-<input type="radio" name="q2" value="B">
-Export Transfer Link
-</label>
-
-<label class="option">
-<input type="radio" name="q2" value="C">
-Evaluate Test Learn
-</label>
-
-</div>
-
-
-<div class="question">
-
-<h4>
-3. Which layer stores cleaned data?
-</h4>
-
-<label class="option">
-<input type="radio" name="q3" value="A">
-Website
-
-</label>
-
-<label class="option">
-<input type="radio" name="q3" value="B">
-Data Warehouse
-</label>
-
-<label class="option">
-<input type="radio" name="q3" value="C">
-Excel
-</label>
-
-</div>
-
-
-<div class="question">
-
-<h4>
-4. Which one is a Source System?
-
-</h4>
-
-<label class="option">
-<input type="radio" name="q4" value="A">
-Excel File
-</label>
-
-<label class="option">
-<input type="radio" name="q4" value="B">
-Dashboard
-</label>
-
-<label class="option">
-<input type="radio" name="q4" value="C">
-Business Report
-</label>
-
-</div>
-
-
-<div class="question">
-
-<h4>
-5. Who normally uses reports from a Data Warehouse?
-
-</h4>
-
-<label class="option">
-<input type="radio" name="q5" value="A">
-Managers
-</label>
-
-<label class="option">
-<input type="radio" name="q5" value="B">
-Printer
-</label>
-
-<label class="option">
-<input type="radio" name="q5" value="C">
-Keyboard
-</label>
-
-</div>
-
-
-<button id="submitQuiz">
-
-Check Answers
-
-</button>
-
-<div id="result">
-
-</div>
-
-</div>
-
-</section>
-
-
-
-<!-- ========================================= -->
-<!-- REFERENCES -->
-<!-- ========================================= -->
-
-<section>
-
-<h2 class="section-title">
-
-References
-
-</h2>
-
-<div class="grid">
-
-<div class="card">
-
-<h3>
-
-Kimball Method
-
-</h3>
-
-<p>
-
-Kimball, R.
-
-The Data Warehouse Toolkit.
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>
-
-Inmon Method
-
-</h3>
-
-<p>
-
-William H. Inmon
-
-Building the Data Warehouse.
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>
-
-Microsoft Learn
-
-</h3>
-
-<p>
-
-Data Warehouse Fundamentals
-
-Business Intelligence
-
-Analytics
-
-</p>
-
-</div>
-
-</div>
-
-</section>
-
-
-
-<footer>
-
-<h2>
-
-🎓 Congratulations!
-
-</h2>
-
-<p>
-
-You have completed the
-
-Data Warehouse Architecture Lesson.
-
-</p>
-
-<p>
-
-Created for BSIT / BSCS Students
-
-</p>
-
-</footer>
-
-
-
-<script>
-
-function toggleAnswer(id){
-
-const answer=document.getElementById(id);
-
-if(answer.style.display==="block"){
-
-answer.style.display="none";
-
-}else{
-
-answer.style.display="block";
-
-}
-
-}
-
-
-
-document.getElementById("submitQuiz").addEventListener("click",function(){
-
-
-let score=0;
-
-const answers={
-
-q1:"B",
-
-q2:"A",
-
-q3:"B",
-
-q4:"A",
-
-q5:"A"
-
-};
-
-
-
-for(let question in answers){
-
-let selected=document.querySelector('input[name="'+question+'"]:checked');
-
-if(selected){
-
-if(selected.value===answers[question]){
-
-score++;
-
-}
-
-}
-
-}
-
-
-
-let result=document.getElementById("result");
-
-
-
-let percent=(score/5)*100;
-
-
-
-if(score==5){
-
-result.innerHTML=`
-
-<div style="padding:25px;
-background:#d4edda;
-border-radius:15px;
-margin-top:25px;">
-
-<h2>🏆 PERFECT SCORE!</h2>
-
-<p>
-
-You got
-
-<b>${score}/5</b>
-
-(${percent}%)
-
-</p>
-
-<p>
-
-Excellent work!
-
-</p>
-
-</div>
-
-`;
-
-}
-
-else if(score>=4){
-
-result.innerHTML=`
-
-<div style="padding:25px;
-background:#d1ecf1;
-border-radius:15px;
-margin-top:25px;">
-
-<h2>🎉 Very Good!</h2>
-
-<p>
-
-Score:
-
-<b>${score}/5</b>
-
-(${percent}%)
-
-</p>
-
-</div>
-
-`;
-
-}
-
-else if(score>=3){
-
-result.innerHTML=`
-
-<div style="padding:25px;
-background:#fff3cd;
-border-radius:15px;
-margin-top:25px;">
-
-<h2>🙂 Good Job!</h2>
-
-<p>
-
-Score:
-
-<b>${score}/5</b>
-
-(${percent}%)
-
-</p>
-
-<p>
-
-Review the lesson and try again.
-
-</p>
-
-</div>
-
-`;
-
-}
-
-else{
-
-result.innerHTML=`
-
-<div style="padding:25px;
-background:#f8d7da;
-border-radius:15px;
-margin-top:25px;">
-
-<h2>📖 Keep Studying</h2>
-
-<p>
-
-Score:
-
-<b>${score}/5</b>
-
-(${percent}%)
-
-</p>
-
-<p>
-
-Review the lesson then retake the quiz.
-
-</p>
-
-</div>
-
-`;
-
-}
-
-});
-
-</script>
-
-</body>
-
-</html>
+<!doctype html>
+<html lang="en"><head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260723-05-e9a76f4"}');</script><script src="/_sdk/e358eac22bd01364.telemetry_sdk.js" integrity="sha512-KPxp3rw4K8Nu9ceWJc3gyM7srgaZxiFWOVbyu260EYzzAqdz10mfo5xyXrCx+wEKtGo77JbtmwXvFLbwrGzwvw=="></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Warehouse Architecture Lesson</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Source+Serif+Pro:wght@400;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #e8f2ff;
+      --muted: #afc2d9;
+      --night: #07131f;
+      --panel: #0d2133;
+      --panel-deep: #0a1a29;
+      --line: rgba(169, 209, 245, 0.17);
+      --cyan: #53d7e8;
+      --lime: #d6f26d;
+      --orange: #ffb56c;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      color: var(--ink);
+      font-family: "Source Serif Pro", serif;
+      background: var(--night);
+    }
+
+    .app-shell {
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 86% 6%, rgba(83, 215, 232, 0.17), transparent 24rem),
+        radial-gradient(circle at 10% 42%, rgba(214, 242, 109, 0.08), transparent 23rem),
+        #07131f;
+    }
+
+    .sans { font-family: "DM Sans", sans-serif; }
+
+    .grid-noise {
+      background-image:
+        linear-gradient(rgba(159, 210, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(159, 210, 255, 0.06) 1px, transparent 1px);
+      background-size: 34px 34px;
+    }
+
+    .section-rule {
+      height: 1px;
+      width: 100%;
+      background: linear-gradient(90deg, transparent, rgba(83, 215, 232, 0.45), transparent);
+    }
+
+    .architecture-line {
+      position: relative;
+    }
+
+    .architecture-line::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -22px;
+      width: 2px;
+      height: 22px;
+      background: linear-gradient(var(--cyan), rgba(83, 215, 232, 0));
+      transform: translateX(-50%);
+    }
+
+    .architecture-line:last-child::after { display: none; }
+
+    .activity-done { display: none; }
+    .is-complete .activity-open { display: none; }
+    .is-complete .activity-done { display: inline-flex; }
+    .is-complete #completion-banner { display: flex; }
+
+    .fade-in {
+      animation: enter 700ms ease both;
+    }
+
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 767px) {
+      .architecture-line::after {
+        left: 28px;
+        transform: none;
+      }
+    }
+  </style>
+  <script src="/_sdk/935a53bc2e11fb8d.data_sdk.js" type="text/javascript" integrity="sha512-qr2oyPnEys1WebcOABaRh6hG77r5PWpqeWW6JTKbRJqly/INsfBi31CVNlTmHqjgeLpkVmmHZJUdxSx/32tOFQ=="></script>
+  <script src="/_sdk/6030e540d4419216.resizing_sdk.js" type="text/javascript" integrity="sha512-b5KWzyoXsbWP4smq4sftIi6Kts4YVBpBsz0BwCViwbBJkK64a3/Z6ZMdWA+qnplNcXw4mhZeqvQi3mOosiRJdA=="></script>
+ </head>
+ <body data-template-id="__page-root" style="background: rgb(7, 19, 31);">
+  <div class="app-shell">
+   <header class="grid-noise border-b border-sky-100/10">
+    <div class="mx-auto w-full max-w-7xl px-5 py-5 md:px-8">
+     <div class="flex flex-wrap items-center justify-between gap-4"><a href="#top" class="sans flex items-center gap-3 font-semibold tracking-wide text-cyan-100"> <span class="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-200/30 bg-cyan-300/10 text-cyan-200"> <i data-lucide="database" aria-hidden="true"></i> </span> <span data-template-id="brand-name" class="canva-text" style="color: rgb(223, 250, 255); font-weight: 700; font-style: normal; font-size: 14px; letter-spacing: 0.08rem;">DATA SYSTEMS LAB</span> </a>
+      <nav aria-label="Lesson navigation" class="sans flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-sky-100/75"><a class="transition hover:text-cyan-200 focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:ring-offset-2 focus:ring-offset-[#07131f] rounded" href="#architecture">Architecture</a> <a class="transition hover:text-cyan-200 focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:ring-offset-2 focus:ring-offset-[#07131f] rounded" href="#workflow">Workflow</a> <a class="transition hover:text-cyan-200 focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:ring-offset-2 focus:ring-offset-[#07131f] rounded" href="#databricks">Databricks</a> <a class="transition hover:text-cyan-200 focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:ring-offset-2 focus:ring-offset-[#07131f] rounded" href="#activity">Activity</a>
+      </nav>
+     </div>
+    </div>
+   </header>
+   <main id="top">
+    <section class="mx-auto w-full max-w-7xl px-5 py-10 md:px-8 md:py-16">
+     <div class="grid items-stretch gap-7 lg:grid-cols-[1.08fr_0.92fr]">
+      <div class="fade-in flex flex-col justify-center rounded-[2rem] border border-sky-100/10 bg-[#0b1e2e]/80 p-7 shadow-2xl shadow-cyan-950/30 md:p-11">
+       <div data-template-id="lesson-tag" class="canva-tag sans mb-6 inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-[0.18em]" style="background: rgba(83, 215, 232, 0.12); color: rgb(135, 239, 250); font-weight: 700; font-style: normal; font-size: 12px;">Computer Science • Data Science</div>
+       <h1 data-template-id="hero-title" class="canva-text mb-5 font-bold leading-[1.02]" style="color: rgb(241, 251, 255); font-weight: 700; font-style: normal; font-size: 54px; line-height: 1;">Data Warehouse Architecture</h1>
+       <p data-template-id="hero-subtitle" class="canva-text max-w-2xl leading-relaxed" style="color: rgb(199, 220, 237); font-weight: 400; font-style: normal; font-size: 20px; line-height: 1.45;">A practical guide to designing trusted analytical systems—from raw operational data to business-ready insight.</p>
+       <div class="section-rule my-8"></div>
+       <div class="sans flex flex-wrap items-center gap-3 text-sm"><span class="text-sky-100/60">Instructor</span> <span data-template-id="instructor-name" class="canva-text rounded-full border px-3 py-1 font-bold" style="background: rgb(214, 242, 109); color: rgb(16, 35, 21); font-weight: 700; font-style: normal; font-size: 14px;">MKDB</span> <span class="text-sky-100/40">•</span> <span data-template-id="audience-label" class="canva-text text-sky-100/80" style="color: rgb(199, 220, 237); font-weight: 500; font-style: normal; font-size: 14px;">For Data Science majors</span>
+       </div>
+      </div>
+      <div class="fade-in overflow-hidden rounded-[2rem] border border-sky-100/10 bg-[#0a1a29] shadow-2xl shadow-cyan-950/30" style="animation-delay: 120ms;">
+       <div class="relative h-full min-h-[320px]"><img data-template-id="hero-image" loading="lazy" class="canva-image absolute inset-0 h-full w-full object-cover opacity-80" src="https://images.pexels.com/photos/37730211/pexels-photo-37730211.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1280" alt="Modern server rack with blue lighting in a secure data center environment.">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#07131f] via-[#07131f]/20 to-transparent"></div>
+        <div class="sans absolute bottom-0 left-0 right-0 p-7">
+         <p data-template-id="hero-image-caption" class="canva-text max-w-md text-sm leading-relaxed" style="color: rgb(234, 248, 255); font-weight: 500; font-style: normal; font-size: 15px; line-height: 1.45;">Data warehouses turn distributed records into a dependable foundation for analysis, dashboards, and machine learning.</p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section>
+    <section aria-labelledby="outcomes-heading" class="mx-auto w-full max-w-7xl px-5 pb-10 md:px-8">
+     <div data-template-id="outcomes-panel" class="canva-panel rounded-[1.5rem] border p-6 md:p-8" style="background: rgb(13, 33, 51); color: rgb(232, 242, 255);">
+      <div class="grid gap-7 md:grid-cols-[0.8fr_1.2fr]">
+       <div>
+        <p class="sans text-xs font-bold uppercase tracking-[0.2em] text-cyan-200">Lesson map</p>
+        <h2 id="outcomes-heading" data-template-id="outcomes-title" class="canva-text mt-2 font-bold leading-tight" style="color: rgb(241, 251, 255); font-weight: 700; font-style: normal; font-size: 28px; line-height: 1.1;">By the end of this lesson, you can:</h2>
+       </div>
+       <ul class="sans grid gap-3 text-sm leading-relaxed text-sky-50/85 md:grid-cols-2">
+        <li class="flex gap-3"><i data-lucide="check-circle-2" class="mt-0.5 h-5 w-5 shrink-0 text-[#d6f26d]" aria-hidden="true"></i><span data-template-id="outcome-one" class="canva-text" style="color: rgb(213, 232, 247); font-weight: 400; font-style: normal; font-size: 15px;">Identify the major layers in a data warehouse architecture.</span></li>
+        <li class="flex gap-3"><i data-lucide="check-circle-2" class="mt-0.5 h-5 w-5 shrink-0 text-[#d6f26d]" aria-hidden="true"></i><span data-template-id="outcome-two" class="canva-text" style="color: rgb(213, 232, 247); font-weight: 400; font-style: normal; font-size: 15px;">Trace the journey of data from source system to analytics.</span></li>
+        <li class="flex gap-3"><i data-lucide="check-circle-2" class="mt-0.5 h-5 w-5 shrink-0 text-[#d6f26d]" aria-hidden="true"></i><span data-template-id="outcome-three" class="canva-text" style="color: rgb(213, 232, 247); font-weight: 400; font-style: normal; font-size: 15px;">Explain how ELT, modeling, governance, and serving work together.</span></li>
+        <li class="flex gap-3"><i data-lucide="check-circle-2" class="mt-0.5 h-5 w-5 shrink-0 text-[#d6f26d]" aria-hidden="true"></i><span data-template-id="outcome-four" class="canva-text" style="color: rgb(213, 232, 247); font-weight: 400; font-style: normal; font-size: 15px;">Discuss how Databricks supports a modern lakehouse approach.</span></li>
+       </ul>
+      </div>
+     </div>
+    </section>
+    <section id="architecture" aria-labelledby="architecture-heading" class="mx-auto w-full max-w-7xl px-5 py-10 md:px-8 md:py-14">
+     <div class="mb-8 max-w-3xl">
+      <p class="sans text-xs font-bold uppercase tracking-[0.2em] text-cyan-200">01 / Foundation</p>
+      <h2 id="architecture-heading" data-template-id="architecture-title" class="canva-text mt-3 font-bold leading-tight" style="color: rgb(241, 251, 255); font-weight: 700; font-style: normal; font-size: 38px; line-height: 1.08;">The architecture: separate concerns, connected flow</h2>
+      <p data-template-id="architecture-intro" class="canva-text mt-4 leading-relaxed text-sky-50/80" style="color: rgb(199, 220, 237); font-weight: 400; font-style: normal; font-size: 18px; line-height: 1.5;">A data warehouse is more than a database. It is an organized system of ingestion, storage, transformation, governance, and delivery designed for consistent decision-making.</p>
+     </div>
+     <div class="grid gap-7 lg:grid-cols-[0.72fr_1.28fr]">
+      <figure class="overflow-hidden rounded-[1.5rem] border border-sky-100/10 bg-[#0a1a29]"><img data-template-id="architecture-image" loading="lazy" class="canva-image h-64 w-full object-cover md:h-full" src="https://images.pexels.com/photos/1148820/pexels-photo-1148820.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" alt="Detailed image of a server rack with glowing lights in a modern data center.">
+       <figcaption data-template-id="architecture-caption" class="canva-text border-t border-sky-100/10 p-5 text-sm leading-relaxed" style="color: rgb(188, 210, 227); font-weight: 400; font-style: normal; font-size: 14px; line-height: 1.45;">The platform must balance reliability, query performance, discoverability, security, and cost.</figcaption>
+      </figure>
+      <div class="space-y-5">
+       <article data-template-id="layer-source" class="canva-card architecture-line rounded-2xl border p-5 md:flex md:items-start md:gap-5" style="background: rgb(12, 32, 49); color: rgb(217, 239, 255);">
+        <div class="sans mb-3 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-300/15 text-cyan-200 md:mb-0">
+         <i data-lucide="plug-zap" aria-hidden="true"></i>
+        </div>
+        <div>
+         <h3 data-template-id="layer-source-title" class="canva-text font-bold" style="color: rgb(234, 248, 255); font-weight: 700; font-style: normal; font-size: 23px;">1. Source systems</h3>
+         <p data-template-id="layer-source-text" class="canva-text mt-2 leading-relaxed" style="color: rgb(191, 211, 227); font-weight: 400; font-style: normal; font-size: 16px; line-height: 1.45;">Operational databases, SaaS applications, logs, APIs, files, and event streams generate the raw facts of the business.</p>
+        </div>
+       </article>
+       <article data-template-id="layer-ingestion" class="canva-card architecture-line rounded-2xl border p-5 md:flex md:items-start md:gap-5" style="background: rgb(14, 37, 49); color: rgb(217, 239, 255);">
+        <div class="sans mb-3 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#d6f26d]/15 text-[#d6f26d] md:mb-0">
+         <i data-lucide="git-merge" aria-hidden="true"></i>
+        </div>
+        <div>
+         <h3 data-template-id="layer-ingestion-title" class="canva-text font-bold" style="color: rgb(242, 255, 221); font-weight: 700; font-style: normal; font-size: 23px;">2. Ingestion and landing</h3>
+         <p data-template-id="layer-ingestion-text" class="canva-text mt-2 leading-relaxed" style="color: rgb(200, 217, 200); font-weight: 400; font-style: normal; font-size: 16px; line-height: 1.45;">Batch jobs, change-data capture, and streaming pipelines bring data into a raw landing zone while preserving lineage and timestamps.</p>
+        </div>
+       </article>
+       <article data-template-id="layer-storage" class="canva-card architecture-line rounded-2xl border p-5 md:flex md:items-start md:gap-5" style="background: rgb(42, 33, 27); color: rgb(255, 231, 205);">
+        <div class="sans mb-3 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-orange-300/15 text-orange-200 md:mb-0">
+         <i data-lucide="layers-3" aria-hidden="true"></i>
+        </div>
+        <div>
+         <h3 data-template-id="layer-storage-title" class="canva-text font-bold" style="color: rgb(255, 241, 226); font-weight: 700; font-style: normal; font-size: 23px;">3. Storage, transformation, and modeling</h3>
+         <p data-template-id="layer-storage-text" class="canva-text mt-2 leading-relaxed" style="color: rgb(235, 207, 179); font-weight: 400; font-style: normal; font-size: 16px; line-height: 1.45;">Raw data is validated, standardized, joined, and modeled into fact and dimension tables or curated domain products for analysis.</p>
+        </div>
+       </article>
+       <article data-template-id="layer-serving" class="canva-card architecture-line rounded-2xl border p-5 md:flex md:items-start md:gap-5" style="background: rgb(33, 27, 49); color: rgb(238, 228, 255);">
+        <div class="sans mb-3 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-fuchsia-300/15 text-fuchsia-200 md:mb-0">
+         <i data-lucide="chart-no-axes-combined" aria-hidden="true"></i>
+        </div>
+        <div>
+         <h3 data-template-id="layer-serving-title" class="canva-text font-bold" style="color: rgb(245, 239, 255); font-weight: 700; font-style: normal; font-size: 23px;">4. Serving and consumption</h3>
+         <p data-template-id="layer-serving-text" class="canva-text mt-2 leading-relaxed" style="color: rgb(216, 205, 234); font-weight: 400; font-style: normal; font-size: 16px; line-height: 1.45;">Semantic models, SQL endpoints, dashboards, notebooks, and machine-learning workflows expose governed data to people and applications.</p>
+        </div>
+       </article>
+      </div>
+     </div>
+    </section>
+    <section id="workflow" aria-labelledby="workflow-heading" class="border-y border-sky-100/10 bg-[#091b2a]/75">
+     <div class="mx-auto w-full max-w-7xl px-5 py-12 md:px-8 md:py-16">
+      <div class="mb-8 flex flex-col justify-between gap-3 md:flex-row md:items-end">
+       <div>
+        <p class="sans text-xs font-bold uppercase tracking-[0.2em] text-[#d6f26d]">02 / Data movement</p>
+        <h2 id="workflow-heading" data-template-id="workflow-title" class="canva-text mt-3 font-bold leading-tight" style="color: rgb(241, 251, 255); font-weight: 700; font-style: normal; font-size: 38px; line-height: 1.08;">A typical ELT workflow</h2>
+       </div>
+       <p data-template-id="workflow-note" class="canva-text max-w-lg leading-relaxed text-sky-50/75" style="color: rgb(199, 220, 237); font-weight: 400; font-style: normal; font-size: 16px; line-height: 1.45;">ELT loads data first, then transforms it within scalable analytical compute. This keeps raw evidence available while enabling repeatable models.</p>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+       <article data-template-id="step-one" class="canva-card rounded-2xl border p-5" style="background: rgb(12, 33, 50); color: rgb(220, 239, 255);"><span class="sans text-xs font-bold tracking-[0.18em] text-cyan-200">01</span>
+        <h3 data-template-id="step-one-title" class="canva-text mt-3 font-bold" style="color: rgb(239, 250, 255); font-weight: 700; font-style: normal; font-size: 21px;">Extract</h3>
+        <p data-template-id="step-one-text" class="canva-text mt-2 leading-relaxed" style="color: rgb(189, 209, 223); font-weight: 400; font-style: normal; font-size: 15px; line-height: 1.45;">Collect source records with clear ownership, frequency, and data contracts.</p>
+       </article>
+       <article data-template-id="step-two" class="canva-card rounded-2xl border p-5" style="background: rgb(12, 33, 50); color: rgb(220, 239, 255);"><span class="sans text-xs font-bold tracking-[0.18em] text-cyan-200">02</span>
+        <h3 data-template-id="step-two-title" class="canva-text mt-3 font-bold" style="color: rgb(239, 250, 255); font-weight: 700; font-style: normal; font-size: 21px;">Load</h3>
+        <p data-template-id="step-two-text" class="canva-text mt-2 leading-relaxed" style="color: rgb(189, 209, 223); font-weight: 400; font-style: normal; font-size: 15px; line-height: 1.45;">Land immutable raw data in cloud storage or warehouse staging tables.</p>
+       </article>
+       <article data-template-id="step-three" class="canva-card rounded-2xl border p-5" style="background: rgb(12, 33, 50); color: rgb(220, 239, 255);"><span class="sans text-xs font-bold tracking-[0.18em] text-cyan-200">03</span>
+        <h3 data-template-id="step-three-title" class="canva-text mt-3 font-bold" style="color: rgb(239, 250, 255); font-weight: 700; font-style: normal; font-size: 21px;">Transform</h3>
+        <p data-template-id="step-three-text" class="canva-text mt-2 leading-relaxed" style="color: rgb(189, 209, 223); font-weight: 400; font-style: normal; font-size: 15px; line-height: 1.45;">Clean, deduplicate, test, and create reusable business entities.</p>
+       </article>
+       <article data-template-id="step-four" class="canva-card rounded-2xl border p-5" style="background: rgb(12, 33, 50); color: rgb(220, 239, 255);"><span class="sans text-xs font-bold tracking-[0.18em] text-cyan-200">04</span>
+        <h3 data-template-id="step-four-title" class="canva-text mt-3 font-bold" style="color: rgb(239, 250, 255); font-weight: 700; font-style: normal; font-size: 21px;">Govern</h3>
+        <p data-template-id="step-four-text" class="canva-text mt-2 leading-relaxed" style="color: rgb(189, 209, 223); font-weight: 400; font-style: normal; font-size: 15px; line-height: 1.45;">Apply access controls, catalogs, quality checks, lineage, and monitoring.</p>
+       </article>
+       <article data-template-id="step-five" class="canva-card rounded-2xl border p-5" style="background: rgb(12, 33, 50); color: rgb(220, 239, 255);"><span class="sans text-xs font-bold tracking-[0.18em] text-cyan-200">05</span>
+        <h3 data-template-id="step-five-title" class="canva-text mt-3 font-bold" style="color: rgb(239, 250, 255); font-weight: 700; font-style: normal; font-size: 21px;">Serve</h3>
+        <p data-template-id="step-five-text" class="canva-text mt-2 leading-relaxed" style="color: rgb(189, 209, 223); font-weight: 400; font-style: normal; font-size: 15px; line-height: 1.45;">Deliver trusted datasets to BI users, analysts, data scientists, and applications.</p>
+       </article>
+      </div>
+     </div>
+    </section>
+    <section aria-labelledby="compare-heading" class="mx-auto w-full max-w-7xl px-5 py-12 md:px-8 md:py-16">
+     <div class="mb-8">
+      <p class="sans text-xs font-bold uppercase tracking-[0.2em] text-orange-200">03 / Design choice</p>
+      <h2 id="compare-heading" data-template-id="compare-title" class="canva-text mt-3 font-bold leading-tight" style="color: rgb(241, 251, 255); font-weight: 700; font-style: normal; font-size: 38px; line-height: 1.08;">Warehouse or lakehouse?</h2>
+     </div>
+     <div class="grid gap-6 md:grid-cols-2">
+      <article data-template-id="warehouse-card" class="canva-card rounded-[1.5rem] border p-7" style="background: rgb(16, 37, 54); color: rgb(215, 233, 248);">
+       <div class="sans mb-4 flex items-center gap-3 text-cyan-200">
+        <i data-lucide="warehouse" aria-hidden="true"></i><span data-template-id="warehouse-label" class="canva-text font-bold" style="color: rgb(177, 244, 251); font-weight: 700; font-style: normal; font-size: 18px;">Traditional data warehouse</span>
+       </div>
+       <p data-template-id="warehouse-text" class="canva-text leading-relaxed" style="color: rgb(194, 215, 231); font-weight: 400; font-style: normal; font-size: 17px; line-height: 1.5;">Optimized for structured data, SQL analytics, stable reporting, and carefully modeled tables. It commonly separates analytics workloads from data-science experimentation.</p>
+      </article>
+      <article data-template-id="lakehouse-card" class="canva-card rounded-[1.5rem] border p-7" style="background: rgb(23, 48, 35); color: rgb(226, 248, 198);">
+       <div class="sans mb-4 flex items-center gap-3 text-[#d6f26d]">
+        <i data-lucide="waves" aria-hidden="true"></i><span data-template-id="lakehouse-label" class="canva-text font-bold" style="color: rgb(230, 255, 158); font-weight: 700; font-style: normal; font-size: 18px;">Lakehouse architecture</span>
+       </div>
+       <p data-template-id="lakehouse-text" class="canva-text leading-relaxed" style="color: rgb(211, 227, 194); font-weight: 400; font-style: normal; font-size: 17px; line-height: 1.5;">Combines data-lake flexibility with warehouse-style reliability. It supports structured and unstructured data, analytics, streaming, and machine learning on shared governed storage.</p>
+      </article>
+     </div>
+    </section>
+    <section id="databricks" aria-labelledby="databricks-heading" class="border-y border-sky-100/10 bg-gradient-to-r from-[#12283a] to-[#0b1a29]">
+     <div class="mx-auto w-full max-w-7xl px-5 py-12 md:px-8 md:py-16">
+      <div class="grid gap-8 lg:grid-cols-[0.78fr_1.22fr]">
+       <div>
+        <p class="sans text-xs font-bold uppercase tracking-[0.2em] text-orange-200">04 / Industry platform discussion</p>
+        <h2 id="databricks-heading" data-template-id="databricks-title" class="canva-text mt-3 font-bold leading-tight" style="color: rgb(241, 251, 255); font-weight: 700; font-style: normal; font-size: 38px; line-height: 1.08;">What does the Databricks platform do?</h2>
+        <p data-template-id="databricks-intro" class="canva-text mt-4 leading-relaxed text-sky-50/80" style="color: rgb(199, 220, 237); font-weight: 400; font-style: normal; font-size: 18px; line-height: 1.5;">Databricks is a cloud data platform built around the lakehouse model. It provides collaborative tools and managed compute so teams can ingest, engineer, govern, analyze, and use data for AI in one environment.</p>
+       </div>
+       <div class="grid gap-4 sm:grid-cols-2">
+        <article data-template-id="databricks-item-one" class="canva-card rounded-2xl border p-5" style="background: rgb(16, 37, 54); color: rgb(220, 239, 255);"><i data-lucide="notebook-tabs" class="mb-4 h-6 w-6 text-cyan-200" aria-hidden="true"></i>
+         <h3 data-template-id="databricks-item-one-title" class="canva-text font-bold" style="color: rgb(239, 250, 255); font-weight: 700; font-style: normal; font-size: 20px;">Collaborative engineering</h3>
+         <p data-template-id="databricks-item-one-text" class="canva-text mt-2 leading-relaxed" style="color: rgb(194, 215, 231); font-weight: 400; font-style: normal; font-size: 15px; line-height: 1.45;">Notebooks and workflows help data engineers, analysts, and scientists work with SQL, Python, R, and Scala in shared projects.</p>
+        </article>
+        <article data-template-id="databricks-item-two" class="canva-card rounded-2xl border p-5" style="background: rgb(23, 48, 35); color: rgb(226, 248, 198);"><i data-lucide="sparkles" class="mb-4 h-6 w-6 text-[#d6f26d]" aria-hidden="true"></i>
+         <h3 data-template-id="databricks-item-two-title" class="canva-text font-bold" style="color: rgb(240, 255, 198); font-weight: 700; font-style: normal; font-size: 20px;">Reliable lakehouse tables</h3>
+         <p data-template-id="databricks-item-two-text" class="canva-text mt-2 leading-relaxed" style="color: rgb(211, 227, 194); font-weight: 400; font-style: normal; font-size: 15px; line-height: 1.45;">Delta Lake tables add transactions, schema controls, version history, and scalable data processing to cloud object storage.</p>
+        </article>
+        <article data-template-id="databricks-item-three" class="canva-card rounded-2xl border p-5" style="background: rgb(43, 36, 30); color: rgb(255, 231, 205);"><i data-lucide="shield-check" class="mb-4 h-6 w-6 text-orange-200" aria-hidden="true"></i>
+         <h3 data-template-id="databricks-item-three-title" class="canva-text font-bold" style="color: rgb(255, 241, 226); font-weight: 700; font-style: normal; font-size: 20px;">Governance and discovery</h3>
+         <p data-template-id="databricks-item-three-text" class="canva-text mt-2 leading-relaxed" style="color: rgb(235, 207, 179); font-weight: 400; font-style: normal; font-size: 15px; line-height: 1.45;">A central catalog can organize data assets, permissions, lineage, and quality expectations across teams and workloads.</p>
+        </article>
+        <article data-template-id="databricks-item-four" class="canva-card rounded-2xl border p-5" style="background: rgb(33, 27, 49); color: rgb(238, 228, 255);"><i data-lucide="brain-circuit" class="mb-4 h-6 w-6 text-fuchsia-200" aria-hidden="true"></i>
+         <h3 data-template-id="databricks-item-four-title" class="canva-text font-bold" style="color: rgb(245, 239, 255); font-weight: 700; font-style: normal; font-size: 20px;">Analytics and AI</h3>
+         <p data-template-id="databricks-item-four-text" class="canva-text mt-2 leading-relaxed" style="color: rgb(216, 205, 234); font-weight: 400; font-style: normal; font-size: 15px; line-height: 1.45;">Teams can query curated data, build dashboards, train models, and operationalize AI workloads using the same governed data foundation.</p>
+        </article>
+       </div>
+      </div>
+     </div>
+    </section>
+    <section id="activity" aria-labelledby="activity-heading" class="mx-auto w-full max-w-7xl px-5 py-12 md:px-8 md:py-16">
+     <div class="mx-auto max-w-5xl">
+      <div data-template-id="activity-card" id="activity-card" class="canva-card rounded-[2rem] border p-7 shadow-2xl shadow-cyan-950/25 md:p-10" style="background: rgb(13, 33, 51); color: rgb(232, 242, 255);">
+       <div class="flex flex-col justify-between gap-7 md:flex-row">
+        <div class="max-w-2xl">
+         <p class="sans text-xs font-bold uppercase tracking-[0.2em] text-[#d6f26d]">Individual activity</p>
+         <h2 id="activity-heading" data-template-id="activity-title" class="canva-text mt-3 font-bold leading-tight" style="color: rgb(241, 251, 255); font-weight: 700; font-style: normal; font-size: 36px; line-height: 1.08;">Design a mini lakehouse for a campus learning platform</h2>
+         <p data-template-id="activity-scenario" class="canva-text mt-4 leading-relaxed" style="color: rgb(199, 220, 237); font-weight: 400; font-style: normal; font-size: 18px; line-height: 1.5;">Imagine that your university wants to understand student engagement in its learning platform. It collects course enrollments, quiz attempts, attendance, discussion posts, and assignment submissions. Create a concise architecture proposal that transforms these sources into trusted datasets for student-success analytics.</p>
+        </div>
+        <div class="sans flex h-fit items-center gap-2 rounded-2xl border border-cyan-200/20 bg-cyan-300/10 px-4 py-3 text-sm text-cyan-100"><i data-lucide="clock-3" class="h-5 w-5" aria-hidden="true"></i> <span data-template-id="activity-time" class="canva-text" style="color: rgb(201, 250, 255); font-weight: 600; font-style: normal; font-size: 14px;">Estimated time: 25–35 minutes</span>
+        </div>
+       </div>
+       <div class="my-8 section-rule"></div>
+       <div class="grid gap-7 md:grid-cols-2">
+        <div>
+         <h3 data-template-id="deliverables-title" class="canva-text font-bold" style="color: rgb(234, 248, 255); font-weight: 700; font-style: normal; font-size: 24px;">Your deliverables</h3>
+         <ol class="sans mt-4 space-y-3 text-sm leading-relaxed text-sky-50/85">
+          <li class="flex gap-3"><span class="font-bold text-cyan-200">1.</span><span data-template-id="deliverable-one" class="canva-text" style="color: rgb(213, 232, 247); font-weight: 400; font-style: normal; font-size: 15px;">Draw a five-layer architecture: sources, ingestion, storage, transformation, and consumption.</span></li>
+          <li class="flex gap-3"><span class="font-bold text-cyan-200">2.</span><span data-template-id="deliverable-two" class="canva-text" style="color: rgb(213, 232, 247); font-weight: 400; font-style: normal; font-size: 15px;">Name two fact tables, two dimension tables, and one data-quality rule for the student engagement domain.</span></li>
+          <li class="flex gap-3"><span class="font-bold text-cyan-200">3.</span><span data-template-id="deliverable-three" class="canva-text" style="color: rgb(213, 232, 247); font-weight: 400; font-style: normal; font-size: 15px;">Explain where Databricks could support engineering, governance, analytics, or machine-learning work.</span></li>
+         </ol>
+        </div>
+        <div>
+         <h3 data-template-id="reflection-title" class="canva-text font-bold" style="color: rgb(234, 248, 255); font-weight: 700; font-style: normal; font-size: 24px;">Reflection prompts</h3>
+         <ul class="sans mt-4 space-y-3 text-sm leading-relaxed text-sky-50/85">
+          <li class="flex gap-3"><i data-lucide="message-square-text" class="mt-0.5 h-4 w-4 shrink-0 text-orange-200" aria-hidden="true"></i><span data-template-id="reflection-one" class="canva-text" style="color: rgb(213, 232, 247); font-weight: 400; font-style: normal; font-size: 15px;">Which data should remain in the raw layer, and why should it not be overwritten?</span></li>
+          <li class="flex gap-3"><i data-lucide="message-square-text" class="mt-0.5 h-4 w-4 shrink-0 text-orange-200" aria-hidden="true"></i><span data-template-id="reflection-two" class="canva-text" style="color: rgb(213, 232, 247); font-weight: 400; font-style: normal; font-size: 15px;">What governance rule would protect student privacy while still enabling useful analysis?</span></li>
+         </ul>
+        </div>
+       </div>
+       <div id="completion-banner" data-template-id="completion-banner" class="canva-banner mt-8 hidden items-center gap-3 rounded-2xl border px-5 py-4" style="background: rgb(23, 48, 35); color: rgb(232, 255, 188);"><i data-lucide="badge-check" class="h-6 w-6 shrink-0" aria-hidden="true"></i> <span data-template-id="completion-text" class="canva-text" style="color: rgb(232, 255, 188); font-weight: 600; font-style: normal; font-size: 15px;">Activity marked complete. Review your architecture against the lesson layers before submitting it to your instructor.</span>
+       </div>
+       <div class="mt-8 flex flex-wrap gap-3"><button id="complete-button" type="button" class="canva-button activity-open sans inline-flex items-center gap-2 rounded-xl px-5 py-3 font-bold transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-[#d6f26d] focus:ring-offset-2 focus:ring-offset-[#0d2133]"> <i data-lucide="check" class="h-5 w-5" aria-hidden="true"></i> <span data-template-id="complete-button-label" class="canva-text" style="background: rgb(214, 242, 109); color: rgb(16, 35, 21); font-weight: 700; font-style: normal; font-size: 15px;">Mark activity complete</span> </button> <button id="reset-button" type="button" class="canva-button activity-done sans inline-flex items-center gap-2 rounded-xl px-5 py-3 font-bold transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:ring-offset-2 focus:ring-offset-[#0d2133]"> <i data-lucide="rotate-ccw" class="h-5 w-5" aria-hidden="true"></i> <span data-template-id="reset-button-label" class="canva-text" style="background: rgb(22, 52, 74); color: rgb(223, 250, 255); font-weight: 700; font-style: normal; font-size: 15px;">Mark as incomplete</span> </button>
+       </div>
+      </div>
+     </div>
+    </section>
+   </main>
+   <footer class="border-t border-sky-100/10">
+    <div class="mx-auto flex w-full max-w-7xl flex-col gap-3 px-5 py-7 text-sm text-sky-100/55 md:flex-row md:items-center md:justify-between md:px-8">
+     <p data-template-id="footer-text" class="canva-text" style="color: rgb(169, 192, 212); font-weight: 400; font-style: normal; font-size: 13px;">Data Warehouse Architecture Lesson • Instructor: MKDB</p>
+     <p data-template-id="footer-note" class="canva-text" style="color: rgb(127, 155, 179); font-weight: 400; font-style: normal; font-size: 13px;">Build reliable pipelines. Deliver trusted insight.</p>
+    </div>
+   </footer>
+  </div>
+  <script src="/_sdk/c939c145c3c74230.editing_sdk.js" integrity="sha512-jh2pv/gl9Gzzn5dxfzwQO4wkqtnAQIim+LIUDYfVu2cdqPkQV2MqbjsDUW5IYbrSZFjRlOBrIWzlvWDXQYxOjg=="></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+
+      const activityCard = document.getElementById("activity-card");
+      const completeButton = document.getElementById("complete-button");
+      const resetButton = document.getElementById("reset-button");
+
+      completeButton.addEventListener("click", () => {
+        activityCard.classList.add("is-complete");
+        completeButton.setAttribute("aria-pressed", "true");
+        resetButton.focus();
+      });
+
+      resetButton.addEventListener("click", () => {
+        activityCard.classList.remove("is-complete");
+        completeButton.setAttribute("aria-pressed", "false");
+        completeButton.focus();
+      });
+    });
+  </script>
+ 
+</body></html>

@@ -1,565 +1,2023 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
- <head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260723-05-e9a76f4"}');</script><script src="/_sdk/e358eac22bd01364.telemetry_sdk.js" integrity="sha512-KPxp3rw4K8Nu9ceWJc3gyM7srgaZxiFWOVbyu260EYzzAqdz10mfo5xyXrCx+wEKtGo77JbtmwXvFLbwrGzwvw=="></script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Data Warehouse Architecture Lesson</title>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Fraunces:opsz,wght@9..144,600;9..144,700&amp;display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --ink: #10233c;
-      --muted: #5c6f84;
-      --paper: #f4f8fc;
-      --navy: #0c2444;
-      --cyan: #0db9d7;
-      --lime: #cae85b;
-      --line: #d9e5ef;
-      --warm: #fff7df;
-    }
 
-    html {
-      scroll-behavior: smooth;
-    }
+<head>
 
-    body {
-      margin: 0;
-      font-family: "DM Sans", sans-serif;
-      color: var(--ink);
-      background: var(--paper);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    .lesson-shell {
-      width: 100%;
-      min-height: calc(100 * min(var(--vh, 1vh), 1vh));
-      overflow-x: hidden;
-    }
+<title>Data Warehouse Architecture Lesson</title>
 
-    .display-font {
-      font-family: "Fraunces", serif;
-    }
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    .grid-pattern {
-      background-image:
-        linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px);
-      background-size: 34px 34px;
-    }
+<style>
 
-    .section-kicker {
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      font-size: .73rem;
-      font-weight: 700;
-    }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    scroll-behavior:smooth;
+}
 
-    .timeline-item::before {
-      content: "";
-      position: absolute;
-      top: 2.6rem;
-      left: 1.05rem;
-      bottom: -1.4rem;
-      width: 1px;
-      background: #cfe0eb;
-    }
+body{
 
-    .timeline-item:last-child::before {
-      display: none;
-    }
+    font-family:'Poppins',sans-serif;
+    background:#eef4fb;
+    color:#233142;
 
-    .layer-card {
-      transition: transform .2s ease, box-shadow .2s ease;
-    }
+}
 
-    .layer-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 18px 30px rgba(20, 55, 88, .11);
-    }
+/* ------------------------- */
 
-    .quiz-option {
-      transition: border-color .18s ease, background .18s ease, transform .18s ease;
-    }
+header{
 
-    .quiz-option:hover {
-      transform: translateX(3px);
-      border-color: #61c7db;
-    }
+background:linear-gradient(135deg,#09203f,#1c4c7d);
 
-    .quiz-option.selected {
-      border-color: #0db9d7;
-      background: #e5f9fd;
-      box-shadow: 0 0 0 3px rgba(13, 185, 215, .12);
-    }
+color:white;
 
-    .quiz-option.correct {
-      border-color: #53a762;
-      background: #edf9ef;
-    }
+padding:80px 8%;
 
-    .quiz-option.incorrect {
-      border-color: #d76767;
-      background: #fff0f0;
-    }
+position:relative;
 
-    .answer-panel {
-      max-height: 0;
-      opacity: 0;
-      overflow: hidden;
-      transition: max-height .35s ease, opacity .28s ease, margin .28s ease;
-    }
+overflow:hidden;
 
-    .answer-panel.open {
-      max-height: 680px;
-      opacity: 1;
-      margin-top: 1rem;
-    }
+}
 
-    .fade-up {
-      animation: fadeUp .65s ease both;
-    }
+/* decorative circles */
 
-    .fade-delay-1 { animation-delay: .12s; }
-    .fade-delay-2 { animation-delay: .24s; }
-    .fade-delay-3 { animation-delay: .36s; }
+header::before{
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+content:"";
 
-    button:focus-visible,
-    a:focus-visible {
-      outline: 3px solid #cae85b;
-      outline-offset: 3px;
-    }
+width:300px;
+height:300px;
 
-    @media (max-width: 640px) {
-      .timeline-item::before {
-        left: .95rem;
-      }
-    }
-  </style>
-  <script src="/_sdk/935a53bc2e11fb8d.data_sdk.js" type="text/javascript" integrity="sha512-qr2oyPnEys1WebcOABaRh6hG77r5PWpqeWW6JTKbRJqly/INsfBi31CVNlTmHqjgeLpkVmmHZJUdxSx/32tOFQ=="></script>
-  <script src="/_sdk/6030e540d4419216.resizing_sdk.js" type="text/javascript" integrity="sha512-b5KWzyoXsbWP4smq4sftIi6Kts4YVBpBsz0BwCViwbBJkK64a3/Z6ZMdWA+qnplNcXw4mhZeqvQi3mOosiRJdA=="></script>
- </head>
- <body data-template-id="__page-root">
-  <div class="lesson-shell">
-   <header data-template-id="lesson-header" class="canva-header relative overflow-hidden bg-[#0c2444] text-white">
-    <div class="absolute inset-0 grid-pattern opacity-70"></div>
-    <div class="absolute -right-28 -top-32 h-96 w-96 rounded-full bg-cyan-300/20 blur-3xl"></div>
-    <div class="relative mx-auto w-full max-w-7xl px-5 py-6 sm:px-8 lg:px-10">
-     <nav class="flex flex-wrap items-center justify-between gap-4" aria-label="Lesson navigation"><a href="#overview" class="flex items-center gap-3 font-semibold tracking-wide text-white no-underline"> <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#cae85b] text-[#10233c]"> <i data-lucide="database" aria-hidden="true"></i> </span> <span data-template-id="course-name" class="canva-text"></span> </a>
-      <div class="flex flex-wrap gap-3 text-sm font-medium text-slate-200"><a href="#architecture" class="rounded-full px-3 py-2 hover:bg-white/10">Architecture</a> <a href="#activities" class="rounded-full px-3 py-2 hover:bg-white/10">Activities</a> <a href="#quiz" class="rounded-full px-3 py-2 hover:bg-white/10">Practice quiz</a>
-      </div>
-     </nav>
-     <div class="grid items-center gap-10 pb-8 pt-12 lg:grid-cols-[1.1fr_.9fr] lg:pb-14">
-      <section class="fade-up">
-       <p data-template-id="lesson-label" class="canva-text section-kicker text-[#cae85b]"></p>
-       <h1 data-template-id="lesson-title" class="canva-text display-font mt-4 max-w-3xl text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl"></h1>
-       <p data-template-id="lesson-description" class="canva-text mt-5 max-w-2xl text-lg leading-8 text-slate-200"></p>
-       <div class="mt-7 flex flex-wrap gap-3">
-        <div data-template-id="duration-badge" class="canva-tag flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold"><i data-lucide="clock-3" class="h-4 w-4" aria-hidden="true"></i>
-        </div>
-        <div data-template-id="instructor-badge" class="canva-tag flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold"><i data-lucide="graduation-cap" class="h-4 w-4" aria-hidden="true"></i>
-        </div>
-       </div>
-      </section>
-      <figure class="fade-up fade-delay-2 relative">
-       <div class="absolute -inset-4 rounded-[2rem] bg-[#0db9d7]/30 blur-2xl"></div><img data-template-id="hero-image" loading="lazy" class="canva-image relative h-72 w-full rounded-[1.75rem] border border-white/20 object-cover shadow-2xl sm:h-80">
-       <figcaption class="absolute bottom-4 left-4 rounded-xl bg-[#0c2444]/85 px-4 py-3 text-sm text-white backdrop-blur"><span data-template-id="hero-caption" class="canva-text"></span>
-       </figcaption>
-      </figure>
-     </div>
-    </div>
-   </header>
-   <main>
-    <section id="overview" class="mx-auto w-full max-w-7xl px-5 py-14 sm:px-8 lg:px-10">
-     <div class="grid gap-8 lg:grid-cols-[.8fr_1.2fr]">
-      <aside class="rounded-[1.5rem] bg-[#fff7df] p-7 shadow-sm">
-       <p data-template-id="roadmap-kicker" class="canva-text section-kicker text-[#8c6918]"></p>
-       <h2 data-template-id="roadmap-title" class="canva-text display-font mt-3 text-3xl font-bold"></h2>
-       <p data-template-id="roadmap-text" class="canva-text mt-4 leading-7 text-[#5b5140]"></p>
-       <div class="mt-7 border-t border-[#e7d9ae] pt-5">
-        <p data-template-id="key-idea-label" class="canva-text text-sm font-bold uppercase tracking-wider text-[#8c6918]"></p>
-        <p data-template-id="key-idea-text" class="canva-text mt-2 text-lg font-semibold leading-7 text-[#473d2b]"></p>
-       </div>
-      </aside>
-      <section aria-labelledby="roadmap-list-title">
-       <h2 id="roadmap-list-title" class="sr-only">Two hour lesson roadmap</h2>
-       <div class="grid gap-4 md:grid-cols-2">
-        <article class="timeline-item relative rounded-2xl border border-[#d9e5ef] bg-white p-5 pl-16 shadow-sm"><span class="absolute left-4 top-5 flex h-9 w-9 items-center justify-center rounded-full bg-[#0c2444] text-sm font-bold text-white">1</span>
-         <p data-template-id="block-one-time" class="canva-text text-sm font-bold text-[#0b9ab6]"></p>
-         <h3 data-template-id="block-one-title" class="canva-text mt-1 text-lg font-bold"></h3>
-         <p data-template-id="block-one-text" class="canva-text mt-2 leading-6 text-[#5c6f84]"></p>
-        </article>
-        <article class="timeline-item relative rounded-2xl border border-[#d9e5ef] bg-white p-5 pl-16 shadow-sm"><span class="absolute left-4 top-5 flex h-9 w-9 items-center justify-center rounded-full bg-[#0c2444] text-sm font-bold text-white">2</span>
-         <p data-template-id="block-two-time" class="canva-text text-sm font-bold text-[#0b9ab6]"></p>
-         <h3 data-template-id="block-two-title" class="canva-text mt-1 text-lg font-bold"></h3>
-         <p data-template-id="block-two-text" class="canva-text mt-2 leading-6 text-[#5c6f84]"></p>
-        </article>
-        <article class="timeline-item relative rounded-2xl border border-[#d9e5ef] bg-white p-5 pl-16 shadow-sm"><span class="absolute left-4 top-5 flex h-9 w-9 items-center justify-center rounded-full bg-[#0c2444] text-sm font-bold text-white">3</span>
-         <p data-template-id="block-three-time" class="canva-text text-sm font-bold text-[#0b9ab6]"></p>
-         <h3 data-template-id="block-three-title" class="canva-text mt-1 text-lg font-bold"></h3>
-         <p data-template-id="block-three-text" class="canva-text mt-2 leading-6 text-[#5c6f84]"></p>
-        </article>
-        <article class="timeline-item relative rounded-2xl border border-[#d9e5ef] bg-white p-5 pl-16 shadow-sm"><span class="absolute left-4 top-5 flex h-9 w-9 items-center justify-center rounded-full bg-[#0c2444] text-sm font-bold text-white">4</span>
-         <p data-template-id="block-four-time" class="canva-text text-sm font-bold text-[#0b9ab6]"></p>
-         <h3 data-template-id="block-four-title" class="canva-text mt-1 text-lg font-bold"></h3>
-         <p data-template-id="block-four-text" class="canva-text mt-2 leading-6 text-[#5c6f84]"></p>
-        </article>
-       </div>
-      </section>
-     </div>
-    </section>
-    <section class="border-y border-[#d9e5ef] bg-white">
-     <div class="mx-auto w-full max-w-7xl px-5 py-14 sm:px-8 lg:px-10">
-      <p data-template-id="objectives-kicker" class="canva-text section-kicker text-[#0b9ab6]"></p>
-      <div class="mt-4 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-       <h2 data-template-id="objectives-title" class="canva-text display-font max-w-xl text-3xl font-bold sm:text-4xl"></h2>
-       <p data-template-id="objectives-intro" class="canva-text max-w-xl leading-7 text-[#5c6f84]"></p>
-      </div>
-      <div class="mt-9 grid gap-4 md:grid-cols-3">
-       <article data-template-id="objective-one" class="canva-card rounded-2xl border border-[#d9e5ef] p-6">
-        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-[#e6fafd] text-[#0b9ab6]"><i data-lucide="layers-3" aria-hidden="true"></i>
-        </div>
-        <h3 data-template-id="objective-one-title" class="canva-text text-lg font-bold"></h3>
-        <p data-template-id="objective-one-text" class="canva-text mt-2 leading-6 text-[#5c6f84]"></p>
-       </article>
-       <article data-template-id="objective-two" class="canva-card rounded-2xl border border-[#d9e5ef] p-6">
-        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-[#e6fafd] text-[#0b9ab6]"><i data-lucide="git-merge" aria-hidden="true"></i>
-        </div>
-        <h3 data-template-id="objective-two-title" class="canva-text text-lg font-bold"></h3>
-        <p data-template-id="objective-two-text" class="canva-text mt-2 leading-6 text-[#5c6f84]"></p>
-       </article>
-       <article data-template-id="objective-three" class="canva-card rounded-2xl border border-[#d9e5ef] p-6">
-        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-[#e6fafd] text-[#0b9ab6]"><i data-lucide="chart-no-axes-combined" aria-hidden="true"></i>
-        </div>
-        <h3 data-template-id="objective-three-title" class="canva-text text-lg font-bold"></h3>
-        <p data-template-id="objective-three-text" class="canva-text mt-2 leading-6 text-[#5c6f84]"></p>
-       </article>
-      </div>
-     </div>
-    </section>
-    <section id="architecture" class="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
-     <div class="grid gap-10 lg:grid-cols-[1fr_.82fr] lg:items-center">
-      <div>
-       <p data-template-id="architecture-kicker" class="canva-text section-kicker text-[#0b9ab6]"></p>
-       <h2 data-template-id="architecture-title" class="canva-text display-font mt-3 text-3xl font-bold sm:text-4xl"></h2>
-       <p data-template-id="architecture-intro" class="canva-text mt-4 max-w-2xl leading-7 text-[#5c6f84]"></p>
-       <div class="mt-8 rounded-[1.5rem] bg-[#0c2444] p-5 shadow-xl sm:p-7">
-        <div class="flex flex-col items-stretch gap-4 lg:flex-row lg:items-center">
-         <div data-template-id="flow-sources" class="canva-card rounded-2xl bg-white/10 p-4 text-center text-white"><i data-lucide="hard-drive" class="mx-auto h-6 w-6 text-[#cae85b]" aria-hidden="true"></i>
-          <p class="mt-2 text-sm font-bold">Sources</p>
-          <p class="mt-1 text-xs text-slate-300">Apps, files, APIs</p>
-         </div><i data-lucide="arrow-right" class="mx-auto h-5 w-5 shrink-0 rotate-90 text-[#0db9d7] lg:rotate-0" aria-hidden="true"></i>
-         <div data-template-id="flow-etl" class="canva-card rounded-2xl bg-[#0db9d7] p-4 text-center text-[#06263a]"><i data-lucide="funnel" class="mx-auto h-6 w-6" aria-hidden="true"></i>
-          <p class="mt-2 text-sm font-bold">Ingest &amp; transform</p>
-          <p class="mt-1 text-xs">ETL / ELT</p>
-         </div><i data-lucide="arrow-right" class="mx-auto h-5 w-5 shrink-0 rotate-90 text-[#0db9d7] lg:rotate-0" aria-hidden="true"></i>
-         <div data-template-id="flow-warehouse" class="canva-card rounded-2xl bg-[#cae85b] p-4 text-center text-[#162910]"><i data-lucide="database-zap" class="mx-auto h-6 w-6" aria-hidden="true"></i>
-          <p class="mt-2 text-sm font-bold">Warehouse</p>
-          <p class="mt-1 text-xs">Trusted data</p>
-         </div><i data-lucide="arrow-right" class="mx-auto h-5 w-5 shrink-0 rotate-90 text-[#0db9d7] lg:rotate-0" aria-hidden="true"></i>
-         <div data-template-id="flow-users" class="canva-card rounded-2xl bg-white/10 p-4 text-center text-white"><i data-lucide="bar-chart-3" class="mx-auto h-6 w-6 text-[#cae85b]" aria-hidden="true"></i>
-          <p class="mt-2 text-sm font-bold">Analytics</p>
-          <p class="mt-1 text-xs text-slate-300">Reports, ML, dashboards</p>
-         </div>
-        </div>
-        <p data-template-id="architecture-flow-caption" class="canva-text mt-6 rounded-xl border border-white/10 bg-white/5 p-4 text-sm leading-6 text-slate-200"></p>
-       </div>
-      </div>
-      <aside class="relative overflow-hidden rounded-[1.75rem] bg-[#10233c] p-7 text-white shadow-xl"><img data-template-id="architecture-image" loading="lazy" class="canva-image absolute inset-0 h-full w-full object-cover opacity-25">
-       <div class="absolute inset-0 bg-[#0c2444]/75"></div>
-       <div class="relative">
-        <p data-template-id="simple-definition-label" class="canva-text section-kicker text-[#cae85b]"></p>
-        <h3 data-template-id="simple-definition-title" class="canva-text display-font mt-3 text-3xl font-bold"></h3>
-        <p data-template-id="simple-definition-text" class="canva-text mt-4 leading-8 text-slate-100"></p>
-        <div class="mt-7 rounded-2xl border border-white/15 bg-white/10 p-5">
-         <p data-template-id="analogy-label" class="canva-text text-sm font-bold uppercase tracking-wider text-[#cae85b]"></p>
-         <p data-template-id="analogy-text" class="canva-text mt-2 leading-7 text-white"></p>
-        </div>
-       </div>
-      </aside>
-     </div>
-     <div class="mt-16">
-      <p data-template-id="layers-kicker" class="canva-text section-kicker text-[#0b9ab6]"></p>
-      <h2 data-template-id="layers-title" class="canva-text display-font mt-3 text-3xl font-bold sm:text-4xl"></h2>
-      <p data-template-id="layers-intro" class="canva-text mt-4 max-w-3xl leading-7 text-[#5c6f84]"></p>
-      <div class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-       <article data-template-id="layer-one-card" class="canva-card layer-card rounded-2xl border border-[#d9e5ef] bg-white p-5 shadow-sm"><span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[#e7f8fc] font-bold text-[#0b9ab6]">01</span>
-        <h3 data-template-id="layer-one-title" class="canva-text mt-4 font-bold"></h3>
-        <p data-template-id="layer-one-text" class="canva-text mt-2 text-sm leading-6 text-[#5c6f84]"></p>
-       </article>
-       <article data-template-id="layer-two-card" class="canva-card layer-card rounded-2xl border border-[#d9e5ef] bg-white p-5 shadow-sm"><span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[#e7f8fc] font-bold text-[#0b9ab6]">02</span>
-        <h3 data-template-id="layer-two-title" class="canva-text mt-4 font-bold"></h3>
-        <p data-template-id="layer-two-text" class="canva-text mt-2 text-sm leading-6 text-[#5c6f84]"></p>
-       </article>
-       <article data-template-id="layer-three-card" class="canva-card layer-card rounded-2xl border border-[#d9e5ef] bg-white p-5 shadow-sm"><span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[#e7f8fc] font-bold text-[#0b9ab6]">03</span>
-        <h3 data-template-id="layer-three-title" class="canva-text mt-4 font-bold"></h3>
-        <p data-template-id="layer-three-text" class="canva-text mt-2 text-sm leading-6 text-[#5c6f84]"></p>
-       </article>
-       <article data-template-id="layer-four-card" class="canva-card layer-card rounded-2xl border border-[#d9e5ef] bg-white p-5 shadow-sm"><span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[#e7f8fc] font-bold text-[#0b9ab6]">04</span>
-        <h3 data-template-id="layer-four-title" class="canva-text mt-4 font-bold"></h3>
-        <p data-template-id="layer-four-text" class="canva-text mt-2 text-sm leading-6 text-[#5c6f84]"></p>
-       </article>
-       <article data-template-id="layer-five-card" class="canva-card layer-card rounded-2xl border border-[#d9e5ef] bg-white p-5 shadow-sm"><span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[#e7f8fc] font-bold text-[#0b9ab6]">05</span>
-        <h3 data-template-id="layer-five-title" class="canva-text mt-4 font-bold"></h3>
-        <p data-template-id="layer-five-text" class="canva-text mt-2 text-sm leading-6 text-[#5c6f84]"></p>
-       </article>
-      </div>
-     </div>
-    </section>
-    <section class="bg-[#eaf3f8]">
-     <div class="mx-auto w-full max-w-7xl px-5 py-14 sm:px-8 lg:px-10">
-      <div class="grid gap-8 lg:grid-cols-[.7fr_1.3fr]">
-       <div>
-        <p data-template-id="comparison-kicker" class="canva-text section-kicker text-[#0b9ab6]"></p>
-        <h2 data-template-id="comparison-title" class="canva-text display-font mt-3 text-3xl font-bold"></h2>
-        <p data-template-id="comparison-text" class="canva-text mt-4 leading-7 text-[#5c6f84]"></p>
-       </div>
-       <div class="overflow-hidden rounded-2xl border border-[#d1e0e9] bg-white shadow-sm">
-        <div class="grid grid-cols-3 bg-[#0c2444] px-4 py-4 text-sm font-bold text-white sm:px-6">
-         <div data-template-id="comparison-head-feature" class="canva-text"></div>
-         <div data-template-id="comparison-head-oltp" class="canva-text"></div>
-         <div data-template-id="comparison-head-warehouse" class="canva-text"></div>
-        </div>
-        <div class="grid grid-cols-3 border-b border-[#e6eef3] px-4 py-4 text-sm sm:px-6">
-         <p data-template-id="comparison-row-one-label" class="canva-text font-bold"></p>
-         <p data-template-id="comparison-row-one-oltp" class="canva-text text-[#5c6f84]"></p>
-         <p data-template-id="comparison-row-one-warehouse" class="canva-text text-[#5c6f84]"></p>
-        </div>
-        <div class="grid grid-cols-3 border-b border-[#e6eef3] px-4 py-4 text-sm sm:px-6">
-         <p data-template-id="comparison-row-two-label" class="canva-text font-bold"></p>
-         <p data-template-id="comparison-row-two-oltp" class="canva-text text-[#5c6f84]"></p>
-         <p data-template-id="comparison-row-two-warehouse" class="canva-text text-[#5c6f84]"></p>
-        </div>
-        <div class="grid grid-cols-3 px-4 py-4 text-sm sm:px-6">
-         <p data-template-id="comparison-row-three-label" class="canva-text font-bold"></p>
-         <p data-template-id="comparison-row-three-oltp" class="canva-text text-[#5c6f84]"></p>
-         <p data-template-id="comparison-row-three-warehouse" class="canva-text text-[#5c6f84]"></p>
-        </div>
-       </div>
-      </div>
-     </div>
-    </section>
-    <section id="activities" class="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
-     <p data-template-id="activities-kicker" class="canva-text section-kicker text-[#0b9ab6]"></p>
-     <h2 data-template-id="activities-title" class="canva-text display-font mt-3 text-3xl font-bold sm:text-4xl"></h2>
-     <p data-template-id="activities-intro" class="canva-text mt-4 max-w-3xl leading-7 text-[#5c6f84]"></p>
-     <div class="mt-9 grid gap-7 lg:grid-cols-2">
-      <article data-template-id="activity-one-card" class="canva-card rounded-[1.5rem] bg-[#fff7df] p-6 shadow-sm sm:p-8">
-       <div class="flex flex-wrap items-center justify-between gap-3"><span data-template-id="activity-one-badge" class="canva-tag rounded-full bg-[#e5ca72] px-3 py-1 text-xs font-bold text-[#59460f]"></span> <span data-template-id="activity-one-time" class="canva-tag flex items-center gap-2 text-sm font-semibold text-[#775e19]"> <i data-lucide="timer" class="h-4 w-4" aria-hidden="true"></i> </span>
-       </div>
-       <h3 data-template-id="activity-one-title" class="canva-text display-font mt-5 text-2xl font-bold"></h3>
-       <p data-template-id="activity-one-instructions" class="canva-text mt-3 leading-7 text-[#5b5140]"></p>
-       <ol class="mt-5 space-y-3 text-sm leading-6 text-[#473d2b]">
-        <li data-template-id="activity-one-step-one" class="canva-text flex gap-3"><span class="font-bold text-[#8c6918]">1.</span></li>
-        <li data-template-id="activity-one-step-two" class="canva-text flex gap-3"><span class="font-bold text-[#8c6918]">2.</span></li>
-        <li data-template-id="activity-one-step-three" class="canva-text flex gap-3"><span class="font-bold text-[#8c6918]">3.</span></li>
-       </ol><button id="activity-one-button" data-template-id="activity-one-button" type="button" class="canva-button mt-6 inline-flex items-center gap-2 rounded-xl bg-[#0c2444] px-5 py-3 font-bold text-white hover:bg-[#163862]"> <i data-lucide="eye" class="h-4 w-4" aria-hidden="true"></i> </button>
-       <div id="activity-one-answer" class="answer-panel rounded-xl border border-[#e7d9ae] bg-white/70 p-5">
-        <p data-template-id="activity-one-answer-label" class="canva-text text-sm font-bold uppercase tracking-wider text-[#8c6918]"></p>
-        <p data-template-id="activity-one-answer-text" class="canva-text mt-2 leading-7 text-[#473d2b]"></p>
-       </div>
-      </article>
-      <article data-template-id="activity-two-card" class="canva-card rounded-[1.5rem] bg-[#e8f8fb] p-6 shadow-sm sm:p-8">
-       <div class="flex flex-wrap items-center justify-between gap-3"><span data-template-id="activity-two-badge" class="canva-tag rounded-full bg-[#a8e4ef] px-3 py-1 text-xs font-bold text-[#075b70]"></span> <span data-template-id="activity-two-time" class="canva-tag flex items-center gap-2 text-sm font-semibold text-[#08788e]"> <i data-lucide="timer" class="h-4 w-4" aria-hidden="true"></i> </span>
-       </div>
-       <h3 data-template-id="activity-two-title" class="canva-text display-font mt-5 text-2xl font-bold"></h3>
-       <p data-template-id="activity-two-scenario" class="canva-text mt-3 rounded-xl border border-[#bee8ee] bg-white/65 p-4 leading-7 text-[#315c68]"></p>
-       <p data-template-id="activity-two-instructions" class="canva-text mt-4 leading-7 text-[#315c68]"></p><button id="activity-two-button" data-template-id="activity-two-button" type="button" class="canva-button mt-6 inline-flex items-center gap-2 rounded-xl bg-[#0b9ab6] px-5 py-3 font-bold text-white hover:bg-[#07839b]"> <i data-lucide="lightbulb" class="h-4 w-4" aria-hidden="true"></i> </button>
-       <div id="activity-two-answer" class="answer-panel rounded-xl border border-[#bce5ec] bg-white/75 p-5">
-        <p data-template-id="activity-two-answer-label" class="canva-text text-sm font-bold uppercase tracking-wider text-[#08788e]"></p>
-        <p data-template-id="activity-two-answer-text" class="canva-text mt-2 leading-7 text-[#315c68]"></p>
-       </div>
-      </article>
-     </div>
-    </section>
-    <section id="quiz" class="bg-[#0c2444]">
-     <div class="mx-auto w-full max-w-5xl px-5 py-16 sm:px-8 lg:px-10">
-      <div class="text-center">
-       <p data-template-id="quiz-kicker" class="canva-text section-kicker text-[#cae85b]"></p>
-       <h2 data-template-id="quiz-title" class="canva-text display-font mt-3 text-3xl font-bold text-white sm:text-4xl"></h2>
-       <p data-template-id="quiz-intro" class="canva-text mx-auto mt-4 max-w-2xl leading-7 text-slate-200"></p>
-      </div>
-      <form id="quiz-form" class="mt-10 space-y-5" novalidate>
-       <fieldset class="rounded-2xl bg-white p-6 shadow-lg"><legend data-template-id="quiz-q1" class="canva-text px-1 text-lg font-bold"></legend>
-        <div class="mt-4 grid gap-3" data-question="q1"><button type="button" class="quiz-option w-full rounded-xl border border-[#d9e5ef] px-4 py-3 text-left text-sm font-medium" data-option="a">A. It replaces all operational systems.</button> <button type="button" class="quiz-option w-full rounded-xl border border-[#d9e5ef] px-4 py-3 text-left text-sm font-medium" data-option="b">B. It organizes data for analysis and decision-making.</button> <button type="button" class="quiz-option w-full rounded-xl border border-[#d9e5ef] px-4 py-3 text-left text-sm font-medium" data-option="c">C. It stores only temporary website files.</button>
-        </div>
-        <p id="feedback-q1" class="mt-4 hidden text-sm font-semibold" aria-live="polite"></p>
-       </fieldset>
-       <fieldset class="rounded-2xl bg-white p-6 shadow-lg"><legend data-template-id="quiz-q2" class="canva-text px-1 text-lg font-bold"></legend>
-        <div class="mt-4 grid gap-3" data-question="q2"><button type="button" class="quiz-option w-full rounded-xl border border-[#d9e5ef] px-4 py-3 text-left text-sm font-medium" data-option="a">A. A tool for designing reports.</button> <button type="button" class="quiz-option w-full rounded-xl border border-[#d9e5ef] px-4 py-3 text-left text-sm font-medium" data-option="b">B. A backup copy of a dashboard.</button> <button type="button" class="quiz-option w-full rounded-xl border border-[#d9e5ef] px-4 py-3 text-left text-sm font-medium" data-option="c">C. A temporary place to validate and prepare incoming data.</button>
-        </div>
-        <p id="feedback-q2" class="mt-4 hidden text-sm font-semibold" aria-live="polite"></p>
-       </fieldset>
-       <fieldset class="rounded-2xl bg-white p-6 shadow-lg"><legend data-template-id="quiz-q3" class="canva-text px-1 text-lg font-bold"></legend>
-        <div class="mt-4 grid gap-3" data-question="q3"><button type="button" class="quiz-option w-full rounded-xl border border-[#d9e5ef] px-4 py-3 text-left text-sm font-medium" data-option="a">A. Extract, Transform, Load.</button> <button type="button" class="quiz-option w-full rounded-xl border border-[#d9e5ef] px-4 py-3 text-left text-sm font-medium" data-option="b">B. Evaluate, Transfer, Link.</button> <button type="button" class="quiz-option w-full rounded-xl border border-[#d9e5ef] px-4 py-3 text-left text-sm font-medium" data-option="c">C. Export, Track, Learn.</button>
-        </div>
-        <p id="feedback-q3" class="mt-4 hidden text-sm font-semibold" aria-live="polite"></p>
-       </fieldset>
-       <fieldset class="rounded-2xl bg-white p-6 shadow-lg"><legend data-template-id="quiz-q4" class="canva-text px-1 text-lg font-bold"></legend>
-        <div class="mt-4 grid gap-3" data-question="q4"><button type="button" class="quiz-option w-full rounded-xl border border-[#d9e5ef] px-4 py-3 text-left text-sm font-medium" data-option="a">A. The warehouse is optimized for many quick transactions.</button> <button type="button" class="quiz-option w-full rounded-xl border border-[#d9e5ef] px-4 py-3 text-left text-sm font-medium" data-option="b">B. The warehouse supports historical analysis and reporting.</button> <button type="button" class="quiz-option w-full rounded-xl border border-[#d9e5ef] px-4 py-3 text-left text-sm font-medium" data-option="c">C. There is no difference between the two.</button>
-        </div>
-        <p id="feedback-q4" class="mt-4 hidden text-sm font-semibold" aria-live="polite"></p>
-       </fieldset>
-       <fieldset class="rounded-2xl bg-white p-6 shadow-lg"><legend data-template-id="quiz-q5" class="canva-text px-1 text-lg font-bold"></legend>
-        <div class="mt-4 grid gap-3" data-question="q5"><button type="button" class="quiz-option w-full rounded-xl border border-[#d9e5ef] px-4 py-3 text-left text-sm font-medium" data-option="a">A. Data mart.</button> <button type="button" class="quiz-option w-full rounded-xl border border-[#d9e5ef] px-4 py-3 text-left text-sm font-medium" data-option="b">B. Source system.</button> <button type="button" class="quiz-option w-full rounded-xl border border-[#d9e5ef] px-4 py-3 text-left text-sm font-medium" data-option="c">C. Staging area.</button>
-        </div>
-        <p id="feedback-q5" class="mt-4 hidden text-sm font-semibold" aria-live="polite"></p>
-       </fieldset>
-       <div class="flex flex-wrap items-center justify-center gap-4 pt-2"><button id="check-quiz-button" data-template-id="check-quiz-button" type="submit" class="canva-button inline-flex items-center gap-2 rounded-xl bg-[#cae85b] px-6 py-3 font-bold text-[#18300f] hover:bg-[#d9f278]"> <i data-lucide="check-circle-2" class="h-5 w-5" aria-hidden="true"></i> </button> <button id="retry-quiz-button" data-template-id="retry-quiz-button" type="button" class="canva-button hidden rounded-xl border border-white/35 px-6 py-3 font-bold text-white hover:bg-white/10"></button>
-       </div>
-       <div id="quiz-summary" class="hidden rounded-2xl border border-[#cae85b]/40 bg-white/10 p-5 text-center text-white" role="status" aria-live="polite">
-        <p class="text-sm uppercase tracking-widest text-[#cae85b]">Your result</p>
-        <p id="quiz-score" class="display-font mt-2 text-3xl font-bold"></p>
-        <p id="quiz-message" class="mt-2 text-slate-200"></p>
-       </div>
-      </form>
-     </div>
-    </section>
-    <section class="mx-auto w-full max-w-7xl px-5 py-14 sm:px-8 lg:px-10">
-     <div class="rounded-[1.5rem] border border-[#d9e5ef] bg-white p-7 shadow-sm sm:p-9">
-      <p data-template-id="references-kicker" class="canva-text section-kicker text-[#0b9ab6]"></p>
-      <h2 data-template-id="references-title" class="canva-text display-font mt-3 text-3xl font-bold"></h2>
-      <ul class="mt-6 space-y-4 text-sm leading-6 text-[#5c6f84]">
-       <li data-template-id="reference-one" class="canva-text border-l-4 border-[#cae85b] pl-4"></li>
-       <li data-template-id="reference-two" class="canva-text border-l-4 border-[#cae85b] pl-4"></li>
-       <li data-template-id="reference-three" class="canva-text border-l-4 border-[#cae85b] pl-4"></li>
-      </ul>
-     </div>
-    </section>
-   </main>
-   <footer data-template-id="lesson-footer" class="canva-footer bg-[#081a31] px-5 py-7 text-center text-slate-300 sm:px-8">
-    <p data-template-id="footer-text" class="canva-text text-sm"></p>
-   </footer>
-  </div>
-  <script src="/_sdk/c939c145c3c74230.editing_sdk.js" integrity="sha512-jh2pv/gl9Gzzn5dxfzwQO4wkqtnAQIim+LIUDYfVu2cdqPkQV2MqbjsDUW5IYbrSZFjRlOBrIWzlvWDXQYxOjg=="></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      lucide.createIcons();
+background:rgba(255,255,255,.08);
 
-      function toggleAnswer(buttonId, answerId) {
-        const button = document.getElementById(buttonId);
-        const answer = document.getElementById(answerId);
+border-radius:50%;
 
-        button.addEventListener("click", () => {
-          const isOpen = answer.classList.toggle("open");
-          button.setAttribute("aria-expanded", String(isOpen));
-        });
-      }
+position:absolute;
 
-      toggleAnswer("activity-one-button", "activity-one-answer");
-      toggleAnswer("activity-two-button", "activity-two-answer");
+right:-120px;
+top:-120px;
 
-      const answers = {
-        q1: "b",
-        q2: "c",
-        q3: "a",
-        q4: "b",
-        q5: "a"
-      };
+}
 
-      const explanations = {
-        q1: "Correct: a warehouse organizes integrated data for analysis and decision-making.",
-        q2: "Correct: the staging area is a temporary preparation zone for incoming data.",
-        q3: "Correct: ETL means Extract, Transform, Load.",
-        q4: "Correct: a warehouse is built for historical analysis, reporting, and large queries.",
-        q5: "Correct: a data mart gives a department-focused view of warehouse data."
-      };
+header::after{
 
-      const selectedAnswers = {};
+content:"";
 
-      document.querySelectorAll(".quiz-option").forEach((option) => {
-        option.addEventListener("click", () => {
-          const question = option.parentElement.dataset.question;
+width:220px;
+height:220px;
 
-          if (document.getElementById("quiz-summary").classList.contains("hidden") === false) {
-            return;
-          }
+background:rgba(255,255,255,.05);
 
-          option.parentElement.querySelectorAll(".quiz-option").forEach((item) => {
-            item.classList.remove("selected");
-          });
+border-radius:50%;
 
-          option.classList.add("selected");
-          selectedAnswers[question] = option.dataset.option;
-        });
-      });
+position:absolute;
 
-      document.getElementById("quiz-form").addEventListener("submit", (event) => {
-        event.preventDefault();
+left:-80px;
+bottom:-80px;
 
-        let score = 0;
+}
 
-        Object.keys(answers).forEach((question) => {
-          const feedback = document.getElementById("feedback-" + question);
-          const options = document.querySelectorAll('[data-question="' + question + '"] .quiz-option');
-          const selected = selectedAnswers[question];
+/* ----------------------- */
 
-          options.forEach((option) => {
-            option.classList.remove("correct", "incorrect");
+nav{
 
-            if (option.dataset.option === answers[question]) {
-              option.classList.add("correct");
-            }
+display:flex;
 
-            if (selected && option.dataset.option === selected && selected !== answers[question]) {
-              option.classList.add("incorrect");
-            }
-          });
+justify-content:space-between;
 
-          feedback.classList.remove("hidden");
+align-items:center;
 
-          if (selected === answers[question]) {
-            score += 1;
-            feedback.textContent = explanations[question];
-            feedback.className = "mt-4 text-sm font-semibold text-green-700";
-          } else if (!selected) {
-            feedback.textContent = "No answer selected. " + explanations[question];
-            feedback.className = "mt-4 text-sm font-semibold text-amber-700";
-          } else {
-            feedback.textContent = "Not quite. " + explanations[question];
-            feedback.className = "mt-4 text-sm font-semibold text-red-700";
-          }
-        });
+flex-wrap:wrap;
 
-        const summary = document.getElementById("quiz-summary");
-        const scoreText = document.getElementById("quiz-score");
-        const message = document.getElementById("quiz-message");
-        const retryButton = document.getElementById("retry-quiz-button");
-        const checkButton = document.getElementById("check-quiz-button");
+margin-bottom:60px;
 
-        scoreText.textContent = score + " / 5";
-        message.textContent = score === 5
-          ? "Excellent work — you are ready to explain the main architecture flow."
-          : score >= 3
-            ? "Good progress. Review the feedback, then try again to strengthen the details."
-            : "Keep going. Revisit the architecture flow and the layer definitions, then retry.";
+}
 
-        summary.classList.remove("hidden");
-        retryButton.classList.remove("hidden");
-        checkButton.classList.add("hidden");
-      });
+.logo{
 
-      document.getElementById("retry-quiz-button").addEventListener("click", () => {
-        Object.keys(selectedAnswers).forEach((key) => delete selectedAnswers[key]);
+font-size:28px;
 
-        document.querySelectorAll(".quiz-option").forEach((option) => {
-          option.classList.remove("selected", "correct", "incorrect");
-        });
+font-weight:bold;
 
-        document.querySelectorAll('[id^="feedback-"]').forEach((feedback) => {
-          feedback.textContent = "";
-          feedback.classList.add("hidden");
-        });
+}
 
-        document.getElementById("quiz-summary").classList.add("hidden");
-        document.getElementById("retry-quiz-button").classList.add("hidden");
-        document.getElementById("check-quiz-button").classList.remove("hidden");
-      });
-    });
-  </script>
- </body>
+.logo span{
+
+color:#ffe66d;
+
+}
+
+nav ul{
+
+display:flex;
+
+gap:20px;
+
+list-style:none;
+
+}
+
+nav a{
+
+text-decoration:none;
+
+color:white;
+
+transition:.3s;
+
+}
+
+nav a:hover{
+
+color:#ffe66d;
+
+}
+
+/* ----------------------- */
+
+.hero{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:60px;
+
+align-items:center;
+
+}
+
+.hero h1{
+
+font-size:52px;
+
+margin-bottom:20px;
+
+line-height:1.2;
+
+}
+
+.hero p{
+
+font-size:18px;
+
+line-height:1.8;
+
+opacity:.95;
+
+margin-bottom:25px;
+
+}
+
+.button{
+
+display:inline-block;
+
+padding:15px 30px;
+
+background:#ffe66d;
+
+color:#233142;
+
+font-weight:bold;
+
+text-decoration:none;
+
+border-radius:12px;
+
+transition:.3s;
+
+}
+
+.button:hover{
+
+transform:translateY(-4px);
+
+}
+
+/* -------------------------- */
+
+.diagram{
+
+background:white;
+
+color:#233142;
+
+padding:30px;
+
+border-radius:20px;
+
+font-family:monospace;
+
+box-shadow:0 10px 30px rgba(0,0,0,.15);
+
+white-space:pre;
+
+font-size:14px;
+
+overflow:auto;
+
+}
+
+/* ------------------------ */
+
+section{
+
+padding:80px 8%;
+
+}
+
+.section-title{
+
+font-size:40px;
+
+margin-bottom:20px;
+
+color:#0b3558;
+
+}
+
+.section-sub{
+
+color:#666;
+
+margin-bottom:40px;
+
+line-height:1.8;
+
+}
+
+/* ------------------------ */
+
+.grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+
+gap:25px;
+
+}
+
+.card{
+
+background:white;
+
+padding:25px;
+
+border-radius:20px;
+
+box-shadow:0 10px 20px rgba(0,0,0,.08);
+
+transition:.3s;
+
+}
+
+.card:hover{
+
+transform:translateY(-8px);
+
+}
+
+.card h3{
+
+margin-bottom:15px;
+
+color:#0b3558;
+
+}
+
+/* ------------------------- */
+
+.flow{
+
+background:#0b3558;
+
+color:white;
+
+padding:40px;
+
+border-radius:25px;
+
+font-family:monospace;
+
+overflow:auto;
+
+font-size:15px;
+
+line-height:1.5;
+
+}
+
+/* -------------------------- */
+
+.activity{
+
+background:white;
+
+padding:25px;
+
+margin-top:25px;
+
+border-radius:20px;
+
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+}
+
+.activity button{
+
+margin-top:20px;
+
+padding:12px 20px;
+
+border:none;
+
+background:#0b3558;
+
+color:white;
+
+cursor:pointer;
+
+border-radius:10px;
+
+}
+
+.answer{
+
+display:none;
+
+margin-top:20px;
+
+background:#edf8ff;
+
+padding:15px;
+
+border-left:5px solid #0b3558;
+
+border-radius:10px;
+
+}
+
+/* -------------------------- */
+
+.quiz{
+
+background:white;
+
+padding:30px;
+
+border-radius:20px;
+
+box-shadow:0 10px 20px rgba(0,0,0,.08);
+
+margin-top:30px;
+
+}
+
+.question{
+
+margin-bottom:30px;
+
+}
+
+.question h4{
+
+margin-bottom:15px;
+
+}
+
+.option{
+
+display:block;
+
+margin-bottom:10px;
+
+padding:12px;
+
+border-radius:10px;
+
+background:#f3f6fa;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.option:hover{
+
+background:#d9efff;
+
+}
+
+button#submitQuiz{
+
+padding:15px 30px;
+
+background:#0b3558;
+
+color:white;
+
+border:none;
+
+border-radius:12px;
+
+cursor:pointer;
+
+font-size:16px;
+
+}
+
+#result{
+
+margin-top:30px;
+
+font-size:22px;
+
+font-weight:bold;
+
+}
+
+/* ------------------------- */
+
+footer{
+
+background:#09203f;
+
+color:white;
+
+padding:40px;
+
+text-align:center;
+
+margin-top:80px;
+
+}
+
+/* ------------------------- */
+
+@media(max-width:900px){
+
+.hero{
+
+grid-template-columns:1fr;
+
+}
+
+.hero h1{
+
+font-size:38px;
+
+}
+
+nav{
+
+justify-content:center;
+
+gap:20px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<nav>
+
+<div class="logo">
+📊 <span>Data Warehouse</span>
+</div>
+
+<ul>
+
+<li><a href="#overview">Overview</a></li>
+
+<li><a href="#architecture">Architecture</a></li>
+
+<li><a href="#activities">Activities</a></li>
+
+<li><a href="#quiz">Quiz</a></li>
+
+</ul>
+
+</nav>
+
+<div class="hero">
+
+<div>
+
+<h1>Data Warehouse Architecture</h1>
+
+<p>
+
+Learn how data travels from different systems into one centralized warehouse where it can be analyzed to support business decisions.
+
+</p>
+
+<a href="#overview" class="button">
+Start Learning
+</a>
+
+</div>
+
+<div class="diagram">
+
++------------+
+
+| Excel |
+
++------------+
+
+|
+
+v
+
++------------+
+
+| Website |
+
++------------+
+
+|
+
+v
+
++------------+
+
+| MySQL |
+
++------------+
+
+|
+
+v
+
+=====================
+
+ETL PROCESS
+
+Extract
+
+Transform
+
+Load
+
+=====================
+
+|
+
+v
+
++------------------+
+
+| DATA WAREHOUSE |
+
++------------------+
+
+|
+
++--------+--------+
+
+| |
+
+v v
+
+Reports Dashboards
+
+</div>
+
+</div>
+
+</header>
+
+ <!-- ========================= -->
+<!-- OVERVIEW -->
+<!-- ========================= -->
+
+<section id="overview">
+
+<h2 class="section-title">Lesson Overview</h2>
+
+<p class="section-sub">
+
+A <b>Data Warehouse</b> is a large storage system designed to collect information
+from many different sources into one central location. Instead of looking at
+multiple databases separately, organizations analyze everything from one place,
+making reporting faster and easier.
+
+</p>
+
+<div class="grid">
+
+<div class="card">
+
+<h3>🎯 Learning Objectives</h3>
+
+<ul>
+
+<li>✔ Understand what a Data Warehouse is.</li>
+
+<li>✔ Explain why businesses use Data Warehouses.</li>
+
+<li>✔ Describe the ETL Process.</li>
+
+<li>✔ Identify the architecture layers.</li>
+
+<li>✔ Compare Operational Databases vs Data Warehouses.</li>
+
+</ul>
+
+</div>
+
+<div class="card">
+
+<h3>💡 Why is it Important?</h3>
+
+<p>
+
+Imagine every department in a company stores information in different
+computers. A Data Warehouse gathers all of those records into one place,
+making it easier to generate reports and discover business trends.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>🏢 Real World Examples</h3>
+
+<ul>
+
+<li>🏦 Banks</li>
+
+<li>🛒 Online Shopping</li>
+
+<li>🏥 Hospitals</li>
+
+<li>🎓 Universities</li>
+
+<li>📱 Mobile Apps</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ========================= -->
+<!-- LESSON ROADMAP -->
+<!-- ========================= -->
+
+<section>
+
+<h2 class="section-title">
+
+2-Hour Lesson Roadmap
+
+</h2>
+
+<p class="section-sub">
+
+This lesson is designed to fit one classroom meeting.
+
+</p>
+
+<div class="grid">
+
+<div class="card">
+
+<h3>15 Minutes</h3>
+
+<p>
+
+Introduction
+
+<br><br>
+
+• What is a Data Warehouse?
+
+<br>
+
+• Why do companies use it?
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>30 Minutes</h3>
+
+<p>
+
+Architecture
+
+<br><br>
+
+• Source Systems
+
+<br>
+
+• ETL
+
+<br>
+
+• Data Warehouse
+
+<br>
+
+• Analytics
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>30 Minutes</h3>
+
+<p>
+
+Architecture Layers
+
+<br><br>
+
+Understand every layer and what happens inside each one.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>20 Minutes</h3>
+
+<p>
+
+Hands-on Activities
+
+<br><br>
+
+Students analyze scenarios and identify architecture components.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>25 Minutes</h3>
+
+<p>
+
+Interactive Quiz
+
+<br><br>
+
+5-item assessment with automatic checking.
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ========================= -->
+<!-- ARCHITECTURE -->
+<!-- ========================= -->
+
+<section id="architecture">
+
+<h2 class="section-title">
+
+Data Warehouse Architecture
+
+</h2>
+
+<p class="section-sub">
+
+Think of the architecture as a factory.
+
+Raw materials come in,
+
+they are cleaned,
+
+organized,
+
+stored,
+
+and finally used to create valuable products.
+
+</p>
+
+<div class="flow">
+
+DATA SOURCES
+
+┌───────────────┐
+
+│ Excel Files │
+
+└───────────────┘
+
+┌───────────────┐
+
+│ MySQL │
+
+└───────────────┘
+
+┌───────────────┐
+
+│ Website │
+
+└───────────────┘
+
+┌───────────────┐
+
+│ Mobile App │
+
+└───────────────┘
+
+↓
+
+========================
+
+STAGING AREA
+
+========================
+
+↓
+
+========================
+
+ETL PROCESS
+
+Extract
+
+↓
+
+Transform
+
+↓
+
+Load
+
+========================
+
+↓
+
+========================
+
+DATA WAREHOUSE
+
+========================
+
+↓
+
++-----------+ +-----------+
+
+| Reports | | Dashboard |
+
++-----------+ +-----------+
+
+↓
+
+Business Decisions
+
+</div>
+
+</section>
+
+<!-- ========================= -->
+<!-- SIMPLE ANALOGY -->
+<!-- ========================= -->
+
+<section>
+
+<h2 class="section-title">
+
+Easy Analogy
+
+</h2>
+
+<div class="card">
+
+<h3>🍳 Think of Cooking</h3>
+
+<p>
+
+Source Systems are the ingredients.
+
+</p>
+
+<p>
+
+The ETL Process is washing, cutting and cooking the ingredients.
+
+</p>
+
+<p>
+
+The Data Warehouse is the refrigerator where everything is stored neatly.
+
+</p>
+
+<p>
+
+Reports and Dashboards are the meals served to customers.
+
+</p>
+
+</div>
+
+</section>
+
+<!-- ========================= -->
+<!-- FIVE LAYERS -->
+<!-- ========================= -->
+
+<section>
+
+<h2 class="section-title">
+
+The Five Layers
+
+</h2>
+
+<div class="grid">
+
+<div class="card">
+
+<h3>1️⃣ Data Sources</h3>
+
+<p>
+
+Original data from websites,
+
+apps,
+
+files,
+
+or databases.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>2️⃣ Staging Area</h3>
+
+<p>
+
+Temporary storage where data is checked and cleaned.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>3️⃣ ETL Layer</h3>
+
+<p>
+
+Extract,
+
+Transform,
+
+and Load the information.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>4️⃣ Data Warehouse</h3>
+
+<p>
+
+The central storage where cleaned data is kept.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>5️⃣ Analytics Layer</h3>
+
+<p>
+
+Business Intelligence,
+
+Dashboards,
+
+Reports,
+
+Machine Learning,
+
+and Decision Making.
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+<!-- ===================================================== -->
+<!-- PART 3 : COMPARISON + SVG + ACTIVITIES -->
+<!-- ===================================================== -->
+
+<section>
+
+<h2 class="section-title">
+Visual Architecture
+</h2>
+
+<p class="section-sub">
+This diagram shows how information moves inside a Data Warehouse.
+</p>
+
+<div class="card" style="text-align:center;">
+
+<svg width="100%" height="450" viewBox="0 0 900 450">
+
+<defs>
+
+<marker id="arrow" markerWidth="10" markerHeight="10"
+refX="6" refY="3" orient="auto">
+
+<path d="M0,0 L0,6 L9,3 z"
+fill="#0b3558"/>
+
+</marker>
+
+</defs>
+
+<!-- Sources -->
+
+<rect x="20" y="40" width="130" height="55"
+rx="10"
+fill="#6EC6FF"/>
+
+<text x="85" y="72"
+text-anchor="middle"
+font-size="18"
+fill="white">
+
+Excel Files
+
+</text>
+
+<rect x="20" y="130"
+width="130"
+height="55"
+rx="10"
+fill="#26A69A"/>
+
+<text x="85"
+y="163"
+text-anchor="middle"
+font-size="18"
+fill="white">
+
+MySQL
+
+</text>
+
+<rect x="20"
+y="220"
+width="130"
+height="55"
+rx="10"
+fill="#FF7043"/>
+
+<text x="85"
+y="253"
+text-anchor="middle"
+font-size="18"
+fill="white">
+
+Website
+
+</text>
+
+<rect x="20"
+y="310"
+width="130"
+height="55"
+rx="10"
+fill="#AB47BC"/>
+
+<text x="85"
+y="343"
+text-anchor="middle"
+font-size="18"
+fill="white">
+
+Mobile App
+
+</text>
+
+<!-- ETL -->
+
+<rect x="330"
+y="140"
+width="220"
+height="120"
+rx="15"
+fill="#0B3558"/>
+
+<text x="440"
+y="170"
+fill="white"
+font-size="22"
+text-anchor="middle">
+
+ETL PROCESS
+
+</text>
+
+<text x="440"
+y="205"
+fill="white"
+font-size="18"
+text-anchor="middle">
+
+Extract
+
+</text>
+
+<text x="440"
+y="230"
+fill="white"
+font-size="18"
+text-anchor="middle">
+
+Transform
+
+</text>
+
+<text x="440"
+y="255"
+fill="white"
+font-size="18"
+text-anchor="middle">
+
+Load
+
+</text>
+
+<!-- Warehouse -->
+
+<rect x="680"
+y="140"
+width="180"
+height="120"
+rx="15"
+fill="#FFD54F"/>
+
+<text x="770"
+y="190"
+font-size="22"
+font-weight="bold"
+text-anchor="middle">
+
+DATA
+
+</text>
+
+<text x="770"
+y="220"
+font-size="22"
+font-weight="bold"
+text-anchor="middle">
+
+WAREHOUSE
+
+</text>
+
+<!-- Reports -->
+
+<rect x="680"
+y="320"
+width="150"
+height="60"
+rx="10"
+fill="#66BB6A"/>
+
+<text x="755"
+y="356"
+fill="white"
+text-anchor="middle"
+font-size="18">
+
+Reports
+
+</text>
+
+<!-- Dashboard -->
+
+<rect x="500"
+y="320"
+width="150"
+height="60"
+rx="10"
+fill="#42A5F5"/>
+
+<text x="575"
+y="356"
+fill="white"
+text-anchor="middle"
+font-size="18">
+
+Dashboard
+
+</text>
+
+<!-- Lines -->
+
+<line x1="150"
+y1="70"
+x2="330"
+y2="170"
+stroke="#0b3558"
+stroke-width="3"
+marker-end="url(#arrow)"/>
+
+<line x1="150"
+y1="160"
+x2="330"
+y2="190"
+stroke="#0b3558"
+stroke-width="3"
+marker-end="url(#arrow)"/>
+
+<line x1="150"
+y1="250"
+x2="330"
+y2="210"
+stroke="#0b3558"
+stroke-width="3"
+marker-end="url(#arrow)"/>
+
+<line x1="150"
+y1="340"
+x2="330"
+y2="230"
+stroke="#0b3558"
+stroke-width="3"
+marker-end="url(#arrow)"/>
+
+<line x1="550"
+y1="200"
+x2="680"
+y2="200"
+stroke="#0b3558"
+stroke-width="4"
+marker-end="url(#arrow)"/>
+
+<line x1="770"
+y1="260"
+x2="770"
+y2="320"
+stroke="#0b3558"
+stroke-width="3"
+marker-end="url(#arrow)"/>
+
+<line x1="720"
+y1="260"
+x2="620"
+y2="320"
+stroke="#0b3558"
+stroke-width="3"
+marker-end="url(#arrow)"/>
+
+</svg>
+
+</div>
+
+</section>
+
+
+<!-- ==================================== -->
+<!-- COMPARISON TABLE -->
+<!-- ==================================== -->
+
+<section>
+
+<h2 class="section-title">
+Operational Database vs Data Warehouse
+</h2>
+
+<table style="width:100%;border-collapse:collapse;background:white;border-radius:20px;overflow:hidden;box-shadow:0 5px 15px rgba(0,0,0,.1);">
+
+<tr style="background:#0b3558;color:white;">
+
+<th style="padding:20px;">Feature</th>
+
+<th>Operational Database</th>
+
+<th>Data Warehouse</th>
+
+</tr>
+
+<tr>
+
+<td style="padding:15px;"><b>Main Purpose</b></td>
+
+<td>Daily Transactions</td>
+
+<td>Analysis & Reports</td>
+
+</tr>
+
+<tr style="background:#f5f5f5;">
+
+<td style="padding:15px;"><b>Updates</b></td>
+
+<td>Every Minute</td>
+
+<td>Scheduled</td>
+
+</tr>
+
+<tr>
+
+<td style="padding:15px;"><b>Data</b></td>
+
+<td>Current</td>
+
+<td>Historical</td>
+
+</tr>
+
+<tr style="background:#f5f5f5;">
+
+<td style="padding:15px;"><b>Users</b></td>
+
+<td>Cashiers / Employees</td>
+
+<td>Managers / Executives</td>
+
+</tr>
+
+<tr>
+
+<td style="padding:15px;"><b>Example</b></td>
+
+<td>ATM Machine</td>
+
+<td>Monthly Sales Report</td>
+
+</tr>
+
+</table>
+
+</section>
+
+
+<!-- ==================================== -->
+<!-- ACTIVITIES -->
+<!-- ==================================== -->
+
+<section id="activities">
+
+<h2 class="section-title">
+Class Activities
+</h2>
+
+<p class="section-sub">
+
+Try answering before revealing the solution.
+
+</p>
+
+<div class="activity">
+
+<h3>
+Activity 1
+</h3>
+
+<p>
+
+A supermarket has information stored in
+
+Excel,
+
+Cash Registers,
+
+Online Orders,
+
+and Mobile Apps.
+
+Where should all of this information go before managers generate reports?
+
+</p>
+
+<button onclick="toggleAnswer('a1')">
+
+Show Answer
+
+</button>
+
+<div class="answer" id="a1">
+
+<b>Answer:</b>
+
+All data should go through the ETL Process and then be stored inside the Data Warehouse.
+
+</div>
+
+</div>
+
+
+
+<div class="activity">
+
+<h3>
+
+Activity 2
+
+</h3>
+
+<p>
+
+Identify whether each belongs to the Operational Database or Data Warehouse.
+
+<ul>
+
+<li>Monthly Sales Report</li>
+
+<li>ATM Withdrawal</li>
+
+<li>Business Dashboard</li>
+
+<li>Cash Register Transaction</li>
+
+</ul>
+
+</p>
+
+<button onclick="toggleAnswer('a2')">
+
+Show Answer
+
+</button>
+
+<div class="answer" id="a2">
+
+Monthly Sales Report →
+Data Warehouse
+
+<br><br>
+
+ATM Withdrawal →
+Operational Database
+
+<br><br>
+
+Dashboard →
+Data Warehouse
+
+<br><br>
+
+Cash Register →
+Operational Database
+
+</div>
+
+</div>
+
+
+
+<div class="activity">
+
+<h3>
+
+Activity 3
+
+</h3>
+
+<p>
+
+Arrange these in the correct order.
+
+<ul>
+
+<li>Reports</li>
+
+<li>ETL</li>
+
+<li>Data Sources</li>
+
+<li>Warehouse</li>
+
+</ul>
+
+</p>
+
+<button onclick="toggleAnswer('a3')">
+
+Show Answer
+
+</button>
+
+<div class="answer" id="a3">
+
+Data Sources
+
+↓
+
+ETL
+
+↓
+
+Data Warehouse
+
+↓
+
+Reports & Dashboards
+
+</div>
+
+</div>
+
+</section>
+
+ <!-- ========================================= -->
+<!-- QUIZ -->
+<!-- ========================================= -->
+
+<section id="quiz">
+
+<h2 class="section-title">
+Practice Quiz
+</h2>
+
+<p class="section-sub">
+Choose the best answer for each question.
+</p>
+
+<div class="quiz">
+
+<div class="question">
+
+<h4>
+1. What is the main purpose of a Data Warehouse?
+</h4>
+
+<label class="option">
+<input type="radio" name="q1" value="A">
+Store temporary files
+</label>
+
+<label class="option">
+<input type="radio" name="q1" value="B">
+Analyze business data
+</label>
+
+<label class="option">
+<input type="radio" name="q1" value="C">
+Replace websites
+</label>
+
+</div>
+
+
+<div class="question">
+
+<h4>
+2. ETL stands for?
+</h4>
+
+<label class="option">
+<input type="radio" name="q2" value="A">
+Extract Transform Load
+</label>
+
+<label class="option">
+<input type="radio" name="q2" value="B">
+Export Transfer Link
+</label>
+
+<label class="option">
+<input type="radio" name="q2" value="C">
+Evaluate Test Learn
+</label>
+
+</div>
+
+
+<div class="question">
+
+<h4>
+3. Which layer stores cleaned data?
+</h4>
+
+<label class="option">
+<input type="radio" name="q3" value="A">
+Website
+
+</label>
+
+<label class="option">
+<input type="radio" name="q3" value="B">
+Data Warehouse
+</label>
+
+<label class="option">
+<input type="radio" name="q3" value="C">
+Excel
+</label>
+
+</div>
+
+
+<div class="question">
+
+<h4>
+4. Which one is a Source System?
+
+</h4>
+
+<label class="option">
+<input type="radio" name="q4" value="A">
+Excel File
+</label>
+
+<label class="option">
+<input type="radio" name="q4" value="B">
+Dashboard
+</label>
+
+<label class="option">
+<input type="radio" name="q4" value="C">
+Business Report
+</label>
+
+</div>
+
+
+<div class="question">
+
+<h4>
+5. Who normally uses reports from a Data Warehouse?
+
+</h4>
+
+<label class="option">
+<input type="radio" name="q5" value="A">
+Managers
+</label>
+
+<label class="option">
+<input type="radio" name="q5" value="B">
+Printer
+</label>
+
+<label class="option">
+<input type="radio" name="q5" value="C">
+Keyboard
+</label>
+
+</div>
+
+
+<button id="submitQuiz">
+
+Check Answers
+
+</button>
+
+<div id="result">
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- ========================================= -->
+<!-- REFERENCES -->
+<!-- ========================================= -->
+
+<section>
+
+<h2 class="section-title">
+
+References
+
+</h2>
+
+<div class="grid">
+
+<div class="card">
+
+<h3>
+
+Kimball Method
+
+</h3>
+
+<p>
+
+Kimball, R.
+
+The Data Warehouse Toolkit.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+Inmon Method
+
+</h3>
+
+<p>
+
+William H. Inmon
+
+Building the Data Warehouse.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+Microsoft Learn
+
+</h3>
+
+<p>
+
+Data Warehouse Fundamentals
+
+Business Intelligence
+
+Analytics
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<footer>
+
+<h2>
+
+🎓 Congratulations!
+
+</h2>
+
+<p>
+
+You have completed the
+
+Data Warehouse Architecture Lesson.
+
+</p>
+
+<p>
+
+Created for BSIT / BSCS Students
+
+</p>
+
+</footer>
+
+
+
+<script>
+
+function toggleAnswer(id){
+
+const answer=document.getElementById(id);
+
+if(answer.style.display==="block"){
+
+answer.style.display="none";
+
+}else{
+
+answer.style.display="block";
+
+}
+
+}
+
+
+
+document.getElementById("submitQuiz").addEventListener("click",function(){
+
+
+let score=0;
+
+const answers={
+
+q1:"B",
+
+q2:"A",
+
+q3:"B",
+
+q4:"A",
+
+q5:"A"
+
+};
+
+
+
+for(let question in answers){
+
+let selected=document.querySelector('input[name="'+question+'"]:checked');
+
+if(selected){
+
+if(selected.value===answers[question]){
+
+score++;
+
+}
+
+}
+
+}
+
+
+
+let result=document.getElementById("result");
+
+
+
+let percent=(score/5)*100;
+
+
+
+if(score==5){
+
+result.innerHTML=`
+
+<div style="padding:25px;
+background:#d4edda;
+border-radius:15px;
+margin-top:25px;">
+
+<h2>🏆 PERFECT SCORE!</h2>
+
+<p>
+
+You got
+
+<b>${score}/5</b>
+
+(${percent}%)
+
+</p>
+
+<p>
+
+Excellent work!
+
+</p>
+
+</div>
+
+`;
+
+}
+
+else if(score>=4){
+
+result.innerHTML=`
+
+<div style="padding:25px;
+background:#d1ecf1;
+border-radius:15px;
+margin-top:25px;">
+
+<h2>🎉 Very Good!</h2>
+
+<p>
+
+Score:
+
+<b>${score}/5</b>
+
+(${percent}%)
+
+</p>
+
+</div>
+
+`;
+
+}
+
+else if(score>=3){
+
+result.innerHTML=`
+
+<div style="padding:25px;
+background:#fff3cd;
+border-radius:15px;
+margin-top:25px;">
+
+<h2>🙂 Good Job!</h2>
+
+<p>
+
+Score:
+
+<b>${score}/5</b>
+
+(${percent}%)
+
+</p>
+
+<p>
+
+Review the lesson and try again.
+
+</p>
+
+</div>
+
+`;
+
+}
+
+else{
+
+result.innerHTML=`
+
+<div style="padding:25px;
+background:#f8d7da;
+border-radius:15px;
+margin-top:25px;">
+
+<h2>📖 Keep Studying</h2>
+
+<p>
+
+Score:
+
+<b>${score}/5</b>
+
+(${percent}%)
+
+</p>
+
+<p>
+
+Review the lesson then retake the quiz.
+
+</p>
+
+</div>
+
+`;
+
+}
+
+});
+
+</script>
+
+</body>
+
 </html>

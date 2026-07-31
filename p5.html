@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="en">
+ <head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260731-03-0b60c17","C":{"Abril Fatface":"YACgEZbkUVE,0","Alfa Slab One":"YACgEYS9sJU,0","Anton":"YACgEcYqQ-A,0","Archivo":"YAHO2-t-jNE,0","Arial":"YAGyDvJ_4Ts,0","Bebas Neue":"YACgESME5ew,0","Broken Glyph":"YADZ-exUkv0,0","Canva Sans":"YAFdJjTk5UU,0","Caveat":"YALBs2ploWQ,0","Comic Sans MS":"YAHO2VMiyZo,0","Cormorant Garamond":"YAFdJhX-538,0","Courier New":"YAGzXiGs0_8,0","DM Sans":"YAD1aU3sLnI,0","DM Serif Display":"YAD1aYG82rc,0","Forum":"YACgEcnnqB4,0","Fraunces":"YAEul-FRQw4,0","Georgia":"YAGzXkO0pEM,0","Ghost Mono":"YAHO2EIdDP0,0","Helvetica Neue":"YAFcf6CtJfI,0","Impact":"YAFcfnjI7Vk,0","Inter":"YAFdJvSyp_k,3","Iowan Old Style":"YAGNIFa8j9o,0","Jacques Francois":"YAHO2a5g66Q,0","JetBrains Mono":"YADy3sAhvXQ,0","Oleo Script":"YACgEQQ14jI,0","Playfair Display":"YAFdJhem5V8,1","Poppins":"YAE5fPSY9qM,0","Press Start 2P":"YAFyGr-8pmQ,0","Source Sans 3":"YAG4lO1Mj10,0","Space Grotesk":"YAHO2sjPCSM,0","Times New Roman":"YAGzXW3gftg,0","Times":"YAGzXW3gftg,0","Trebuchet MS":"YAFcfrglpVA,0","Verdana":"YAGzXTctYtQ,0","Work Sans":"YAGXhLOKv44,0","Yellowtail":"YACgEYG4kG4,0"}}');</script><script src="/_sdk/a27874207e105461.telemetry_sdk.js" integrity="sha512-wgI5N9F7oA2h3vH+benMYIv4wGqTct4nKWakqgvfgRyBLmfYq8q/fi6gkfWKd2hMsyN+VQ/qOAOpxybwkcoxlA=="></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 5: Online Analytical Processing (OLAP)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700;800&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #07101e;
+      --panel: #0d1b2d;
+      --panel-2: #10243b;
+      --line: rgba(87, 219, 255, 0.18);
+      --cyan: #58e1ff;
+      --electric: #9cff57;
+      --violet: #b29bff;
+      --muted: #a9bdd1;
+      --paper: #eaf7ff;
+      --rose: #ff9cb3;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      color: var(--paper);
+      font-family: "Fira Sans", sans-serif;
+      background: var(--ink);
+    }
+
+    .cyber-page {
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+      position: relative;
+      background:
+        radial-gradient(circle at 15% 6%, rgba(52, 160, 195, 0.18), transparent 28rem),
+        radial-gradient(circle at 85% 16%, rgba(111, 82, 203, 0.18), transparent 31rem),
+        linear-gradient(135deg, #07101e 0%, #091728 52%, #07101e 100%);
+    }
+
+    .cyber-page::before,
+    .cyber-page::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .cyber-page::before {
+      opacity: 0.38;
+      background-image:
+        linear-gradient(rgba(95, 219, 255, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(95, 219, 255, 0.055) 1px, transparent 1px);
+      background-size: 38px 38px;
+      mask-image: linear-gradient(to bottom, black, transparent 90%);
+    }
+
+    .cyber-page::after {
+      background:
+        radial-gradient(circle at 20% 20%, rgba(156, 255, 87, 0.65) 0 2px, transparent 3px),
+        radial-gradient(circle at 77% 34%, rgba(88, 225, 255, 0.6) 0 2px, transparent 3px),
+        radial-gradient(circle at 60% 80%, rgba(178, 155, 255, 0.65) 0 2px, transparent 3px);
+      animation: pulseNodes 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulseNodes {
+      from { opacity: 0.42; }
+      to { opacity: 0.86; }
+    }
+
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-content { position: relative; z-index: 1; width: 100%; }
+    .mono { font-family: "Space Mono", monospace; }
+    .wrap { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 1.25rem; }
+
+    .network-line {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), var(--electric), transparent);
+      box-shadow: 0 0 18px rgba(88, 225, 255, 0.55);
+    }
+
+    .topline {
+      border-bottom: 1px solid var(--line);
+      background: rgba(4, 12, 23, 0.72);
+      backdrop-filter: blur(16px);
+    }
+
+    .topline-inner {
+      min-height: 74px;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 0.85rem;
+      padding-bottom: 0.85rem;
+    }
+
+    .brand { display: flex; align-items: center; gap: 0.8rem; }
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      color: var(--cyan);
+      font-size: 1.3rem;
+      border: 1px solid rgba(88, 225, 255, 0.38);
+      border-radius: 12px;
+      background: rgba(88, 225, 255, 0.08);
+    }
+
+    .course-label {
+      margin: 0;
+      color: #bceeff;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .instructor { margin: 0.2rem 0 0; color: #8fa8bd; font-size: 0.9rem; }
+    .status { color: #d8ffc4; font-size: 0.72rem; letter-spacing: 0.06em; }
+    .status span { color: #71859a; }
+
+    main { padding-top: 2.5rem; padding-bottom: 3.5rem; }
+
+    .glass-panel {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 1.8rem;
+      background: linear-gradient(145deg, rgba(18, 41, 66, 0.92), rgba(8, 22, 39, 0.92));
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.2);
+    }
+
+    .hero { padding: 2.2rem; animation: riseIn 650ms ease both; }
+    .badges, .chips { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+    .badge, .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.76rem;
+    }
+
+    .badge {
+      color: #d9ffc1;
+      font-family: "Space Mono", monospace;
+      letter-spacing: 0.04em;
+      border: 1px solid rgba(156, 255, 87, 0.44);
+      background: rgba(156, 255, 87, 0.08);
+    }
+
+    .badge.alt {
+      color: #c4efff;
+      border-color: rgba(88, 225, 255, 0.25);
+      background: rgba(88, 225, 255, 0.06);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.75fr);
+      gap: 2.5rem;
+      align-items: end;
+      margin-top: 1.6rem;
+    }
+
+    .terminal-label {
+      margin: 0;
+      color: var(--electric);
+      font-family: "Space Mono", monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, h4 { margin-top: 0; }
+    h1 {
+      margin-bottom: 0;
+      color: #fff;
+      font-size: clamp(2.35rem, 6vw, 4.5rem);
+      line-height: 1.06;
+      letter-spacing: -0.04em;
+    }
+
+    .hero-subtitle {
+      max-width: 660px;
+      margin: 1.15rem 0 0;
+      color: #c3d3e1;
+      font-size: clamp(1.06rem, 2vw, 1.3rem);
+      line-height: 1.55;
+    }
+
+    .chip {
+      color: #d5edf8;
+      border: 1px solid rgba(88, 225, 255, 0.2);
+      background: rgba(88, 225, 255, 0.05);
+    }
+
+    .chip.violet {
+      color: #e0d9ff;
+      border-color: rgba(178, 155, 255, 0.26);
+      background: rgba(178, 155, 255, 0.09);
+    }
+
+    .focus-box {
+      padding: 1.25rem;
+      border: 1px solid rgba(88, 225, 255, 0.16);
+      border-radius: 1rem;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .focus-row { display: flex; justify-content: space-between; gap: 1rem; color: #9cb3c6; font-size: 0.9rem; }
+    .focus-icon { color: var(--electric); font-size: 1.25rem; }
+    .meter { height: 8px; overflow: hidden; margin-top: 0.85rem; border-radius: 999px; background: #172536; }
+    .meter span { display: block; width: 84%; height: 100%; background: linear-gradient(90deg, var(--cyan), var(--violet), var(--electric)); }
+    .focus-box p:last-child { margin: 1rem 0 0; color: #c2d1df; line-height: 1.6; font-size: 0.92rem; }
+
+    .lesson-layout {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 2rem;
+      margin-top: 2.2rem;
+    }
+
+    .lesson-nav { align-self: start; position: sticky; top: 1.4rem; padding: 1rem; border: 1px solid var(--line); border-radius: 1rem; background: rgba(13, 27, 45, 0.78); }
+    .lesson-nav p { padding: 0 0.75rem; }
+    .lesson-nav a {
+      display: block;
+      padding: 0.65rem 0.75rem;
+      color: #9fb6ca;
+      font-size: 0.88rem;
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      border-radius: 0 0.5rem 0.5rem 0;
+      transition: 160ms ease;
+    }
+
+    .lesson-nav a:hover { color: var(--electric); border-left-color: var(--electric); background: rgba(156, 255, 87, 0.06); }
+
+    article { min-width: 0; }
+    .stack { display: grid; gap: 1.75rem; }
+
+    .section-card {
+      padding: 1.5rem;
+      border: 1px solid rgba(112, 219, 255, 0.15);
+      border-radius: 1.2rem;
+      background: rgba(10, 27, 47, 0.68);
+    }
+
+    .section-card p, .section-card li { color: #c5d7e6; line-height: 1.72; }
+    .section-card strong { color: #fff; }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-bottom: 1.1rem;
+      padding-bottom: 0.75rem;
+      color: var(--cyan);
+      font-family: "Space Mono", monospace;
+      font-size: 1.05rem;
+      letter-spacing: 0.045em;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(88, 225, 255, 0.16);
+    }
+
+    .section-icon { color: var(--electric); }
+
+    .grid-2, .grid-3, .grid-4 { display: grid; gap: 0.85rem; }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .outcome-card, .concept-card, .operation-card, .type-card {
+      border: 1px solid rgba(88, 225, 255, 0.17);
+      border-radius: 0.85rem;
+      background: rgba(5, 19, 34, 0.48);
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .outcome-card:hover, .concept-card:hover, .operation-card:hover, .type-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(156, 255, 87, 0.65);
+      background: rgba(13, 42, 54, 0.78);
+    }
+
+    .outcome-card { display: flex; gap: 0.8rem; padding: 1rem; }
+    .outcome-card p { margin: 0; font-size: 0.9rem; }
+    .outcome-number {
+      display: grid;
+      width: 1.75rem;
+      height: 1.75rem;
+      flex: 0 0 auto;
+      place-items: center;
+      color: var(--ink);
+      font-family: "Space Mono", monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      border-radius: 50%;
+      background: var(--electric);
+    }
+
+    .quote-box {
+      padding: 1rem 1.2rem;
+      color: #e3f9d2;
+      border-left: 3px solid var(--electric);
+      border-radius: 0 0.75rem 0.75rem 0;
+      background: rgba(156, 255, 87, 0.07);
+    }
+
+    .quote-box p { margin: 0.4rem 0 0; }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(9, minmax(0, 1fr));
+      gap: 0.5rem;
+      align-items: center;
+      margin-top: 1.4rem;
+    }
+
+    .flow-node {
+      display: flex;
+      min-height: 76px;
+      align-items: center;
+      justify-content: center;
+      padding: 0.65rem;
+      color: #dff8ff;
+      font-family: "Space Mono", monospace;
+      font-size: 0.71rem;
+      line-height: 1.35;
+      text-align: center;
+      border: 1px solid rgba(88, 225, 255, 0.3);
+      border-radius: 0.75rem;
+      background: rgba(9, 31, 53, 0.88);
+    }
+
+    .flow-node.active { color: var(--ink); font-weight: 700; border-color: #d6ffae; background: #b8ff71; }
+    .flow-arrow { color: var(--electric); font-size: 1.3rem; text-align: center; }
+
+    .mini-card, .operation-card, .type-card { padding: 1.1rem; }
+    .mini-card { border: 1px solid rgba(88, 225, 255, 0.15); border-radius: 0.8rem; background: rgba(88, 225, 255, 0.05); }
+    .mini-card h3, .operation-card h3, .type-card h3 { margin: 0.35rem 0 0.55rem; color: #fff; font-size: 1.15rem; }
+    .mini-card p, .operation-card p, .type-card p { margin-bottom: 0; font-size: 0.9rem; }
+
+    .data-table-wrap { overflow-x: auto; margin-top: 1rem; }
+    .data-table { width: 100%; min-width: 620px; overflow: hidden; border-collapse: collapse; border-radius: 0.9rem; box-shadow: 0 0 0 1px rgba(88, 225, 255, 0.17); }
+    .data-table th, .data-table td { padding: 0.8rem; text-align: left; vertical-align: top; border: 1px solid rgba(88, 225, 255, 0.12); }
+    .data-table th { color: var(--cyan); font-family: "Space Mono", monospace; font-size: 0.75rem; letter-spacing: 0.04em; background: rgba(88, 225, 255, 0.12); }
+    .data-table td { color: #d9e9f4; line-height: 1.5; }
+
+    .cube-layout { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 1.5rem; align-items: center; }
+    .cube-diagram {
+      min-height: 270px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(178, 155, 255, 0.22);
+      border-radius: 1rem;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(88, 225, 255, 0.14), transparent 40%),
+        rgba(7, 16, 30, 0.55);
+    }
+
+    .cube {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      border: 2px solid var(--cyan);
+      transform: skewY(-12deg) rotate(30deg);
+      box-shadow: 18px 18px 0 rgba(156, 255, 87, 0.18), 0 0 28px rgba(88, 225, 255, 0.28);
+    }
+
+    .cube::before, .cube::after { content: ""; position: absolute; border: 2px solid var(--violet); }
+    .cube::before { width: 180px; height: 180px; left: 34px; top: -34px; }
+    .cube::after { width: 34px; height: 180px; left: 180px; top: -17px; border-left: none; }
+    .axis { position: absolute; color: #e5faff; font-family: "Space Mono", monospace; font-size: 0.7rem; transform: skewY(12deg) rotate(-30deg); }
+    .axis.one { left: -38px; bottom: -43px; color: var(--electric); }
+    .axis.two { right: -93px; bottom: 5px; color: var(--cyan); }
+    .axis.three { left: 58px; top: -70px; color: var(--violet); }
+
+    .operation-card .op-number { color: var(--electric); font-family: "Space Mono", monospace; font-size: 0.72rem; letter-spacing: 0.1em; }
+    .operation-card { border-color: rgba(178, 155, 255, 0.22); background: linear-gradient(145deg, rgba(29, 28, 67, 0.6), rgba(9, 25, 44, 0.82)); }
+    .example { margin-top: 0.8rem; padding: 0.7rem; color: #d4e8f4; font-size: 0.83rem; border-radius: 0.6rem; background: rgba(0, 0, 0, 0.23); }
+    .example b { color: var(--electric); }
+
+    .list-columns { columns: 2; column-gap: 2.2rem; padding-left: 1.2rem; }
+    .list-columns li { break-inside: avoid; margin-bottom: 0.5rem; }
+
+    .summary {
+      padding: 1.7rem;
+      border: 1px solid rgba(156, 255, 87, 0.25);
+      border-radius: 1.2rem;
+      background: linear-gradient(135deg, rgba(156, 255, 87, 0.1), rgba(88, 225, 255, 0.05));
+    }
+
+    .summary-head { display: flex; gap: 1rem; align-items: flex-start; }
+    .summary-mark { display: grid; width: 44px; height: 44px; flex: 0 0 auto; place-items: center; color: #07101e; font-size: 1.2rem; border-radius: 0.75rem; background: var(--electric); }
+    .summary h2 { margin: 0; color: #fff; font-size: 1.55rem; }
+    .summary p { color: #d5e5f0; line-height: 1.72; }
+
+    footer { border-top: 1px solid rgba(88, 225, 255, 0.1); background: rgba(0, 0, 0, 0.2); }
+    .footer-inner { display: flex; gap: 0.7rem; justify-content: space-between; padding-top: 1.4rem; padding-bottom: 1.4rem; color: #71859a; font-size: 0.88rem; }
+
+    @media (max-width: 1023px) {
+      .lesson-layout { grid-template-columns: 1fr; }
+      .lesson-nav { display: none; }
+      .hero-grid, .cube-layout { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      .topline-inner, .footer-inner { align-items: flex-start; flex-direction: column; }
+      .status { display: none; }
+      .grid-3, .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .flow { grid-template-columns: 1fr; }
+      .flow-arrow { transform: rotate(90deg); }
+      .cube-layout { gap: 1rem; }
+    }
+
+    @media (max-width: 560px) {
+      main { padding-top: 1.4rem; }
+      .hero, .section-card, .summary { padding: 1.1rem; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .list-columns { columns: 1; }
+      .cube { transform: scale(.8) skewY(-12deg) rotate(30deg); }
+      .cube-diagram { min-height: 230px; }
+    }
+  </style>
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  <script src="/_sdk/935a53bc2e11fb8d.data_sdk.js" type="text/javascript" integrity="sha512-qr2oyPnEys1WebcOABaRh6hG77r5PWpqeWW6JTKbRJqly/INsfBi31CVNlTmHqjgeLpkVmmHZJUdxSx/32tOFQ=="></script>
+  <script src="/_sdk/9a740ce6cacd0808.editing_sdk.js" type="text/javascript" integrity="sha512-ZcKE2UXVxSh0Kmty64HdB2xjpgsalbehms1KOXHeK7POjO9v81VU+RYWmq0cOBM9u4mY5oRq7UsigAanNH4Iww=="></script>
+  <script src="/_sdk/6030e540d4419216.resizing_sdk.js" type="text/javascript" integrity="sha512-b5KWzyoXsbWP4smq4sftIi6Kts4YVBpBsz0BwCViwbBJkK64a3/Z6ZMdWA+qnplNcXw4mhZeqvQi3mOosiRJdA=="></script>
+ </head>
+ <body data-template-id="__page-root">
+  <div class="cyber-page">
+   <div class="page-content">
+    <div class="network-line"></div>
+    <header class="topline">
+     <div class="wrap topline-inner">
+      <div class="brand">
+       <div class="brand-mark" aria-hidden="true">
+        ◈
+       </div>
+       <div>
+        <p class="course-label mono">Course · Data Warehousing</p>
+        <p class="instructor">Instructor: MKDB</p>
+       </div>
+      </div>
+      <div class="status mono">
+       <span>STATUS:</span> ONLINE / LESSON MODULE
+      </div>
+     </div>
+    </header>
+    <main class="wrap">
+     <section class="glass-panel hero" aria-labelledby="lesson-title">
+      <div class="badges"><span class="badge">LESSON 05</span> <span class="badge alt">◈ BUSINESS INTELLIGENCE ANALYTICS</span>
+      </div>
+      <div class="hero-grid">
+       <div>
+        <p class="terminal-label">/ Course Module / Knowledge Node 05</p>
+        <h1 id="lesson-title">Online Analytical<br>
+         Processing (OLAP)</h1>
+        <p class="hero-subtitle">Understanding OLAP for Business Intelligence</p>
+        <div class="chips" style="margin-top: 1.35rem;"><span class="chip">Bachelor of Science in Computer Science (BSCS)</span> <span class="chip violet">2 Hours Lecture</span>
+        </div>
+       </div>
+       <aside class="focus-box" aria-label="Lesson focus">
+        <div class="focus-row"><span>Lesson focus</span> <span class="focus-icon" aria-hidden="true">⚡</span>
+        </div>
+        <div class="meter" aria-hidden="true">
+         <span></span>
+        </div>
+        <p>Move from stored warehouse data to fast analysis, multidimensional views, and informed business decisions.</p>
+       </aside>
+      </div>
+     </section>
+     <div class="lesson-layout">
+      <aside class="lesson-nav">
+       <p class="terminal-label">Navigate</p>
+       <nav aria-label="Lesson navigation"><a href="#outcomes">Learning Outcomes</a> <a href="#review">Previous Lesson</a> <a href="#introduction">Introduction</a> <a href="#oltp-olap">OLTP vs OLAP</a> <a href="#cube">OLAP Cube</a> <a href="#operations">OLAP Operations</a> <a href="#types">OLAP Types</a> <a href="#business">OLAP in Business</a> <a href="#activities">Activities</a> <a href="#summary">Summary</a>
+       </nav>
+      </aside>
+      <article class="stack">
+       <section id="outcomes" class="section-card">
+        <h2 class="section-title"><span class="section-icon">◎</span> Learning Outcomes</h2>
+        <p>At the end of this lesson, students should be able to:</p>
+        <div class="grid-2">
+         <div class="outcome-card">
+          <span class="outcome-number">01</span>
+          <p>Explain the concept and purpose of Online Analytical Processing (OLAP).</p>
+         </div>
+         <div class="outcome-card">
+          <span class="outcome-number">02</span>
+          <p>Differentiate OLAP from Online Transaction Processing (OLTP).</p>
+         </div>
+         <div class="outcome-card">
+          <span class="outcome-number">03</span>
+          <p>Identify the main components of an OLAP system.</p>
+         </div>
+         <div class="outcome-card">
+          <span class="outcome-number">04</span>
+          <p>Explain the different OLAP operations used in data analysis.</p>
+         </div>
+         <div class="outcome-card">
+          <span class="outcome-number">05</span>
+          <p>Distinguish between MOLAP, ROLAP, and HOLAP.</p>
+         </div>
+         <div class="outcome-card">
+          <span class="outcome-number">06</span>
+          <p>Apply OLAP concepts to solve business analysis problems.</p>
+         </div>
+        </div>
+        <h3 style="margin: 2rem 0 0.8rem; color: #fff;">Learning Objectives</h3>
+        <ul class="list-columns">
+         <li>Define OLAP and its role in Business Intelligence.</li>
+         <li>Explain how OLAP works with a Data Warehouse.</li>
+         <li>Differentiate OLAP and OLTP systems.</li>
+         <li>Perform basic OLAP operations conceptually.</li>
+         <li>Explain the different types of OLAP.</li>
+         <li>Recognize real-world applications of OLAP.</li>
+        </ul>
+       </section>
+       <section id="review" class="section-card">
+        <h2 class="section-title"><span class="section-icon">↻</span> Review of Previous Lesson</h2>
+        <p>In Lesson 4, we learned about the <strong>ETL Process (Extract, Transform, Load)</strong>.</p>
+        <p>We discovered that:</p>
+        <div class="grid-3">
+         <div class="mini-card">
+          Data comes from different sources.
+         </div>
+         <div class="mini-card">
+          ETL cleans and prepares the data.
+         </div>
+         <div class="mini-card">
+          Clean data is loaded into the Data Warehouse.
+         </div>
+        </div>
+        <div class="quote-box" style="margin-top: 1.35rem;"><span class="terminal-label">Next Question //</span>
+         <p>Once the data is inside the Data Warehouse, how do managers analyze millions of records quickly? The answer is <strong>OLAP (Online Analytical Processing)</strong>.</p>
+        </div>
+        <div class="flow" aria-label="Operational systems to business decisions process">
+         <div class="flow-node">
+          OPERATIONAL<br>
+          SYSTEMS
+         </div>
+         <div class="flow-arrow">
+          →
+         </div>
+         <div class="flow-node active">
+          ETL
+         </div>
+         <div class="flow-arrow">
+          →
+         </div>
+         <div class="flow-node">
+          DATA<br>
+          WAREHOUSE
+         </div>
+         <div class="flow-arrow">
+          →
+         </div>
+         <div class="flow-node active">
+          OLAP
+         </div>
+         <div class="flow-arrow">
+          →
+         </div>
+         <div class="flow-node">
+          REPORTS · DASHBOARDS · DECISIONS
+         </div>
+        </div>
+        <p style="margin-bottom: 0;">Notice that OLAP comes after the Data Warehouse has already been built.</p>
+       </section>
+       <section id="introduction" class="section-card">
+        <h2 class="section-title"><span class="section-icon">⌁</span> Introduction</h2>
+        <p>Imagine you own a nationwide supermarket. Every day, thousands of products are sold in hundreds of stores. At the end of the year, you may have millions of sales records.</p>
+        <p>Now your manager asks questions like:</p>
+        <ul class="list-columns">
+         <li>Which product sold the most last month?</li>
+         <li>Which region had the highest revenue?</li>
+         <li>Which branch performed best during Christmas?</li>
+         <li>How did sales compare between 2025 and 2026?</li>
+        </ul>
+        <p>Searching through millions of records one by one would take a long time. Instead, businesses use <strong>OLAP</strong>, which allows users to explore and summarize large amounts of data quickly.</p>
+        <div class="quote-box"><span class="terminal-label">Key Idea //</span>
+         <p>Think of OLAP as a smart tool that lets managers ask business questions and receive answers in seconds.</p>
+        </div>
+        <h3 style="margin: 2rem 0 0.8rem; color: #fff;">What is OLAP?</h3>
+        <p><strong>OLAP (Online Analytical Processing)</strong> is a technology used to analyze large amounts of data stored in a Data Warehouse.</p>
+        <div class="grid-4">
+         <div class="mini-card">
+          Analyze trends
+         </div>
+         <div class="mini-card">
+          Compare performance
+         </div>
+         <div class="mini-card">
+          Summarize information
+         </div>
+         <div class="mini-card">
+          Make business decisions
+         </div>
+        </div>
+        <div class="quote-box" style="margin-top: 1.35rem;"><span class="terminal-label">Simple Definition //</span>
+         <p>OLAP is a system that allows users to quickly analyze data from different perspectives.</p>
+        </div>
+       </section>
+       <section class="section-card">
+        <h2 class="section-title"><span class="section-icon">!</span> Why is OLAP Important?</h2>
+        <p>Businesses collect huge amounts of data every day, including sales transactions, student enrollments, hospital admissions, bank transactions, and online purchases.</p>
+        <div class="grid-2">
+         <div class="concept-card mini-card">
+          <p class="terminal-label">Business Questions</p>
+          <h3>Managers need quick answers</h3>
+          <p>Which department performs best? What products are most profitable? Which months have the highest sales?</p>
+         </div>
+         <div class="concept-card mini-card">
+          <p class="terminal-label">OLAP Contribution</p>
+          <h3>Fast and efficient analysis</h3>
+          <p>OLAP makes answering analytical questions fast, interactive, and useful for decision-making.</p>
+         </div>
+        </div>
+       </section>
+       <section id="oltp-olap" class="section-card">
+        <h2 class="section-title"><span class="section-icon">⇄</span> OLTP vs OLAP</h2>
+        <p>Many students confuse OLTP and OLAP. Although they work together, they have different purposes.</p>
+        <div class="data-table-wrap">
+         <table class="data-table">
+          <thead>
+           <tr>
+            <th>OLTP (Online Transaction Processing)</th>
+            <th>OLAP (Online Analytical Processing)</th>
+           </tr>
+          </thead>
+          <tbody>
+           <tr>
+            <td>Records daily transactions</td>
+            <td>Analyzes historical data</td>
+           </tr>
+           <tr>
+            <td>Supports business operations</td>
+            <td>Supports business decisions</td>
+           </tr>
+           <tr>
+            <td>Many small transactions</td>
+            <td>Complex analytical queries</td>
+           </tr>
+           <tr>
+            <td>Fast insert, update, delete</td>
+            <td>Fast reporting and analysis</td>
+           </tr>
+           <tr>
+            <td>Current data</td>
+            <td>Historical and summarized data</td>
+           </tr>
+          </tbody>
+         </table>
+        </div>
+        <div class="grid-2" style="margin-top: 1.35rem;">
+         <div class="concept-card mini-card">
+          <p class="terminal-label">OLTP Example</p>
+          <h3>A customer buys a laptop</h3>
+          <p>The system records the customer, product, payment, and date. This is an operational transaction.</p>
+         </div>
+         <div class="concept-card mini-card">
+          <p class="terminal-label">OLAP Example</p>
+          <h3>A manager analyzes laptop sales</h3>
+          <p>How many laptops were sold this year? Which city bought the most? Which month had the highest revenue?</p>
+         </div>
+        </div>
+       </section>
+       <section id="cube" class="section-card">
+        <h2 class="section-title"><span class="section-icon">◇</span> What is an OLAP Cube?</h2>
+        <div class="cube-layout">
+         <div>
+          <p>An <strong>OLAP Cube</strong> is a way of organizing data so that it can be analyzed from multiple perspectives. Although it is called a cube, it does not have to contain only three dimensions. It can have many dimensions depending on business requirements.</p>
+          <p>Imagine a cube with the dimensions <strong>Product, Time, and Location</strong>. Each point inside the cube stores a value, such as <strong>Sales Amount</strong>.</p>
+          <p>This structure allows users to quickly compare sales by product, month, region, or any combination of dimensions.</p>
+         </div>
+         <div class="cube-diagram" aria-label="OLAP cube diagram showing Product, Time, and Location dimensions">
+          <div class="cube"><span class="axis one">PRODUCT</span> <span class="axis two">LOCATION</span> <span class="axis three">TIME</span>
+          </div>
+         </div>
+        </div>
+        <h3 style="margin: 1.8rem 0 0.8rem; color: #fff;">Components of an OLAP Cube</h3>
+        <div class="grid-3">
+         <div class="concept-card mini-card">
+          <p class="terminal-label">Component 01</p>
+          <h3>Facts</h3>
+          <p>Measurable values such as Sales, Profit, Quantity, and Revenue.</p>
+         </div>
+         <div class="concept-card mini-card">
+          <p class="terminal-label">Component 02</p>
+          <h3>Dimensions</h3>
+          <p>Categories used for analysis, such as Time, Product, Customer, Branch, and Employee.</p>
+         </div>
+         <div class="concept-card mini-card">
+          <p class="terminal-label">Component 03</p>
+          <h3>Measures</h3>
+          <p>Calculations performed on facts, such as SUM(Sales), AVG(Profit), COUNT(Orders), and MAX(Revenue).</p>
+         </div>
+        </div>
+       </section>
+       <section id="operations" class="section-card">
+        <h2 class="section-title"><span class="section-icon">⟲</span> OLAP Operations</h2>
+        <p>One of the strengths of OLAP is that users can explore data in different ways.</p>
+        <div class="grid-2">
+         <div class="operation-card"><span class="op-number">OPERATION 01</span>
+          <h3>Roll-Up</h3>
+          <p>Roll-Up summarizes data by moving to a higher level.</p>
+          <div class="example">
+           <b>Example:</b> Daily Sales → Monthly Sales → Yearly Sales. January ₱100,000 plus February ₱120,000 gives 2026 Total Sales = ₱220,000.
+          </div>
+         </div>
+         <div class="operation-card"><span class="op-number">OPERATION 02</span>
+          <h3>Drill-Down</h3>
+          <p>Drill-Down is the opposite of Roll-Up. It shows more detailed information.</p>
+          <div class="example">
+           <b>Example:</b> Year → Quarter → Month → Day. Managers can start with yearly reports and inspect daily details.
+          </div>
+         </div>
+         <div class="operation-card"><span class="op-number">OPERATION 03</span>
+          <h3>Slice</h3>
+          <p>A Slice selects one value from one dimension.</p>
+          <div class="example">
+           <b>Example:</b> Select Year = 2026. The report now displays only data for 2026.
+          </div>
+         </div>
+         <div class="operation-card"><span class="op-number">OPERATION 04</span>
+          <h3>Dice</h3>
+          <p>A Dice selects multiple values from multiple dimensions.</p>
+          <div class="example">
+           <b>Example:</b> Year = 2026 AND Region = Luzon AND Product Category = Electronics.
+          </div>
+         </div>
+         <div class="operation-card" style="grid-column: 1 / -1;"><span class="op-number">OPERATION 05</span>
+          <h3>Pivot (Rotate)</h3>
+          <p>Pivot changes the way data is displayed. The data is the same, but the perspective changes.</p>
+          <div class="example">
+           <b>Example:</b> Before Pivot: Rows = Products and Columns = Months. After Pivot: Rows = Months and Columns = Products.
+          </div>
+         </div>
+        </div>
+       </section>
+       <section id="types" class="section-card">
+        <h2 class="section-title"><span class="section-icon">▦</span> Types of OLAP</h2>
+        <p>There are three main types of OLAP systems.</p>
+        <div class="grid-3">
+         <div class="type-card">
+          <p class="terminal-label">Type 01</p>
+          <h3>MOLAP</h3>
+          <p><strong>Multidimensional OLAP</strong> stores data in specialized multidimensional cubes.</p>
+          <p><strong>Advantages:</strong> Very fast analysis and excellent query performance.</p>
+          <p><strong>Disadvantages:</strong> Requires additional storage and cube processing may take time.</p>
+         </div>
+         <div class="type-card">
+          <p class="terminal-label">Type 02</p>
+          <h3>ROLAP</h3>
+          <p><strong>Relational OLAP</strong> keeps data inside relational databases.</p>
+          <p><strong>Advantages:</strong> Handles very large datasets and is easier to update.</p>
+          <p><strong>Disadvantages:</strong> Slower than MOLAP for complex queries.</p>
+         </div>
+         <div class="type-card">
+          <p class="terminal-label">Type 03</p>
+          <h3>HOLAP</h3>
+          <p><strong>Hybrid OLAP</strong> combines MOLAP and ROLAP.</p>
+          <p>Frequently used summary data is stored in cubes, while detailed data remains in relational databases.</p>
+          <p><strong>Advantage:</strong> Good balance of speed and scalability.</p>
+         </div>
+        </div>
+        <h3 style="margin: 1.8rem 0 0.8rem; color: #fff;">Comparison of OLAP Types</h3>
+        <div class="data-table-wrap">
+         <table class="data-table">
+          <thead>
+           <tr>
+            <th>Feature</th>
+            <th>MOLAP</th>
+            <th>ROLAP</th>
+            <th>HOLAP</th>
+           </tr>
+          </thead>
+          <tbody>
+           <tr>
+            <td>Storage</td>
+            <td>Multidimensional Cube</td>
+            <td>Relational Database</td>
+            <td>Combination</td>
+           </tr>
+           <tr>
+            <td>Speed</td>
+            <td>Very Fast</td>
+            <td>Moderate</td>
+            <td>Fast</td>
+           </tr>
+           <tr>
+            <td>Scalability</td>
+            <td>Medium</td>
+            <td>High</td>
+            <td>High</td>
+           </tr>
+           <tr>
+            <td>Complex Queries</td>
+            <td>Excellent</td>
+            <td>Good</td>
+            <td>Very Good</td>
+           </tr>
+          </tbody>
+         </table>
+        </div>
+       </section>
+       <section id="business" class="section-card">
+        <h2 class="section-title"><span class="section-icon">▣</span> OLAP in Business</h2>
+        <p>Many industries rely on OLAP every day.</p>
+        <div class="grid-3">
+         <div class="mini-card">
+          <p class="terminal-label">Retail</p>
+          <h3>Sales insight</h3>
+          <p>Best-selling products, seasonal sales, and customer spending.</p>
+         </div>
+         <div class="mini-card">
+          <p class="terminal-label">Banking</p>
+          <h3>Financial analysis</h3>
+          <p>Loan analysis, fraud detection, and branch performance.</p>
+         </div>
+         <div class="mini-card">
+          <p class="terminal-label">Healthcare</p>
+          <h3>Service trends</h3>
+          <p>Patient admissions, disease trends, and medicine usage.</p>
+         </div>
+         <div class="mini-card">
+          <p class="terminal-label">Education</p>
+          <h3>Academic reporting</h3>
+          <p>Student enrollment, graduation rates, and subject performance.</p>
+         </div>
+         <div class="mini-card">
+          <p class="terminal-label">E-commerce</p>
+          <h3>Customer behavior</h3>
+          <p>Product recommendations, customer behavior, and monthly revenue.</p>
+         </div>
+         <div class="mini-card">
+          <p class="terminal-label">Business Intelligence</p>
+          <h3>Strategic decisions</h3>
+          <p>Interactive reports that transform historical data into useful information.</p>
+         </div>
+        </div>
+        <h3 style="margin: 1.8rem 0 0.8rem; color: #fff;">Advantages of OLAP</h3>
+        <div class="grid-2">
+         <div class="mini-card">
+          ✔ Fast analysis of large datasets
+         </div>
+         <div class="mini-card">
+          ✔ Supports better decision-making
+         </div>
+         <div class="mini-card">
+          ✔ Easy trend analysis
+         </div>
+         <div class="mini-card">
+          ✔ Interactive reports
+         </div>
+         <div class="mini-card">
+          ✔ Supports Business Intelligence tools
+         </div>
+         <div class="mini-card">
+          ✔ Analyzes data from different perspectives
+         </div>
+        </div>
+        <h3 style="margin: 1.8rem 0 0.8rem; color: #fff;">Limitations of OLAP</h3>
+        <ul class="list-columns">
+         <li>Requires a well-designed Data Warehouse.</li>
+         <li>Initial setup can be expensive.</li>
+         <li>Cube processing may require additional time and storage.</li>
+         <li>Historical data must be accurate and consistent.</li>
+         <li>Very large datasets may require optimized storage strategies.</li>
+        </ul>
+       </section>
+       <section class="section-card">
+        <h2 class="section-title"><span class="section-icon">◉</span> Real-World Example</h2>
+        <p>An online shopping company stores millions of transactions in its Data Warehouse. Using OLAP, managers can instantly answer questions such as:</p>
+        <ul class="list-columns">
+         <li>What were the top five products last quarter?</li>
+         <li>Which city generated the highest revenue?</li>
+         <li>Which payment method is most popular?</li>
+         <li>Which products sell best during holidays?</li>
+         <li>How do this year's sales compare with last year's?</li>
+        </ul>
+        <div class="quote-box">
+         <p>Instead of manually searching millions of records, OLAP performs these analyses within seconds.</p>
+        </div>
+       </section>
+       <section id="activities" class="section-card">
+        <h2 class="section-title"><span class="section-icon">✦</span> Class Activity 1: Identify the OLAP Operation</h2>
+        <p>For each scenario, identify the correct OLAP operation.</p>
+        <div class="data-table-wrap">
+         <table class="data-table">
+          <thead>
+           <tr>
+            <th>Scenario</th>
+            <th>Answer</th>
+           </tr>
+          </thead>
+          <tbody>
+           <tr>
+            <td>View yearly sales instead of monthly sales</td>
+            <td>Roll-Up</td>
+           </tr>
+           <tr>
+            <td>View daily sales for January</td>
+            <td>Drill-Down</td>
+           </tr>
+           <tr>
+            <td>Display only data for 2026</td>
+            <td>Slice</td>
+           </tr>
+           <tr>
+            <td>Analyze Electronics sales in Luzon during 2026</td>
+            <td>Dice</td>
+           </tr>
+           <tr>
+            <td>Swap products and months in a report</td>
+            <td>Pivot</td>
+           </tr>
+          </tbody>
+         </table>
+        </div>
+        <h2 class="section-title" style="margin-top: 2.2rem;"><span class="section-icon">⌘</span> Class Activity 2: Build an OLAP Cube</h2>
+        <p><strong>Scenario: University Enrollment</strong></p>
+        <div class="grid-2">
+         <div class="mini-card">
+          <p class="terminal-label">Dimensions</p>
+          <p>Student<br>
+           Program<br>
+           Semester<br>
+           Year</p>
+         </div>
+         <div class="mini-card">
+          <p class="terminal-label">Fact</p>
+          <p>Number of Enrollments</p>
+         </div>
+        </div>
+        <div class="quote-box" style="margin-top: 1rem;"><span class="terminal-label">Instructions //</span>
+         <p>Identify the dimensions. Identify the fact. Suggest three questions administrators could answer using OLAP. Identify which OLAP operation would answer each question.</p>
+        </div>
+       </section>
+       <section class="section-card">
+        <h2 class="section-title"><span class="section-icon">?</span> Reflection Questions</h2>
+        <ol style="padding-left: 1.25rem;">
+         <li>Why is OLAP important for organizations that collect large amounts of data?</li>
+         <li>Compare OLTP and OLAP. How do their purposes differ?</li>
+         <li>Explain how an OLAP cube helps managers analyze business information.</li>
+         <li>Describe the five basic OLAP operations and provide one example of each.</li>
+         <li>Compare MOLAP, ROLAP, and HOLAP. Which would you recommend for a large company and why?</li>
+         <li>Imagine you are designing an OLAP system for your university. What dimensions, facts, and reports would be most useful to administrators?</li>
+        </ol>
+       </section>
+       <section id="summary" class="summary">
+        <div class="summary-head">
+         <div class="summary-mark" aria-hidden="true">
+          ✓
+         </div>
+         <div>
+          <h2>Lesson Summary</h2>
+          <p>Online Analytical Processing (OLAP) is a key technology in Data Warehousing and Business Intelligence that enables organizations to analyze large volumes of historical data quickly and efficiently.</p>
+          <p>Unlike OLTP, which focuses on recording daily transactions, OLAP is designed for reporting, trend analysis, and decision support. Using OLAP cubes, organizations can examine data from multiple dimensions and perform operations such as Roll-Up, Drill-Down, Slice, Dice, and Pivot.</p>
+          <p>Different OLAP architectures—MOLAP, ROLAP, and HOLAP—provide different approaches to balancing speed, storage, and scalability. Together with the Data Warehouse and ETL processes, OLAP helps businesses transform raw data into meaningful insights that support strategic decision-making.</p>
+         </div>
+        </div>
+       </section>
+      </article>
+     </div>
+    </main>
+    <footer>
+     <div class="wrap footer-inner"><span>Data Warehousing · Lesson 5</span> <span class="mono">MKDB // OLAP ANALYTICS</span>
+     </div>
+    </footer>
+   </div>
+  </div>
+ </body>
+</html>

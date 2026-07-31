@@ -1,0 +1,897 @@
+<!doctype html>
+<html lang="en">
+ <head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260731-03-0b60c17","C":{"Abril Fatface":"YACgEZbkUVE,0","Alfa Slab One":"YACgEYS9sJU,0","Anton":"YACgEcYqQ-A,0","Archivo":"YAHO2-t-jNE,0","Arial":"YAGyDvJ_4Ts,0","Bebas Neue":"YACgESME5ew,0","Broken Glyph":"YADZ-exUkv0,0","Canva Sans":"YAFdJjTk5UU,0","Caveat":"YALBs2ploWQ,0","Comic Sans MS":"YAHO2VMiyZo,0","Cormorant Garamond":"YAFdJhX-538,0","Courier New":"YAGzXiGs0_8,0","DM Sans":"YAD1aU3sLnI,0","DM Serif Display":"YAD1aYG82rc,0","Forum":"YACgEcnnqB4,0","Fraunces":"YAEul-FRQw4,0","Georgia":"YAGzXkO0pEM,0","Ghost Mono":"YAHO2EIdDP0,0","Helvetica Neue":"YAFcf6CtJfI,0","Impact":"YAFcfnjI7Vk,0","Inter":"YAFdJvSyp_k,3","Iowan Old Style":"YAGNIFa8j9o,0","Jacques Francois":"YAHO2a5g66Q,0","JetBrains Mono":"YADy3sAhvXQ,0","Oleo Script":"YACgEQQ14jI,0","Playfair Display":"YAFdJhem5V8,1","Poppins":"YAE5fPSY9qM,0","Press Start 2P":"YAFyGr-8pmQ,0","Source Sans 3":"YAG4lO1Mj10,0","Space Grotesk":"YAHO2sjPCSM,0","Times New Roman":"YAGzXW3gftg,0","Times":"YAGzXW3gftg,0","Trebuchet MS":"YAFcfrglpVA,0","Verdana":"YAGzXTctYtQ,0","Work Sans":"YAGXhLOKv44,0","Yellowtail":"YACgEYG4kG4,0"}}');</script><script src="/_sdk/a27874207e105461.telemetry_sdk.js" integrity="sha512-wgI5N9F7oA2h3vH+benMYIv4wGqTct4nKWakqgvfgRyBLmfYq8q/fi6gkfWKd2hMsyN+VQ/qOAOpxybwkcoxlA=="></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 4: Advanced Dimensional Modelling — ETL Processes</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700;800&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #07101e;
+      --panel: #0d1b2d;
+      --panel-2: #10243b;
+      --line: rgba(87, 219, 255, 0.18);
+      --cyan: #58e1ff;
+      --electric: #9cff57;
+      --violet: #b29bff;
+      --muted: #a9bdd1;
+      --paper: #eaf7ff;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      color: var(--paper);
+      font-family: "Fira Sans", sans-serif;
+      background: #07101e;
+    }
+
+    .cyber-page {
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+      position: relative;
+      background:
+        radial-gradient(circle at 15% 6%, rgba(52, 160, 195, 0.18), transparent 28rem),
+        radial-gradient(circle at 85% 16%, rgba(111, 82, 203, 0.18), transparent 31rem),
+        linear-gradient(135deg, #07101e 0%, #091728 52%, #07101e 100%);
+    }
+
+    .cyber-page::before,
+    .cyber-page::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .cyber-page::before {
+      opacity: 0.38;
+      background-image:
+        linear-gradient(rgba(95, 219, 255, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(95, 219, 255, 0.055) 1px, transparent 1px);
+      background-size: 38px 38px;
+      mask-image: linear-gradient(to bottom, black, transparent 90%);
+    }
+
+    .cyber-page::after {
+      background:
+        radial-gradient(circle at 20% 20%, rgba(156, 255, 87, 0.65) 0 2px, transparent 3px),
+        radial-gradient(circle at 77% 34%, rgba(88, 225, 255, 0.6) 0 2px, transparent 3px),
+        radial-gradient(circle at 60% 80%, rgba(178, 155, 255, 0.65) 0 2px, transparent 3px);
+      animation: pulseNodes 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulseNodes {
+      from { opacity: 0.45; }
+      to { opacity: 0.85; }
+    }
+
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-content { position: relative; z-index: 1; width: 100%; }
+    .mono { font-family: "Space Mono", monospace; }
+
+    .network-line {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), var(--electric), transparent);
+      box-shadow: 0 0 18px rgba(88, 225, 255, 0.55);
+    }
+
+    .topline {
+      border-bottom: 1px solid var(--line);
+      background: rgba(4, 12, 23, 0.72);
+      backdrop-filter: blur(16px);
+    }
+
+    .glass-panel {
+      background: linear-gradient(145deg, rgba(18, 41, 66, 0.92), rgba(8, 22, 39, 0.92));
+      border: 1px solid var(--line);
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.2);
+    }
+
+    .section-card {
+      padding: 1.5rem;
+      border: 1px solid rgba(112, 219, 255, 0.15);
+      border-radius: 1.2rem;
+      background: rgba(10, 27, 47, 0.68);
+    }
+
+    .section-card p,
+    .section-card li { color: #c5d7e6; line-height: 1.78; }
+
+    .section-card strong { color: #ffffff; }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.1rem;
+      padding-bottom: 0.75rem;
+      color: var(--cyan);
+      font-family: "Space Mono", monospace;
+      letter-spacing: 0.045em;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(88, 225, 255, 0.16);
+    }
+
+    .terminal-label {
+      color: var(--electric);
+      font-family: "Space Mono", monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .outcome-card {
+      border: 1px solid rgba(88, 225, 255, 0.17);
+      background: rgba(5, 19, 34, 0.48);
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .outcome-card:hover,
+    .concept-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(156, 255, 87, 0.65);
+      background: rgba(13, 42, 54, 0.78);
+    }
+
+    .outcome-number {
+      width: 1.75rem;
+      height: 1.75rem;
+      flex-shrink: 0;
+      color: var(--ink);
+      font-family: "Space Mono", monospace;
+      font-weight: 700;
+      background: var(--electric);
+    }
+
+    .quote-box {
+      color: #e3f9d2;
+      border-left: 3px solid var(--electric);
+      background: rgba(156, 255, 87, 0.07);
+    }
+
+    .data-table {
+      width: 100%;
+      overflow: hidden;
+      border-collapse: collapse;
+      border-radius: 0.9rem;
+      border-style: hidden;
+      box-shadow: 0 0 0 1px rgba(88, 225, 255, 0.17);
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 0.8rem;
+      border: 1px solid rgba(88, 225, 255, 0.12);
+    }
+
+    .data-table th {
+      color: var(--cyan);
+      font-family: "Space Mono", monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      text-align: left;
+      background: rgba(88, 225, 255, 0.12);
+    }
+
+    .data-table td { color: #d9e9f4; }
+
+    .lesson-nav a {
+      color: #9fb6ca;
+      border-left: 2px solid transparent;
+      transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .lesson-nav a:hover {
+      color: var(--electric);
+      border-left-color: var(--electric);
+      background: rgba(156, 255, 87, 0.06);
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.7rem;
+      align-items: center;
+    }
+
+    .pipeline-node {
+      min-height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.8rem;
+      color: #dff8ff;
+      text-align: center;
+      font-family: "Space Mono", monospace;
+      font-size: 0.76rem;
+      border: 1px solid rgba(88, 225, 255, 0.3);
+      border-radius: 0.85rem;
+      background: rgba(9, 31, 53, 0.88);
+    }
+
+    .pipeline-node.active {
+      color: #07101e;
+      font-weight: 700;
+      border-color: #d6ffae;
+      background: #b8ff71;
+      box-shadow: 0 0 22px rgba(156, 255, 87, 0.25);
+    }
+
+    .pipeline-arrow {
+      color: var(--electric);
+      font-size: 1.25rem;
+      text-align: center;
+    }
+
+    .concept-card {
+      border: 1px solid rgba(178, 155, 255, 0.22);
+      background: linear-gradient(145deg, rgba(29, 28, 67, 0.6), rgba(9, 25, 44, 0.82));
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .phase-icon {
+      color: var(--cyan);
+      border: 1px solid rgba(88, 225, 255, 0.26);
+      background: rgba(88, 225, 255, 0.08);
+    }
+
+    .fade-in { animation: riseIn 650ms ease both; }
+
+    @media (max-width: 1023px) {
+      .lesson-nav { display: none; }
+    }
+
+    @media (max-width: 760px) {
+      .pipeline { grid-template-columns: 1fr; }
+      .pipeline-arrow { transform: rotate(90deg); }
+    }
+
+    @media (max-width: 640px) {
+      .section-card { padding: 1.1rem; }
+      .data-table { font-size: 0.82rem; }
+      .data-table th, .data-table td { padding: 0.6rem; }
+    }
+  </style>
+  <script src="/_sdk/935a53bc2e11fb8d.data_sdk.js" type="text/javascript" integrity="sha512-qr2oyPnEys1WebcOABaRh6hG77r5PWpqeWW6JTKbRJqly/INsfBi31CVNlTmHqjgeLpkVmmHZJUdxSx/32tOFQ=="></script>
+  <script src="/_sdk/9a740ce6cacd0808.editing_sdk.js" type="text/javascript" integrity="sha512-ZcKE2UXVxSh0Kmty64HdB2xjpgsalbehms1KOXHeK7POjO9v81VU+RYWmq0cOBM9u4mY5oRq7UsigAanNH4Iww=="></script>
+  <script src="/_sdk/6030e540d4419216.resizing_sdk.js" type="text/javascript" integrity="sha512-b5KWzyoXsbWP4smq4sftIi6Kts4YVBpBsz0BwCViwbBJkK64a3/Z6ZMdWA+qnplNcXw4mhZeqvQi3mOosiRJdA=="></script>
+ </head>
+ <body class="cyber-page">
+  <div class="page-content">
+   <div class="network-line"></div>
+   <header class="topline">
+    <div class="w-full max-w-7xl mx-auto px-5 py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+     <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center border border-cyan-300/40 bg-cyan-300/10 text-cyan-200"><i data-lucide="database" class="w-5 h-5"></i>
+      </div>
+      <div>
+       <p class="mono text-xs tracking-widest text-cyan-200 uppercase">Course · Data Warehousing</p>
+       <p class="text-sm text-slate-400">Instructor: MKDB</p>
+      </div>
+     </div>
+     <div class="mono text-xs text-lime-200 tracking-wide"><span class="text-slate-500">STATUS:</span> ONLINE / LESSON MODULE
+     </div>
+    </div>
+   </header>
+   <main class="w-full max-w-7xl mx-auto px-5 py-10 lg:py-14">
+    <section class="glass-panel rounded-3xl overflow-hidden fade-in">
+     <div class="p-7 md:p-11">
+      <div class="flex flex-wrap gap-3 items-center mb-6"><span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mono text-xs border border-lime-300/45 text-lime-200 bg-lime-300/10">LESSON 04</span> <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mono text-xs border border-cyan-300/25 text-cyan-100 bg-cyan-300/5"> <i data-lucide="workflow" class="w-3.5 h-3.5"></i> DATA PIPELINE ARCHITECTURE </span>
+      </div>
+      <div class="grid lg:grid-cols-[1.25fr_.75fr] gap-10 items-end">
+       <div>
+        <p class="terminal-label mb-4">/ Course Module / Knowledge Node 04</p>
+        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-tight">Advanced Dimensional Modelling</h1>
+        <p class="mt-5 max-w-2xl text-lg md:text-xl text-slate-300 leading-relaxed">ETL Processes, Design, and Implementation</p>
+        <div class="mt-6 flex flex-wrap gap-3 text-sm"><span class="rounded-full border border-cyan-300/20 bg-cyan-300/5 px-3 py-1.5 text-cyan-100">BSCS Program</span> <span class="rounded-full border border-violet-300/25 bg-violet-300/10 px-3 py-1.5 text-violet-100">2 Hours Lecture</span>
+        </div>
+       </div>
+       <div class="rounded-2xl border border-cyan-300/15 bg-black/20 p-5">
+        <div class="flex items-center justify-between text-sm"><span class="text-slate-400">Lesson focus</span> <i data-lucide="zap" class="w-5 h-5 text-lime-300"></i>
+        </div>
+        <div class="mt-3 h-2 rounded-full bg-slate-800 overflow-hidden">
+         <div class="h-full w-4/5 bg-gradient-to-r from-cyan-300 via-violet-300 to-lime-300"></div>
+        </div>
+        <p class="mt-4 text-sm text-slate-300 leading-relaxed">Follow raw business data through extraction, transformation, and loading until it becomes reliable information for reporting and analytics.</p>
+       </div>
+      </div>
+     </div>
+    </section>
+    <div class="grid lg:grid-cols-[220px_minmax(0,1fr)] gap-8 mt-9">
+     <aside class="lesson-nav hidden lg:block">
+      <nav class="sticky top-6 glass-panel rounded-2xl p-4" aria-label="Lesson navigation">
+       <p class="terminal-label px-3 mb-3">Navigate</p><a href="#outcomes" class="block text-sm py-2.5 px-3 rounded-r-lg">Learning Outcomes</a> <a href="#review" class="block text-sm py-2.5 px-3 rounded-r-lg">Previous Lesson</a> <a href="#introduction" class="block text-sm py-2.5 px-3 rounded-r-lg">Introduction</a> <a href="#etl-process" class="block text-sm py-2.5 px-3 rounded-r-lg">ETL Process</a> <a href="#extract" class="block text-sm py-2.5 px-3 rounded-r-lg">Extract</a> <a href="#transform" class="block text-sm py-2.5 px-3 rounded-r-lg">Transform</a> <a href="#load" class="block text-sm py-2.5 px-3 rounded-r-lg">Load</a> <a href="#elt" class="block text-sm py-2.5 px-3 rounded-r-lg">ETL vs ELT</a> <a href="#practice" class="block text-sm py-2.5 px-3 rounded-r-lg">Activities</a> <a href="#summary" class="block text-sm py-2.5 px-3 rounded-r-lg">Summary</a>
+      </nav>
+     </aside>
+     <article class="space-y-7 min-w-0">
+      <section id="outcomes" class="section-card fade-in">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="target" class="w-5 h-5"></i> Learning Outcomes</h2>
+       <p class="text-slate-300 mb-5">At the end of this lesson, students should be able to:</p>
+       <div class="grid sm:grid-cols-2 gap-3">
+        <div class="outcome-card rounded-xl p-4 flex gap-3">
+         <span class="outcome-number rounded-full flex items-center justify-center text-xs">01</span>
+         <p class="m-0 text-sm">Explain the purpose of the ETL process in a Data Warehouse.</p>
+        </div>
+        <div class="outcome-card rounded-xl p-4 flex gap-3">
+         <span class="outcome-number rounded-full flex items-center justify-center text-xs">02</span>
+         <p class="m-0 text-sm">Describe the three phases of ETL: Extract, Transform, and Load.</p>
+        </div>
+        <div class="outcome-card rounded-xl p-4 flex gap-3">
+         <span class="outcome-number rounded-full flex items-center justify-center text-xs">03</span>
+         <p class="m-0 text-sm">Differentiate ETL from ELT.</p>
+        </div>
+        <div class="outcome-card rounded-xl p-4 flex gap-3">
+         <span class="outcome-number rounded-full flex items-center justify-center text-xs">04</span>
+         <p class="m-0 text-sm">Explain how ETL integrates with dimensional modelling.</p>
+        </div>
+        <div class="outcome-card rounded-xl p-4 flex gap-3">
+         <span class="outcome-number rounded-full flex items-center justify-center text-xs">05</span>
+         <p class="m-0 text-sm">Design a simple ETL workflow for a business scenario.</p>
+        </div>
+        <div class="outcome-card rounded-xl p-4 flex gap-3">
+         <span class="outcome-number rounded-full flex items-center justify-center text-xs">06</span>
+         <p class="m-0 text-sm">Identify common challenges and best practices in ETL implementation.</p>
+        </div>
+       </div>
+       <h3 class="mt-8 mb-4 text-xl font-bold text-white">Learning Objectives</h3>
+       <div class="grid sm:grid-cols-2 gap-x-8 gap-y-1 list-disc pl-6">
+        <li>Define ETL and explain why it is important.</li>
+        <li>Describe each stage of the ETL process.</li>
+        <li>Identify common data quality problems.</li>
+        <li>Explain how data is transformed before loading into a warehouse.</li>
+        <li>Design an ETL pipeline for a simple business case.</li>
+        <li>Understand the role of ETL tools in modern data warehousing.</li>
+       </div>
+      </section>
+      <section id="review" class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="history" class="w-5 h-5"></i> Review of Previous Lesson</h2>
+       <p>Previously, we learned how data is organized inside a Data Warehouse using <strong>Dimensional Modelling</strong>.</p>
+       <p>We learned about:</p>
+       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 my-5">
+        <div class="rounded-xl border border-cyan-300/15 bg-cyan-300/5 p-4 text-cyan-100">
+         Fact Tables
+        </div>
+        <div class="rounded-xl border border-cyan-300/15 bg-cyan-300/5 p-4 text-cyan-100">
+         Dimension Tables
+        </div>
+        <div class="rounded-xl border border-cyan-300/15 bg-cyan-300/5 p-4 text-cyan-100">
+         Star Schema
+        </div>
+        <div class="rounded-xl border border-cyan-300/15 bg-cyan-300/5 p-4 text-cyan-100">
+         Snowflake Schema
+        </div>
+        <div class="rounded-xl border border-cyan-300/15 bg-cyan-300/5 p-4 text-cyan-100">
+         Slowly Changing Dimensions
+        </div>
+        <div class="rounded-xl border border-cyan-300/15 bg-cyan-300/5 p-4 text-cyan-100">
+         Different Fact Table Types
+        </div>
+       </div>
+       <div class="quote-box rounded-r-xl px-5 py-4"><span class="mono text-sm text-lime-200">NEXT QUESTION //</span>
+        <p class="m-0 mt-1">Now that we know how data is organized, where does the data come from? The answer is the <strong>ETL Process</strong>.</p>
+       </div>
+      </section>
+      <section id="introduction" class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="glass-water" class="w-5 h-5"></i> Introduction</h2>
+       <p>Imagine you are preparing fruit juice. You do not simply throw everything into a blender. Instead, you follow three steps.</p>
+       <div class="grid md:grid-cols-3 gap-4 mt-5">
+        <div class="concept-card rounded-xl p-5">
+         <p class="terminal-label">Step 01</p>
+         <h3 class="mt-2 text-xl font-bold text-white">Collect the fruits</h3>
+         <p class="text-sm">Gather apples, oranges, and mangoes.</p>
+        </div>
+        <div class="concept-card rounded-xl p-5">
+         <p class="terminal-label">Step 02</p>
+         <h3 class="mt-2 text-xl font-bold text-white">Prepare them</h3>
+         <p class="text-sm">Wash them, remove the seeds, peel the skin, and cut them into pieces.</p>
+        </div>
+        <div class="concept-card rounded-xl p-5">
+         <p class="terminal-label">Step 03</p>
+         <h3 class="mt-2 text-xl font-bold text-white">Blend and pour</h3>
+         <p class="text-sm">The juice is ready to drink.</p>
+        </div>
+       </div>
+       <p class="mt-6">A Data Warehouse works almost the same way. Business data must first be collected, cleaned, and prepared before it can be stored for reporting. This process is called <strong>ETL</strong>.</p>
+      </section>
+      <section id="etl-process" class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="workflow" class="w-5 h-5"></i> What is ETL?</h2>
+       <p>ETL stands for <strong>Extract, Transform, and Load</strong>. It is the process of collecting data from different sources, cleaning and organizing it, and storing it inside a Data Warehouse.</p>
+       <p>Think of ETL as a factory assembly line. Raw materials enter one side, are processed, and come out as finished products. Similarly, raw data enters the ETL process and becomes useful information for business analysis.</p>
+       <div class="pipeline mt-7">
+        <div class="pipeline-node">
+         DATA<br>
+         SOURCES
+        </div>
+        <div class="pipeline-arrow">
+         →
+        </div>
+        <div class="pipeline-node active">
+         EXTRACT
+        </div>
+        <div class="pipeline-arrow">
+         →
+        </div>
+        <div class="pipeline-node active">
+         TRANSFORM
+        </div>
+        <div class="pipeline-arrow">
+         →
+        </div>
+        <div class="pipeline-node active">
+         LOAD
+        </div>
+        <div class="pipeline-arrow">
+         →
+        </div>
+        <div class="pipeline-node">
+         DATA WAREHOUSE<br>
+         &amp; REPORTS
+        </div>
+       </div>
+       <h3 class="mt-8 mb-3 text-xl font-bold text-white">Why is ETL Important?</h3>
+       <p>Businesses collect data from many different systems. A supermarket may have a Sales System, Inventory System, Payroll System, Customer Loyalty System, and Online Store. Each system stores data differently.</p>
+       <p>ETL combines all these sources into one Data Warehouse so managers can generate accurate reports.</p>
+       <div class="grid sm:grid-cols-2 gap-3 mt-5">
+        <div class="rounded-xl border border-rose-300/20 bg-rose-300/5 p-4">
+         <p class="terminal-label text-rose-200">Without ETL</p>
+         <ul class="mt-3 mb-0 list-disc pl-5 text-sm text-slate-300">
+          <li>Data may be incomplete.</li>
+          <li>Reports may contain errors.</li>
+          <li>Departments may have conflicting information.</li>
+          <li>Decision-making becomes unreliable.</li>
+         </ul>
+        </div>
+        <div class="rounded-xl border border-lime-300/20 bg-lime-300/5 p-4">
+         <p class="terminal-label">With ETL</p>
+         <ul class="mt-3 mb-0 list-disc pl-5 text-sm text-slate-300">
+          <li>Data is prepared for analysis.</li>
+          <li>Reports become more accurate.</li>
+          <li>Information is standardized.</li>
+          <li>Decisions become more reliable.</li>
+         </ul>
+        </div>
+       </div>
+      </section>
+      <section id="extract" class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="download" class="w-5 h-5"></i> Step 1: Extract</h2>
+       <p><strong>Extraction</strong> is the process of collecting data from different sources.</p>
+       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-5">
+        <div class="rounded-xl border border-cyan-300/15 bg-cyan-300/5 p-4 text-cyan-100">
+         Relational databases
+        </div>
+        <div class="rounded-xl border border-cyan-300/15 bg-cyan-300/5 p-4 text-cyan-100">
+         Excel spreadsheets
+        </div>
+        <div class="rounded-xl border border-cyan-300/15 bg-cyan-300/5 p-4 text-cyan-100">
+         CSV files
+        </div>
+        <div class="rounded-xl border border-cyan-300/15 bg-cyan-300/5 p-4 text-cyan-100">
+         Web applications
+        </div>
+        <div class="rounded-xl border border-cyan-300/15 bg-cyan-300/5 p-4 text-cyan-100">
+         ERP and CRM systems
+        </div>
+        <div class="rounded-xl border border-cyan-300/15 bg-cyan-300/5 p-4 text-cyan-100">
+         APIs and cloud storage
+        </div>
+       </div>
+       <p class="mt-6">For example, a company may collect sales from MySQL, inventory from Excel, customers from an online website, and employees from an HR system. All these datasets are extracted.</p>
+       <div class="quote-box rounded-r-xl px-5 py-4 mt-5">
+        <p class="m-0">The goal of extraction is to collect all required data without changing the original source data. Extraction should be <strong>accurate, fast, and reliable</strong>.</p>
+       </div>
+       <h3 class="mt-8 mb-4 text-xl font-bold text-white">Types of Extraction</h3>
+       <div class="grid md:grid-cols-2 gap-5">
+        <div class="concept-card rounded-xl p-5">
+         <p class="terminal-label text-violet-200">Type 01</p>
+         <h4 class="mt-2 text-xl font-bold text-white">Full Extraction</h4>
+         <p>Copies all available data every time. For example, a company copies every customer record every night.</p>
+         <p class="mb-0 text-sm"><strong>Advantages:</strong> Simple and complete.<br><strong>Disadvantages:</strong> Slow and uses more storage.</p>
+        </div>
+        <div class="concept-card rounded-xl p-5">
+         <p class="terminal-label">Type 02</p>
+         <h4 class="mt-2 text-xl font-bold text-white">Incremental Extraction</h4>
+         <p>Copies only new or updated records. If 100,000 sales existed yesterday and 500 sales are new today, ETL copies only the 500 new records.</p>
+         <p class="mb-0 text-sm"><strong>Advantages:</strong> Faster, uses less storage, and is most commonly used.</p>
+        </div>
+       </div>
+      </section>
+      <section id="transform" class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="wand-sparkles" class="w-5 h-5"></i> Step 2: Transform</h2>
+       <p>After extraction, the data is rarely ready for analysis. Different systems may store information differently. For example, one system may store <strong>Male</strong> while another uses <strong>M</strong>. These values should be standardized before loading.</p>
+       <p>The transformation stage improves data quality by cleaning incorrect data, removing duplicates, standardizing formats, validating records, combining datasets, and creating calculated fields.</p>
+       <div class="grid md:grid-cols-2 gap-4 mt-6">
+        <div class="rounded-xl border border-cyan-300/18 bg-cyan-300/5 p-5">
+         <div class="flex gap-3">
+          <div class="phase-icon w-10 h-10 rounded-xl flex items-center justify-center shrink-0">
+           <i data-lucide="brush-cleaning" class="w-5 h-5"></i>
+          </div>
+          <div>
+           <h3 class="m-0 text-lg font-bold text-white">1. Data Cleaning</h3>
+           <p class="m-0 mt-2 text-sm">Correct spelling errors. For example, “Manilla” should become “Manila”.</p>
+          </div>
+         </div>
+        </div>
+        <div class="rounded-xl border border-cyan-300/18 bg-cyan-300/5 p-5">
+         <div class="flex gap-3">
+          <div class="phase-icon w-10 h-10 rounded-xl flex items-center justify-center shrink-0">
+           <i data-lucide="copy-x" class="w-5 h-5"></i>
+          </div>
+          <div>
+           <h3 class="m-0 text-lg font-bold text-white">2. Remove Duplicates</h3>
+           <p class="m-0 mt-2 text-sm">Two records for John Santos should become one clean customer record.</p>
+          </div>
+         </div>
+        </div>
+        <div class="rounded-xl border border-cyan-300/18 bg-cyan-300/5 p-5">
+         <div class="flex gap-3">
+          <div class="phase-icon w-10 h-10 rounded-xl flex items-center justify-center shrink-0">
+           <i data-lucide="calendar-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+           <h3 class="m-0 text-lg font-bold text-white">3. Standardize Formats</h3>
+           <p class="m-0 mt-2 text-sm">Dates such as 01/12/2026 and 2026-12-01 can be standardized as 2026-12-01.</p>
+          </div>
+         </div>
+        </div>
+        <div class="rounded-xl border border-cyan-300/18 bg-cyan-300/5 p-5">
+         <div class="flex gap-3">
+          <div class="phase-icon w-10 h-10 rounded-xl flex items-center justify-center shrink-0">
+           <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+           <h3 class="m-0 text-lg font-bold text-white">4. Data Validation</h3>
+           <p class="m-0 mt-2 text-sm">Check whether values are correct. An age value of -5 is invalid.</p>
+          </div>
+         </div>
+        </div>
+        <div class="rounded-xl border border-cyan-300/18 bg-cyan-300/5 p-5">
+         <div class="flex gap-3">
+          <div class="phase-icon w-10 h-10 rounded-xl flex items-center justify-center shrink-0">
+           <i data-lucide="combine" class="w-5 h-5"></i>
+          </div>
+          <div>
+           <h3 class="m-0 text-lg font-bold text-white">5. Data Integration</h3>
+           <p class="m-0 mt-2 text-sm">Merge customer, sales, and inventory information from multiple systems.</p>
+          </div>
+         </div>
+        </div>
+        <div class="rounded-xl border border-cyan-300/18 bg-cyan-300/5 p-5">
+         <div class="flex gap-3">
+          <div class="phase-icon w-10 h-10 rounded-xl flex items-center justify-center shrink-0">
+           <i data-lucide="calculator" class="w-5 h-5"></i>
+          </div>
+          <div>
+           <h3 class="m-0 text-lg font-bold text-white">6. Derived Fields</h3>
+           <p class="m-0 mt-2 text-sm">Create new information. Quantity = 5 and Price = ₱400 produces Total Sales = ₱2,000.</p>
+          </div>
+         </div>
+        </div>
+       </div>
+      </section>
+      <section id="load" class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="upload" class="w-5 h-5"></i> Step 3: Load</h2>
+       <p>Loading means storing the transformed data inside the Data Warehouse. After loading, Business Intelligence tools such as Power BI or Tableau can analyze the data.</p>
+       <div class="grid md:grid-cols-2 gap-5 mt-5">
+        <div class="rounded-xl border border-violet-300/25 bg-violet-300/5 p-5">
+         <p class="terminal-label text-violet-200">Full Load</p>
+         <h3 class="mt-2 text-xl font-bold text-white">Replace all warehouse data</h3>
+         <p class="mb-0">Usually used during the first implementation of a Data Warehouse.</p>
+        </div>
+        <div class="rounded-xl border border-lime-300/25 bg-lime-300/5 p-5">
+         <p class="terminal-label">Incremental Load</p>
+         <h3 class="mt-2 text-xl font-bold text-white">Add only new records</h3>
+         <p class="mb-0">The most common loading strategy because it is faster and more efficient.</p>
+        </div>
+       </div>
+       <h3 class="mt-8 mb-3 text-xl font-bold text-white">ETL and Dimensional Modelling</h3>
+       <p>ETL loads data into <strong>Fact Tables</strong> and <strong>Dimension Tables</strong>. The ETL process ensures that each table receives clean and accurate data.</p>
+       <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-5">
+        <div class="rounded-xl border border-cyan-300/20 bg-cyan-300/5 p-4 text-center text-cyan-100">
+         Sales System
+        </div>
+        <div class="rounded-xl border border-lime-300/25 bg-lime-300/5 p-4 text-center text-lime-100">
+         Extract + Transform
+        </div>
+        <div class="rounded-xl border border-violet-300/25 bg-violet-300/5 p-4 text-center text-violet-100">
+         Fact Sales
+        </div>
+        <div class="rounded-xl border border-cyan-300/20 bg-cyan-300/5 p-4 text-center text-cyan-100">
+         Product, Customer &amp; Date Dimensions
+        </div>
+       </div>
+      </section>
+      <section id="elt" class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="git-compare-arrows" class="w-5 h-5"></i> ETL vs ELT</h2>
+       <p>You may also hear the term <strong>ELT</strong>.</p>
+       <div class="overflow-x-auto mt-5">
+        <table class="data-table">
+         <thead>
+          <tr>
+           <th>ETL</th>
+           <th>ELT</th>
+          </tr>
+         </thead>
+         <tbody>
+          <tr>
+           <td><strong class="text-white">Extract → Transform → Load</strong></td>
+           <td><strong class="text-white">Extract → Load → Transform</strong></td>
+          </tr>
+          <tr>
+           <td>Data is cleaned before entering the warehouse.</td>
+           <td>Data is loaded first, then transformed inside the warehouse.</td>
+          </tr>
+          <tr>
+           <td>Traditional approach.</td>
+           <td>Modern cloud approach.</td>
+          </tr>
+          <tr>
+           <td>Good for smaller systems.</td>
+           <td>Good for large cloud platforms.</td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+       <p class="mt-5">Examples of ELT platforms include <strong>Snowflake, Google BigQuery, and Amazon Redshift</strong>.</p>
+      </section>
+      <section class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="shopping-cart" class="w-5 h-5"></i> ETL Workflow Example: Online Shopping System</h2>
+       <div class="grid lg:grid-cols-2 gap-6">
+        <div>
+         <p class="terminal-label">Data Sources</p>
+         <ul class="list-disc pl-6 mt-3">
+          <li>Website Orders</li>
+          <li>Customer Database</li>
+          <li>Payment Gateway</li>
+          <li>Inventory System</li>
+         </ul>
+        </div>
+        <div class="rounded-xl border border-cyan-300/15 bg-black/20 p-5">
+         <p class="terminal-label">Workflow Output</p>
+         <p class="mt-3 text-sm">Load cleaned data into <strong>Fact Sales, Product Dimension, Customer Dimension, and Date Dimension</strong>.</p>
+         <p class="mb-0 text-sm">Managers can analyze daily sales, best-selling products, top customers, and monthly revenue.</p>
+        </div>
+       </div>
+       <div class="mt-6 grid md:grid-cols-3 gap-4">
+        <div class="rounded-xl border border-cyan-300/15 bg-cyan-300/5 p-5">
+         <p class="terminal-label text-cyan-200">Extract</p>
+         <p class="mt-2 mb-0">Collect all required data.</p>
+        </div>
+        <div class="rounded-xl border border-violet-300/20 bg-violet-300/5 p-5">
+         <p class="terminal-label text-violet-200">Transform</p>
+         <p class="mt-2 mb-0">Remove duplicates, correct invalid records, standardize dates, calculate sales, and match product IDs.</p>
+        </div>
+        <div class="rounded-xl border border-lime-300/20 bg-lime-300/5 p-5">
+         <p class="terminal-label">Load</p>
+         <p class="mt-2 mb-0">Store prepared records in dimensional warehouse tables.</p>
+        </div>
+       </div>
+      </section>
+      <section class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="settings-2" class="w-5 h-5"></i> ETL Design Principles</h2>
+       <div class="grid sm:grid-cols-2 gap-4">
+        <div class="concept-card rounded-xl p-5">
+         <h3 class="text-lg font-bold text-white">Accurate</h3>
+         <p class="text-sm mb-0">No missing or incorrect data.</p>
+        </div>
+        <div class="concept-card rounded-xl p-5">
+         <h3 class="text-lg font-bold text-white">Consistent</h3>
+         <p class="text-sm mb-0">The same data should mean the same thing everywhere. “M” and “Male” should be standardized.</p>
+        </div>
+        <div class="concept-card rounded-xl p-5">
+         <h3 class="text-lg font-bold text-white">Scalable</h3>
+         <p class="text-sm mb-0">The process should still work as data grows from thousands to millions of records.</p>
+        </div>
+        <div class="concept-card rounded-xl p-5">
+         <h3 class="text-lg font-bold text-white">Efficient</h3>
+         <p class="text-sm mb-0">Minimize processing time and storage usage.</p>
+        </div>
+        <div class="concept-card rounded-xl p-5 sm:col-span-2">
+         <h3 class="text-lg font-bold text-white">Reliable</h3>
+         <p class="text-sm mb-0">When an error occurs, the ETL process should detect it, log it, and recover without corrupting the warehouse.</p>
+        </div>
+       </div>
+      </section>
+      <section class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="triangle-alert" class="w-5 h-5"></i> Common Challenges in ETL</h2>
+       <div class="grid md:grid-cols-2 gap-4">
+        <div class="rounded-xl border border-rose-300/20 bg-rose-300/5 p-5">
+         <h3 class="text-lg font-bold text-white">Poor Data Quality</h3>
+         <p class="text-sm mb-0">Missing values, incorrect spelling, and duplicate records.</p>
+        </div>
+        <div class="rounded-xl border border-rose-300/20 bg-rose-300/5 p-5">
+         <h3 class="text-lg font-bold text-white">Different Data Formats</h3>
+         <p class="text-sm mb-0">CSV, Excel, MySQL, APIs, and cloud databases may all use different structures.</p>
+        </div>
+        <div class="rounded-xl border border-rose-300/20 bg-rose-300/5 p-5">
+         <h3 class="text-lg font-bold text-white">Large Data Volume</h3>
+         <p class="text-sm mb-0">Millions of records require efficient extraction and loading strategies.</p>
+        </div>
+        <div class="rounded-xl border border-rose-300/20 bg-rose-300/5 p-5">
+         <h3 class="text-lg font-bold text-white">Slow Performance</h3>
+         <p class="text-sm mb-0">Poorly designed ETL processes can delay reports.</p>
+        </div>
+        <div class="rounded-xl border border-rose-300/20 bg-rose-300/5 p-5 md:col-span-2">
+         <h3 class="text-lg font-bold text-white">Security</h3>
+         <p class="text-sm mb-0">Sensitive information, such as customer details, must be protected during extraction, transformation, and loading.</p>
+        </div>
+       </div>
+       <h3 class="mt-8 mb-4 text-xl font-bold text-white">Popular ETL Tools</h3>
+       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div class="rounded-lg bg-black/25 border border-white/10 p-3 text-slate-200">
+         Microsoft SSIS
+        </div>
+        <div class="rounded-lg bg-black/25 border border-white/10 p-3 text-slate-200">
+         Talend Open Studio
+        </div>
+        <div class="rounded-lg bg-black/25 border border-white/10 p-3 text-slate-200">
+         Pentaho Data Integration
+        </div>
+        <div class="rounded-lg bg-black/25 border border-white/10 p-3 text-slate-200">
+         Apache NiFi
+        </div>
+        <div class="rounded-lg bg-black/25 border border-white/10 p-3 text-slate-200">
+         Apache Airflow
+        </div>
+        <div class="rounded-lg bg-black/25 border border-white/10 p-3 text-slate-200">
+         Informatica PowerCenter
+        </div>
+        <div class="rounded-lg bg-black/25 border border-white/10 p-3 text-slate-200">
+         AWS Glue
+        </div>
+        <div class="rounded-lg bg-black/25 border border-white/10 p-3 text-slate-200">
+         Azure Data Factory
+        </div>
+        <div class="rounded-lg bg-black/25 border border-white/10 p-3 text-slate-200">
+         Google Cloud Data Fusion
+        </div>
+       </div>
+      </section>
+      <section class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="badge-check" class="w-5 h-5"></i> Best Practices</h2>
+       <div class="grid sm:grid-cols-2 gap-3">
+        <div class="rounded-xl border border-lime-300/20 bg-lime-300/5 p-4 text-lime-50">
+         ✔ Validate data before loading.
+        </div>
+        <div class="rounded-xl border border-lime-300/20 bg-lime-300/5 p-4 text-lime-50">
+         ✔ Remove duplicate records.
+        </div>
+        <div class="rounded-xl border border-lime-300/20 bg-lime-300/5 p-4 text-lime-50">
+         ✔ Standardize formats.
+        </div>
+        <div class="rounded-xl border border-lime-300/20 bg-lime-300/5 p-4 text-lime-50">
+         ✔ Use incremental loading whenever possible.
+        </div>
+        <div class="rounded-xl border border-lime-300/20 bg-lime-300/5 p-4 text-lime-50">
+         ✔ Log all ETL activities.
+        </div>
+        <div class="rounded-xl border border-lime-300/20 bg-lime-300/5 p-4 text-lime-50">
+         ✔ Monitor ETL performance regularly.
+        </div>
+        <div class="rounded-xl border border-lime-300/20 bg-lime-300/5 p-4 text-lime-50">
+         ✔ Protect sensitive data using encryption and access controls.
+        </div>
+        <div class="rounded-xl border border-lime-300/20 bg-lime-300/5 p-4 text-lime-50">
+         ✔ Test ETL workflows before deployment.
+        </div>
+       </div>
+      </section>
+      <section class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="hospital" class="w-5 h-5"></i> Real-World Example: Hospital Data Warehouse</h2>
+       <p>A hospital collects data from Patient Registration, Laboratory, Pharmacy, and Billing. Each department uses its own database.</p>
+       <p>The ETL process combines all these records into one Data Warehouse. Hospital administrators can then answer questions such as:</p>
+       <ul class="grid sm:grid-cols-2 gap-x-8 gap-y-1 list-disc pl-6">
+        <li>How many patients were admitted this month?</li>
+        <li>Which department generated the highest revenue?</li>
+        <li>What are the most common diagnoses?</li>
+        <li>Which medicines are prescribed most often?</li>
+       </ul>
+       <p class="mt-5">Without ETL, answering these questions would require manually combining data from multiple systems.</p>
+      </section>
+      <section id="practice" class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="graduation-cap" class="w-5 h-5"></i> Class Activity 1: Identify the ETL Stage</h2>
+       <p>For each task, identify whether it belongs to Extract (E), Transform (T), or Load (L).</p>
+       <div class="overflow-x-auto mt-5">
+        <table class="data-table">
+         <thead>
+          <tr>
+           <th>Task</th>
+           <th>Answer</th>
+          </tr>
+         </thead>
+         <tbody>
+          <tr>
+           <td>Collect customer records from MySQL</td>
+           <td class="text-cyan-100">Extract</td>
+          </tr>
+          <tr>
+           <td>Remove duplicate records</td>
+           <td class="text-violet-100">Transform</td>
+          </tr>
+          <tr>
+           <td>Correct invalid dates</td>
+           <td class="text-violet-100">Transform</td>
+          </tr>
+          <tr>
+           <td>Store cleaned data in the warehouse</td>
+           <td class="text-lime-100">Load</td>
+          </tr>
+          <tr>
+           <td>Combine sales and inventory data</td>
+           <td class="text-violet-100">Transform</td>
+          </tr>
+          <tr>
+           <td>Retrieve data from Excel files</td>
+           <td class="text-cyan-100">Extract</td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+       <h2 class="section-title text-lg font-bold mt-10"><i data-lucide="university" class="w-5 h-5"></i> Class Activity 2: Design an ETL Process</h2>
+       <p><strong>Scenario: University Enrollment System</strong></p>
+       <p>A university stores data in three systems:</p>
+       <ul class="list-disc pl-6">
+        <li>Student Information System</li>
+        <li>Finance Office</li>
+        <li>Learning Management System (LMS)</li>
+       </ul>
+       <div class="mt-5 rounded-xl border border-cyan-300/15 bg-black/20 p-5">
+        <p class="terminal-label">Instructions</p>
+        <ol class="mt-3 list-decimal pl-6 space-y-2 text-slate-300">
+         <li>Identify the data sources.</li>
+         <li>Describe what happens during the Extract stage.</li>
+         <li>List at least five transformations needed.</li>
+         <li>Explain how the cleaned data will be loaded into a Data Warehouse.</li>
+         <li>Identify at least three reports that administrators could generate.</li>
+        </ol>
+       </div>
+      </section>
+      <section class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="message-square-text" class="w-5 h-5"></i> Reflection Questions</h2>
+       <ol class="list-decimal pl-6 space-y-3 text-slate-300">
+        <li>Why is the ETL process considered the foundation of a Data Warehouse?</li>
+        <li>What problems might occur if data is loaded into the warehouse without transformation?</li>
+        <li>Compare Full Extraction and Incremental Extraction. Which would you recommend for a large online shopping company? Why?</li>
+        <li>How does ETL improve the accuracy and reliability of business reports?</li>
+        <li>What is the difference between ETL and ELT, and why are cloud platforms increasingly adopting ELT?</li>
+        <li>If you were designing an ETL process for your university, what data sources would you include, and what transformations would be necessary before loading the data into the warehouse?</li>
+       </ol>
+      </section>
+      <section id="summary" class="rounded-2xl border border-lime-300/25 bg-gradient-to-br from-lime-300/10 to-cyan-300/5 p-6 md:p-8">
+       <div class="flex items-start gap-4">
+        <div class="shrink-0 w-11 h-11 flex items-center justify-center rounded-xl bg-lime-300 text-slate-950"><i data-lucide="check-check" class="w-6 h-6"></i>
+        </div>
+        <div>
+         <h2 class="text-2xl font-bold text-white">Lesson Summary</h2>
+         <p class="mt-4 mb-0 text-slate-200 leading-relaxed">The ETL (Extract, Transform, Load) process is the backbone of every Data Warehouse. It collects data from multiple sources, improves its quality through cleaning and transformation, and stores it in a structured format for analysis.</p>
+         <p class="mt-4 mb-0 text-slate-200 leading-relaxed">A well-designed ETL process ensures that business reports are accurate, consistent, and reliable. Understanding ETL design and implementation prepares students to build data pipelines that support Business Intelligence, analytics, and data-driven decision-making across industries such as retail, healthcare, education, banking, and e-commerce.</p>
+        </div>
+       </div>
+      </section>
+     </article>
+    </div>
+   </main>
+   <footer class="border-t border-cyan-300/10 bg-black/20">
+    <div class="w-full max-w-7xl mx-auto px-5 py-6 flex flex-col sm:flex-row gap-2 justify-between text-sm text-slate-500"><span>Data Warehousing · Lesson 4</span> <span class="mono text-xs">MKDB // ETL PROCESSES</span>
+    </div>
+   </footer>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      lucide.createIcons();
+    });
+  </script>
+ </body>
+</html>

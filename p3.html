@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="en">
+ <head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260731-03-0b60c17","C":{"Abril Fatface":"YACgEZbkUVE,0","Alfa Slab One":"YACgEYS9sJU,0","Anton":"YACgEcYqQ-A,0","Archivo":"YAHO2-t-jNE,0","Arial":"YAGyDvJ_4Ts,0","Bebas Neue":"YACgESME5ew,0","Broken Glyph":"YADZ-exUkv0,0","Canva Sans":"YAFdJjTk5UU,0","Caveat":"YALBs2ploWQ,0","Comic Sans MS":"YAHO2VMiyZo,0","Cormorant Garamond":"YAFdJhX-538,0","Courier New":"YAGzXiGs0_8,0","DM Sans":"YAD1aU3sLnI,0","DM Serif Display":"YAD1aYG82rc,0","Forum":"YACgEcnnqB4,0","Fraunces":"YAEul-FRQw4,0","Georgia":"YAGzXkO0pEM,0","Ghost Mono":"YAHO2EIdDP0,0","Helvetica Neue":"YAFcf6CtJfI,0","Impact":"YAFcfnjI7Vk,0","Inter":"YAFdJvSyp_k,3","Iowan Old Style":"YAGNIFa8j9o,0","Jacques Francois":"YAHO2a5g66Q,0","JetBrains Mono":"YADy3sAhvXQ,0","Oleo Script":"YACgEQQ14jI,0","Playfair Display":"YAFdJhem5V8,1","Poppins":"YAE5fPSY9qM,0","Press Start 2P":"YAFyGr-8pmQ,0","Source Sans 3":"YAG4lO1Mj10,0","Space Grotesk":"YAHO2sjPCSM,0","Times New Roman":"YAGzXW3gftg,0","Times":"YAGzXW3gftg,0","Trebuchet MS":"YAFcfrglpVA,0","Verdana":"YAGzXTctYtQ,0","Work Sans":"YAGXhLOKv44,0","Yellowtail":"YACgEYG4kG4,0"}}');</script><script src="/_sdk/a27874207e105461.telemetry_sdk.js" integrity="sha512-wgI5N9F7oA2h3vH+benMYIv4wGqTct4nKWakqgvfgRyBLmfYq8q/fi6gkfWKd2hMsyN+VQ/qOAOpxybwkcoxlA=="></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 3: Dimensional Modelling</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700;800&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #07101e;
+      --panel: #0d1b2d;
+      --panel-2: #10243b;
+      --line: rgba(87, 219, 255, 0.18);
+      --cyan: #58e1ff;
+      --electric: #9cff57;
+      --violet: #b29bff;
+      --muted: #a9bdd1;
+      --paper: #eaf7ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      font-family: "Fira Sans", sans-serif;
+      color: var(--paper);
+      background: #07101e;
+    }
+
+    .cyber-page {
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 15% 6%, rgba(52, 160, 195, 0.18), transparent 28rem),
+        radial-gradient(circle at 85% 16%, rgba(111, 82, 203, 0.18), transparent 31rem),
+        linear-gradient(135deg, #07101e 0%, #091728 52%, #07101e 100%);
+      position: relative;
+    }
+
+    .cyber-page::before,
+    .cyber-page::after {
+      content: "";
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+      inset: 0;
+    }
+
+    .cyber-page::before {
+      opacity: 0.38;
+      background-image:
+        linear-gradient(rgba(95, 219, 255, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(95, 219, 255, 0.055) 1px, transparent 1px);
+      background-size: 38px 38px;
+      mask-image: linear-gradient(to bottom, black, transparent 90%);
+    }
+
+    .cyber-page::after {
+      background:
+        radial-gradient(circle at 20% 20%, rgba(156, 255, 87, 0.65) 0 2px, transparent 3px),
+        radial-gradient(circle at 77% 34%, rgba(88, 225, 255, 0.6) 0 2px, transparent 3px),
+        radial-gradient(circle at 60% 80%, rgba(178, 155, 255, 0.65) 0 2px, transparent 3px);
+      animation: pulseNodes 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulseNodes {
+      from { opacity: 0.45; }
+      to { opacity: 0.85; }
+    }
+
+    .page-content {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+    }
+
+    .mono { font-family: "Space Mono", monospace; }
+
+    .topline {
+      border-bottom: 1px solid var(--line);
+      background: rgba(4, 12, 23, 0.72);
+      backdrop-filter: blur(16px);
+    }
+
+    .network-line {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), var(--electric), transparent);
+      box-shadow: 0 0 18px rgba(88, 225, 255, 0.55);
+    }
+
+    .glass-panel {
+      background: linear-gradient(145deg, rgba(18, 41, 66, 0.92), rgba(8, 22, 39, 0.92));
+      border: 1px solid var(--line);
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.2);
+    }
+
+    .section-card {
+      border: 1px solid rgba(112, 219, 255, 0.15);
+      background: rgba(10, 27, 47, 0.68);
+      border-radius: 1.2rem;
+      padding: 1.5rem;
+    }
+
+    .section-card p,
+    .section-card li {
+      color: #c5d7e6;
+      line-height: 1.78;
+    }
+
+    .section-card strong { color: #ffffff; }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--cyan);
+      font-family: "Space Mono", monospace;
+      letter-spacing: 0.045em;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(88, 225, 255, 0.16);
+      padding-bottom: 0.75rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .terminal-label {
+      color: var(--electric);
+      font-family: "Space Mono", monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .outcome-card {
+      border: 1px solid rgba(88, 225, 255, 0.17);
+      background: rgba(5, 19, 34, 0.48);
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .outcome-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(156, 255, 87, 0.65);
+      background: rgba(13, 42, 54, 0.78);
+    }
+
+    .outcome-number {
+      color: var(--ink);
+      background: var(--electric);
+      font-family: "Space Mono", monospace;
+      font-weight: 700;
+    }
+
+    .quote-box {
+      border-left: 3px solid var(--electric);
+      background: rgba(156, 255, 87, 0.07);
+      color: #e3f9d2;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 0.9rem;
+      border-style: hidden;
+      box-shadow: 0 0 0 1px rgba(88, 225, 255, 0.17);
+    }
+
+    .data-table th {
+      background: rgba(88, 225, 255, 0.12);
+      color: var(--cyan);
+      font-family: "Space Mono", monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      text-align: left;
+    }
+
+    .data-table th,
+    .data-table td {
+      border: 1px solid rgba(88, 225, 255, 0.12);
+      padding: 0.8rem;
+    }
+
+    .data-table td { color: #d9e9f4; }
+
+    .schema-stage {
+      position: relative;
+      min-height: 280px;
+      overflow: hidden;
+      border: 1px solid rgba(88, 225, 255, 0.16);
+      border-radius: 1rem;
+      background:
+        linear-gradient(rgba(88, 225, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(88, 225, 255, 0.05) 1px, transparent 1px),
+        rgba(3, 16, 29, 0.72);
+      background-size: 26px 26px;
+    }
+
+    .schema-node {
+      position: absolute;
+      padding: 0.65rem 0.8rem;
+      border-radius: 0.75rem;
+      font-family: "Space Mono", monospace;
+      font-size: 0.73rem;
+      text-align: center;
+      letter-spacing: 0.02em;
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.24);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .schema-node:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(88, 225, 255, 0.38);
+    }
+
+    .fact-node {
+      background: #b8ff71;
+      color: #07101e;
+      font-weight: 700;
+      border: 1px solid #d6ffae;
+    }
+
+    .dimension-node {
+      background: #123b5c;
+      color: #bcefff;
+      border: 1px solid rgba(88, 225, 255, 0.45);
+    }
+
+    .schema-line {
+      position: absolute;
+      height: 1px;
+      background: rgba(156, 255, 87, 0.75);
+      transform-origin: left center;
+      box-shadow: 0 0 8px rgba(156, 255, 87, 0.55);
+    }
+
+    .concept-card {
+      border: 1px solid rgba(178, 155, 255, 0.22);
+      background: linear-gradient(145deg, rgba(29, 28, 67, 0.6), rgba(9, 25, 44, 0.82));
+      transition: transform 180ms ease, border-color 180ms ease;
+    }
+
+    .concept-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(178, 155, 255, 0.78);
+    }
+
+    .type-chip {
+      color: #d9d1ff;
+      border: 1px solid rgba(178, 155, 255, 0.4);
+      background: rgba(178, 155, 255, 0.1);
+      font-family: "Space Mono", monospace;
+      font-size: 0.7rem;
+    }
+
+    .lesson-nav a {
+      color: #9fb6ca;
+      border-left: 2px solid transparent;
+      transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .lesson-nav a:hover {
+      color: var(--electric);
+      border-left-color: var(--electric);
+      background: rgba(156, 255, 87, 0.06);
+    }
+
+    .fade-in {
+      animation: riseIn 650ms ease both;
+    }
+
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 1023px) {
+      .lesson-nav { display: none; }
+    }
+
+    @media (max-width: 640px) {
+      .section-card { padding: 1.1rem; }
+      .data-table { font-size: 0.82rem; }
+      .data-table th, .data-table td { padding: 0.6rem; }
+      .schema-stage { min-height: 250px; }
+    }
+  </style>
+  <script src="/_sdk/935a53bc2e11fb8d.data_sdk.js" type="text/javascript" integrity="sha512-qr2oyPnEys1WebcOABaRh6hG77r5PWpqeWW6JTKbRJqly/INsfBi31CVNlTmHqjgeLpkVmmHZJUdxSx/32tOFQ=="></script>
+  <script src="/_sdk/6030e540d4419216.resizing_sdk.js" type="text/javascript" integrity="sha512-b5KWzyoXsbWP4smq4sftIi6Kts4YVBpBsz0BwCViwbBJkK64a3/Z6ZMdWA+qnplNcXw4mhZeqvQi3mOosiRJdA=="></script>
+ </head>
+ <body data-template-id="__page-root" class="cyber-page">
+  <div class="page-content">
+   <div class="network-line"></div>
+   <header class="topline">
+    <div class="w-full max-w-7xl mx-auto px-5 py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+     <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center border border-cyan-300/40 bg-cyan-300/10 text-cyan-200"><i data-lucide="database" class="w-5 h-5"></i>
+      </div>
+      <div>
+       <p data-template-id="course-label" class="canva-text mono text-xs tracking-widest text-cyan-200 uppercase"></p>
+       <p data-template-id="instructor-label" class="canva-text text-sm text-slate-400"></p>
+      </div>
+     </div>
+     <div class="mono text-xs text-lime-200 tracking-wide"><span class="text-slate-500">STATUS:</span> ONLINE / LESSON MODULE
+     </div>
+    </div>
+   </header>
+   <main class="w-full max-w-7xl mx-auto px-5 py-10 lg:py-14">
+    <section class="glass-panel rounded-3xl overflow-hidden fade-in">
+     <div class="p-7 md:p-11">
+      <div class="flex flex-wrap gap-3 items-center mb-6"><span data-template-id="lesson-badge" class="canva-tag inline-flex items-center gap-2 px-3 py-1.5 rounded-full mono text-xs border border-lime-300/45 text-lime-200 bg-lime-300/10"></span> <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mono text-xs border border-cyan-300/25 text-cyan-100 bg-cyan-300/5"> <i data-lucide="network" class="w-3.5 h-3.5"></i> DATA WAREHOUSE ARCHITECTURE </span>
+      </div>
+      <div class="grid lg:grid-cols-[1.25fr_.75fr] gap-10 items-end">
+       <div>
+        <p class="terminal-label mb-4">/ Course Module / Knowledge Node 03</p>
+        <h1 data-template-id="lesson-title" class="canva-text text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-tight"></h1>
+        <p data-template-id="lesson-subtitle" class="canva-text mt-5 max-w-2xl text-lg md:text-xl text-slate-300 leading-relaxed"></p>
+       </div>
+       <div class="rounded-2xl border border-cyan-300/15 bg-black/20 p-5">
+        <div class="flex items-center justify-between text-sm"><span class="text-slate-400">Lesson focus</span> <i data-lucide="zap" class="w-5 h-5 text-lime-300"></i>
+        </div>
+        <div class="mt-3 h-2 rounded-full bg-slate-800 overflow-hidden">
+         <div class="h-full w-3/4 bg-gradient-to-r from-cyan-300 to-lime-300"></div>
+        </div>
+        <p class="mt-4 text-sm text-slate-300 leading-relaxed">Learn how facts, dimensions, and schema patterns turn high-volume data into fast business insight.</p>
+       </div>
+      </div>
+     </div>
+    </section>
+    <div class="grid lg:grid-cols-[220px_minmax(0,1fr)] gap-8 mt-9">
+     <aside class="lesson-nav hidden lg:block">
+      <nav class="sticky top-6 glass-panel rounded-2xl p-4" aria-label="Lesson navigation">
+       <p class="terminal-label px-3 mb-3">Navigate</p><a href="#outcomes" class="block text-sm py-2.5 px-3 rounded-r-lg">Learning Outcomes</a> <a href="#introduction" class="block text-sm py-2.5 px-3 rounded-r-lg">Introduction</a> <a href="#facts-dimensions" class="block text-sm py-2.5 px-3 rounded-r-lg">Facts &amp; Dimensions</a> <a href="#schemas" class="block text-sm py-2.5 px-3 rounded-r-lg">Schema Types</a> <a href="#grain" class="block text-sm py-2.5 px-3 rounded-r-lg">Grain &amp; Keys</a> <a href="#advanced" class="block text-sm py-2.5 px-3 rounded-r-lg">Advanced Concepts</a> <a href="#summary" class="block text-sm py-2.5 px-3 rounded-r-lg">Summary</a>
+      </nav>
+     </aside>
+     <article class="space-y-7 min-w-0">
+      <section id="outcomes" data-template-id="outcomes-section" class="canva-section section-card fade-in">
+       <h2 data-template-id="outcomes-heading" class="canva-text section-title text-lg font-bold"><i data-lucide="target" class="w-5 h-5"></i></h2>
+       <p class="text-slate-300 mb-5">At the end of this lesson, you should be able to:</p>
+       <div class="grid sm:grid-cols-2 gap-3">
+        <div class="outcome-card rounded-xl p-4 flex gap-3"><span class="outcome-number w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs">01</span>
+         <p class="m-0 text-sm">Explain what dimensional modelling is.</p>
+        </div>
+        <div class="outcome-card rounded-xl p-4 flex gap-3"><span class="outcome-number w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs">02</span>
+         <p class="m-0 text-sm">Identify fact tables and dimension tables.</p>
+        </div>
+        <div class="outcome-card rounded-xl p-4 flex gap-3"><span class="outcome-number w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs">03</span>
+         <p class="m-0 text-sm">Compare Star Schema and Snowflake Schema.</p>
+        </div>
+        <div class="outcome-card rounded-xl p-4 flex gap-3"><span class="outcome-number w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs">04</span>
+         <p class="m-0 text-sm">Design a simple dimensional model for a business.</p>
+        </div>
+        <div class="outcome-card rounded-xl p-4 flex gap-3 sm:col-span-2"><span class="outcome-number w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs">05</span>
+         <p class="m-0 text-sm">Explain advanced concepts such as Slowly Changing Dimensions and different types of fact tables.</p>
+        </div>
+       </div>
+      </section>
+      <section id="introduction" class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="coffee" class="w-5 h-5"></i> Introduction</h2>
+       <p>Imagine that you own a coffee shop with three branches. Every day, hundreds of customers buy coffee, pastries, and other drinks. After one year, you have over 100,000 sales records.</p>
+       <p>Your manager now asks questions like:</p>
+       <ul class="grid sm:grid-cols-2 gap-x-8 gap-y-1 list-disc pl-6">
+        <li>Which drink sells the most?</li>
+        <li>Which branch earns the highest revenue?</li>
+        <li>Which month has the highest sales?</li>
+        <li>Which customers visit the most often?</li>
+       </ul>
+       <p>If all of your data is stored in many separate tables, answering these questions could take a long time. A <strong>Data Warehouse</strong> solves this problem by organizing data in a way that makes reporting and analysis much faster.</p>
+       <div class="quote-box rounded-r-xl px-5 py-4 mt-5"><span class="mono text-sm text-lime-200">CORE IDEA //</span>
+        <p class="m-0 mt-1">This method of organizing data is called <strong>Dimensional Modelling</strong>.</p>
+       </div>
+      </section>
+      <section class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="library" class="w-5 h-5"></i> What is Dimensional Modelling?</h2>
+       <p>Think of a library. Imagine all the books are thrown into one giant pile. Finding one book would be difficult. Now imagine the books are organized by:</p>
+       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 my-5">
+        <div class="rounded-lg border border-cyan-300/15 bg-cyan-300/5 p-3 text-center text-cyan-100">
+         Subject
+        </div>
+        <div class="rounded-lg border border-cyan-300/15 bg-cyan-300/5 p-3 text-center text-cyan-100">
+         Author
+        </div>
+        <div class="rounded-lg border border-cyan-300/15 bg-cyan-300/5 p-3 text-center text-cyan-100">
+         Year
+        </div>
+        <div class="rounded-lg border border-cyan-300/15 bg-cyan-300/5 p-3 text-center text-cyan-100">
+         Genre
+        </div>
+       </div>
+       <p>Finding a book becomes much easier. A Data Warehouse works the same way. Instead of organizing books, it organizes business data so computers can answer questions quickly.</p>
+       <div class="mt-5 p-5 rounded-xl border border-violet-300/20 bg-violet-300/5">
+        <p class="terminal-label text-violet-200">Definition</p>
+        <p class="m-0 mt-2">Dimensional Modelling is a technique used in Data Warehousing to organize data for reporting and decision-making. Instead of designing a database mainly for storing data, we design it so that users can analyze information quickly and easily.</p>
+       </div>
+      </section>
+      <section class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="gauge" class="w-5 h-5"></i> Why Do We Need It?</h2>
+       <p>Businesses collect a huge amount of data every day. Examples include sales transactions, student enrollments, hospital records, bank transactions, and online shopping orders.</p>
+       <p>Managers need answers quickly. They may ask, <strong>“What was our total sales last month?”</strong> or <strong>“Which product is our best seller?”</strong></p>
+       <p>Without dimensional modelling, these reports would require complicated database queries and could take much longer to generate. Dimensional modelling helps organize data so reports are faster and easier to create.</p>
+      </section>
+      <section id="facts-dimensions" class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="table-properties" class="w-5 h-5"></i> Two Main Parts of Dimensional Modelling</h2>
+       <p>Everything in dimensional modelling is built around two kinds of tables: <strong>Fact Tables</strong> and <strong>Dimension Tables</strong>. Think of them as answering different kinds of questions.</p>
+       <div class="grid xl:grid-cols-2 gap-5 mt-6">
+        <div class="rounded-2xl border border-lime-300/25 bg-lime-300/5 p-5">
+         <p class="terminal-label">Fact Tables</p>
+         <h3 class="text-2xl font-bold text-white mt-2">“What happened?”</h3>
+         <p>A Fact Table stores measurable information. These are usually numbers that can be calculated.</p>
+         <ul class="list-disc pl-6">
+          <li>Sales Amount</li>
+          <li>Quantity Sold</li>
+          <li>Profit</li>
+          <li>Discount</li>
+          <li>Number of Students Enrolled</li>
+         </ul>
+         <p class="mt-4 text-lime-100">Fact tables answer: <strong>How many? How much? How often?</strong></p>
+        </div>
+        <div class="rounded-2xl border border-cyan-300/25 bg-cyan-300/5 p-5">
+         <p class="terminal-label text-cyan-200">Dimension Tables</p>
+         <h3 class="text-2xl font-bold text-white mt-2">“Tell me more about it.”</h3>
+         <p>Dimension tables contain descriptive information. Instead of numbers, they describe the facts.</p>
+         <ul class="list-disc pl-6">
+          <li>Who bought the product?</li>
+          <li>What product was purchased?</li>
+          <li>When was it purchased?</li>
+          <li>Where did the sale happen?</li>
+         </ul>
+         <p class="mt-4 text-cyan-100">Dimensions provide business context for every fact.</p>
+        </div>
+       </div>
+       <h3 class="mt-7 mb-3 text-xl font-bold text-white">Example: Sales Fact Table</h3>
+       <div class="overflow-x-auto">
+        <table class="data-table">
+         <thead>
+          <tr>
+           <th>Sale ID</th>
+           <th>Product</th>
+           <th>Customer</th>
+           <th>Date</th>
+           <th>Quantity</th>
+           <th>Sales</th>
+          </tr>
+         </thead>
+         <tbody>
+          <tr>
+           <td>1001</td>
+           <td>Laptop</td>
+           <td>John</td>
+           <td>July 1</td>
+           <td class="text-lime-200">2</td>
+           <td class="text-lime-200">₱60,000</td>
+          </tr>
+          <tr>
+           <td>1002</td>
+           <td>Mouse</td>
+           <td>Maria</td>
+           <td>July 1</td>
+           <td class="text-lime-200">5</td>
+           <td class="text-lime-200">₱7,500</td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+       <p class="mt-4">Notice that the important values are the numbers: <strong>Quantity</strong> and <strong>Sales</strong>. These are the facts.</p>
+       <h3 class="mt-7 mb-3 text-xl font-bold text-white">Examples: Dimension Tables</h3>
+       <div class="grid lg:grid-cols-3 gap-4">
+        <div class="overflow-x-auto">
+         <p class="mono text-sm text-cyan-200 mb-2">PRODUCT DIMENSION</p>
+         <table class="data-table text-sm">
+          <thead>
+           <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Category</th>
+           </tr>
+          </thead>
+          <tbody>
+           <tr>
+            <td>P001</td>
+            <td>Laptop</td>
+            <td>Electronics</td>
+           </tr>
+           <tr>
+            <td>P002</td>
+            <td>Mouse</td>
+            <td>Accessories</td>
+           </tr>
+          </tbody>
+         </table>
+        </div>
+        <div class="overflow-x-auto">
+         <p class="mono text-sm text-cyan-200 mb-2">CUSTOMER DIMENSION</p>
+         <table class="data-table text-sm">
+          <thead>
+           <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>City</th>
+           </tr>
+          </thead>
+          <tbody>
+           <tr>
+            <td>C001</td>
+            <td>John Santos</td>
+            <td>Manila</td>
+           </tr>
+           <tr>
+            <td>C002</td>
+            <td>Maria Cruz</td>
+            <td>Cebu</td>
+           </tr>
+          </tbody>
+         </table>
+        </div>
+        <div class="overflow-x-auto">
+         <p class="mono text-sm text-cyan-200 mb-2">DATE DIMENSION</p>
+         <table class="data-table text-sm">
+          <thead>
+           <tr>
+            <th>ID</th>
+            <th>Day</th>
+            <th>Month</th>
+            <th>Year</th>
+           </tr>
+          </thead>
+          <tbody>
+           <tr>
+            <td>D001</td>
+            <td>15</td>
+            <td>July</td>
+            <td>2026</td>
+           </tr>
+          </tbody>
+         </table>
+        </div>
+       </div>
+       <div class="mt-7 grid md:grid-cols-2 gap-4">
+        <div class="rounded-xl bg-black/25 border border-white/10 p-5">
+         <p class="terminal-label text-lime-200">Facts answer</p>
+         <p class="m-0 mt-2 text-xl font-bold text-white">“How much?”</p>
+        </div>
+        <div class="rounded-xl bg-black/25 border border-white/10 p-5">
+         <p class="terminal-label text-cyan-200">Dimensions answer</p>
+         <p class="m-0 mt-2 text-xl font-bold text-white">Who? What? Where? When? Why?</p>
+        </div>
+       </div>
+      </section>
+      <section id="schemas" class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="git-branch" class="w-5 h-5"></i> Star Schema</h2>
+       <p>The Star Schema is the most common design used in Data Warehouses. It is called a Star Schema because the fact table is placed in the center, while the dimension tables surround it like the points of a star.</p>
+       <div class="schema-stage mt-6">
+        <div class="schema-line" style="left:50%; top:50%; width:104px; transform:rotate(180deg);"></div>
+        <div class="schema-line" style="left:50%; top:50%; width:100px; transform:rotate(0deg);"></div>
+        <div class="schema-line" style="left:50%; top:50%; width:78px; transform:rotate(-90deg);"></div>
+        <div class="schema-line" style="left:50%; top:50%; width:78px; transform:rotate(90deg);"></div>
+        <div class="schema-node fact-node" style="left:50%; top:50%; transform:translate(-50%,-50%);">
+         SALES FACT
+        </div>
+        <div class="schema-node dimension-node" style="left:7%; top:50%; transform:translateY(-50%);">
+         CUSTOMER<br>
+         DIMENSION
+        </div>
+        <div class="schema-node dimension-node" style="right:7%; top:50%; transform:translateY(-50%);">
+         DATE<br>
+         DIMENSION
+        </div>
+        <div class="schema-node dimension-node" style="left:50%; top:8%; transform:translateX(-50%);">
+         PRODUCT<br>
+         DIMENSION
+        </div>
+        <div class="schema-node dimension-node" style="left:50%; bottom:8%; transform:translateX(-50%);">
+         BRANCH<br>
+         DIMENSION
+        </div>
+       </div>
+       <p class="mt-6">The Sales table contains the numbers, while the surrounding tables describe those numbers.</p>
+       <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-5">
+        <div class="rounded-xl border border-cyan-300/15 p-4 bg-cyan-300/5 text-center text-cyan-100">
+         Easy to understand
+        </div>
+        <div class="rounded-xl border border-cyan-300/15 p-4 bg-cyan-300/5 text-center text-cyan-100">
+         Easy to design
+        </div>
+        <div class="rounded-xl border border-cyan-300/15 p-4 bg-cyan-300/5 text-center text-cyan-100">
+         Fast to query
+        </div>
+        <div class="rounded-xl border border-cyan-300/15 p-4 bg-cyan-300/5 text-center text-cyan-100">
+         Ideal for reports
+        </div>
+       </div>
+       <p class="mt-5">Most Business Intelligence tools such as Power BI and Tableau work very well with Star Schemas.</p>
+      </section>
+      <section class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="snowflake" class="w-5 h-5"></i> Snowflake Schema</h2>
+       <p>A Snowflake Schema is similar to a Star Schema, but the dimension tables are divided into smaller related tables.</p>
+       <div class="schema-stage mt-6">
+        <div class="schema-line" style="left:49%; top:51%; width:95px; transform:rotate(180deg);"></div>
+        <div class="schema-line" style="left:49%; top:51%; width:95px; transform:rotate(0deg);"></div>
+        <div class="schema-line" style="left:23%; top:51%; width:78px; transform:rotate(-145deg);"></div>
+        <div class="schema-node fact-node" style="left:50%; top:50%; transform:translate(-50%,-50%);">
+         SALES
+        </div>
+        <div class="schema-node dimension-node" style="left:20%; top:50%; transform:translateY(-50%);">
+         PRODUCT
+        </div>
+        <div class="schema-node dimension-node" style="right:16%; top:50%; transform:translateY(-50%);">
+         DATE
+        </div>
+        <div class="schema-node dimension-node" style="left:6%; top:12%;">
+         CATEGORY
+        </div>
+       </div>
+       <p class="mt-6">For example, instead of storing Product and Category together, we separate Category into another table. This reduces duplicate information.</p>
+       <p>The trade-off is that the database becomes more organized, but queries become more complicated because there are more tables to join.</p>
+       <div class="overflow-x-auto mt-6">
+        <table class="data-table">
+         <thead>
+          <tr>
+           <th>Star Schema</th>
+           <th>Snowflake Schema</th>
+          </tr>
+         </thead>
+         <tbody>
+          <tr>
+           <td>Simple structure</td>
+           <td>More detailed structure</td>
+          </tr>
+          <tr>
+           <td>Faster queries</td>
+           <td>Slightly slower queries</td>
+          </tr>
+          <tr>
+           <td>Easy to understand</td>
+           <td>More complex</td>
+          </tr>
+          <tr>
+           <td>Uses more storage</td>
+           <td>Uses less storage</td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+       <p class="mt-5">For most reporting systems, organizations prefer the <strong>Star Schema</strong> because it is simpler and faster.</p>
+      </section>
+      <section id="grain" class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="scan-line" class="w-5 h-5"></i> Grain</h2>
+       <p>One of the most important decisions in dimensional modelling is choosing the grain. The grain tells us exactly what one row in the fact table represents.</p>
+       <p>One row can mean:</p>
+       <ul class="grid sm:grid-cols-2 gap-x-8 list-disc pl-6">
+        <li>One sales transaction</li>
+        <li>One student enrollment</li>
+        <li>One hospital admission</li>
+        <li>One product sold per day</li>
+       </ul>
+       <div class="quote-box rounded-r-xl px-5 py-4 mt-5">
+        <p class="m-0">Think of the grain as answering this question: <strong>“What does one record in this table represent?”</strong></p>
+       </div>
+       <p class="mt-5">If the grain is not clearly defined, reports may produce incorrect results.</p>
+       <h2 class="section-title text-lg font-bold mt-9"><i data-lucide="key-round" class="w-5 h-5"></i> Surrogate Keys</h2>
+       <p>Many operational systems already have IDs. For example, a product may already have <strong>Product ID = P100</strong>. In Data Warehousing, we usually create another ID called a <strong>Surrogate Key</strong>.</p>
+       <div class="grid sm:grid-cols-2 gap-4 mt-5">
+        <div class="rounded-xl border border-white/10 bg-black/20 p-5">
+         <p class="text-sm text-slate-400 m-0">Operational system</p>
+         <p class="mono text-xl text-cyan-200 mt-2 mb-0">Product ID = P100</p>
+        </div>
+        <div class="rounded-xl border border-lime-300/25 bg-lime-300/5 p-5">
+         <p class="text-sm text-slate-400 m-0">Warehouse key</p>
+         <p class="mono text-xl text-lime-200 mt-2 mb-0">ProductKey = 15</p>
+        </div>
+       </div>
+       <p class="mt-5">Surrogate keys make joins faster, never change, and help preserve historical records.</p>
+      </section>
+      <section id="advanced" class="section-card">
+       <h2 class="section-title text-lg font-bold"><i data-lucide="brain-circuit" class="w-5 h-5"></i> Advanced Concepts</h2>
+       <p>Once we understand the basics, we can solve more complex business problems.</p>
+       <div class="mt-6">
+        <p class="terminal-label text-violet-200">Slowly Changing Dimensions (SCD)</p>
+        <h3 class="text-2xl font-bold mt-2 text-white">Managing information that changes over time</h3>
+        <p>People and businesses change over time. Imagine a customer named Maria. In 2024 she lives in Manila. In 2026 she moves to Cebu. Should the warehouse replace her old address? That depends on the business requirement.</p>
+       </div>
+       <div class="grid md:grid-cols-3 gap-4 mt-5">
+        <div class="concept-card rounded-xl p-5"><span class="type-chip inline-block rounded-full px-2.5 py-1">TYPE 1</span>
+         <h3 class="mt-4 text-lg font-bold text-white">Replace the old value</h3>
+         <p class="text-sm">Maria – Manila becomes Maria – Cebu. The old address is lost.</p>
+        </div>
+        <div class="concept-card rounded-xl p-5"><span class="type-chip inline-block rounded-full px-2.5 py-1">TYPE 2</span>
+         <h3 class="mt-4 text-lg font-bold text-white">Keep both records</h3>
+         <p class="text-sm">Maria – Manila and Maria – Cebu both remain. This preserves historical information.</p>
+        </div>
+        <div class="concept-card rounded-xl p-5"><span class="type-chip inline-block rounded-full px-2.5 py-1">TYPE 3</span>
+         <h3 class="mt-4 text-lg font-bold text-white">Keep one previous value</h3>
+         <p class="text-sm">Current City: Cebu. Previous City: Manila. Useful when only recent history matters.</p>
+        </div>
+       </div>
+       <p class="mt-5">Type 2 is the most common approach because businesses often need historical information.</p>
+       <h3 class="text-2xl font-bold mt-10 text-white">Different Types of Fact Tables</h3>
+       <div class="grid md:grid-cols-3 gap-4 mt-5">
+        <div class="rounded-xl border border-cyan-300/18 bg-cyan-300/5 p-5"><i data-lucide="receipt" class="w-6 h-6 text-cyan-200"></i>
+         <h4 class="text-lg font-bold text-white mt-3">Transaction Fact Table</h4>
+         <p class="text-sm">Stores one record for every transaction. Example: every purchase made in Shopee.</p>
+        </div>
+        <div class="rounded-xl border border-cyan-300/18 bg-cyan-300/5 p-5"><i data-lucide="calendar-days" class="w-6 h-6 text-cyan-200"></i>
+         <h4 class="text-lg font-bold text-white mt-3">Periodic Snapshot</h4>
+         <p class="text-sm">Stores information at regular intervals, such as daily inventory, monthly sales, or weekly attendance.</p>
+        </div>
+        <div class="rounded-xl border border-cyan-300/18 bg-cyan-300/5 p-5"><i data-lucide="route" class="w-6 h-6 text-cyan-200"></i>
+         <h4 class="text-lg font-bold text-white mt-3">Accumulating Snapshot</h4>
+         <p class="text-sm">Tracks a process from beginning to end, such as an online order: ordered, packed, shipped, and delivered.</p>
+        </div>
+       </div>
+       <div class="grid md:grid-cols-2 gap-4 mt-7">
+        <div class="concept-card rounded-xl p-5">
+         <h3 class="text-lg font-bold text-white">Junk Dimension</h3>
+         <p class="text-sm">Several small pieces of information can be grouped into one dimension. Examples include Gift Wrap, Payment Method, and Promo Used. This makes the database simpler.</p>
+        </div>
+        <div class="concept-card rounded-xl p-5">
+         <h3 class="text-lg font-bold text-white">Degenerate Dimension</h3>
+         <p class="text-sm">Useful values that do not need their own table, such as Invoice Number, Receipt Number, or Order Number. These stay directly inside the Fact Table.</p>
+        </div>
+        <div class="concept-card rounded-xl p-5">
+         <h3 class="text-lg font-bold text-white">Role-Playing Dimension</h3>
+         <p class="text-sm">The same dimension is used in different ways. One Date Dimension can represent Order Date, Shipping Date, and Delivery Date.</p>
+        </div>
+        <div class="concept-card rounded-xl p-5">
+         <h3 class="text-lg font-bold text-white">Conformed Dimensions</h3>
+         <p class="text-sm">Large companies may share one Customer Dimension across Sales, Inventory, and Marketing fact tables to keep reports consistent.</p>
+        </div>
+       </div>
+      </section>
+      <section id="summary" data-template-id="summary-section" class="canva-panel rounded-2xl border border-lime-300/25 bg-gradient-to-br from-lime-300/10 to-cyan-300/5 p-6 md:p-8">
+       <div class="flex items-start gap-4">
+        <div class="shrink-0 w-11 h-11 flex items-center justify-center rounded-xl bg-lime-300 text-slate-950"><i data-lucide="check-check" class="w-6 h-6"></i>
+        </div>
+        <div>
+         <h2 data-template-id="summary-heading" class="canva-text text-2xl font-bold text-white"></h2>
+         <p class="mt-4 mb-0 text-slate-200 leading-relaxed">Dimensional modelling is the foundation of Data Warehousing because it organizes data for fast reporting and business analysis. Every design starts with identifying the facts — measurable values — and dimensions — descriptive information. The Star Schema is the most widely used because it is simple and efficient, while the Snowflake Schema provides greater normalization at the cost of more complex queries.</p>
+         <p class="mt-4 mb-0 text-slate-200 leading-relaxed">Advanced concepts such as Slowly Changing Dimensions, different fact table types, surrogate keys, and conformed dimensions help organizations manage historical data and build scalable Business Intelligence systems. Understanding these concepts prepares students to design data warehouses that support real-world decision-making in retail, banking, healthcare, education, and e-commerce.</p>
+        </div>
+       </div>
+      </section>
+     </article>
+    </div>
+   </main>
+   <footer class="border-t border-cyan-300/10 bg-black/20">
+    <div class="w-full max-w-7xl mx-auto px-5 py-6 flex flex-col sm:flex-row gap-2 justify-between text-sm text-slate-500"><span>Data Warehousing · Lesson 3</span> <span class="mono text-xs">MKDB // DIMENSIONAL MODELLING</span>
+    </div>
+   </footer>
+  </div>
+  <script src="/_sdk/9a740ce6cacd0808.editing_sdk.js" integrity="sha512-ZcKE2UXVxSh0Kmty64HdB2xjpgsalbehms1KOXHeK7POjO9v81VU+RYWmq0cOBM9u4mY5oRq7UsigAanNH4Iww=="></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      lucide.createIcons();
+    });
+  </script>
+ </body>
+</html>

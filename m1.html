@@ -1,1324 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Warehousing - BSCS Major in Data Science</title>
-    <style>
-        :root {
-            --bg-primary: #0f172a;
-            --bg-card: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent-blue: #38bdf8;
-            --accent-green: #34d399;
-            --accent-purple: #c084fc;
-            --accent-amber: #fbbf24;
-            --accent-rose: #fb7185;
-            --border: #334155;
-            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            --font-code: "Fira Code", Monaco, Consolas, "Courier New", monospace;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BSCS Data Science - Data Warehousing</title>
+<style>
+  :root {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent: #38bdf8;
+    --accent-hover: #0284c7;
+  }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
 
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-main);
-            font-family: var(--font-main);
-            overflow: hidden;
-            height: 100vh;
-            width: 100vw;
-        }
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
 
-        /* Presentation Container */
-        .deck-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+  .slide-container {
+    width: 80vw;
+    max-width: 900px;
+    height: 55vh;
+    min-height: 400px;
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    text-align: center;
+    position: relative;
+    border: 1px solid #334155;
+  }
 
-        /* Slide Styling */
-        .slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            padding: 3rem 5rem 5rem 5rem;
-            display: flex;
-            flex-direction: column;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            transform: scale(0.98);
-            overflow-y: auto;
-        }
+  .slide {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    height: 100%;
+  }
 
-        .slide.active {
-            opacity: 1;
-            visibility: visible;
-            transform: scale(1);
-        }
+  .slide.active {
+    display: flex;
+  }
 
-        /* Header / Headers */
-        .slide-header {
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid var(--border);
-            padding-bottom: 0.75rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
+  .badge {
+    background-color: rgba(56, 189, 248, 0.1);
+    color: var(--accent);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
 
-        .slide-tag {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--accent-blue);
-            font-weight: 700;
-        }
+  h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
 
-        h1 {
-            font-size: 2.75rem;
-            font-weight: 800;
-            color: #ffffff;
-            line-height: 1.2;
-        }
+  h2 {
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--accent);
+  }
 
-        h2 {
-            font-size: 2rem;
-            color: var(--accent-blue);
-            margin-bottom: 1rem;
-        }
+  p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    max-width: 600px;
+    line-height: 1.5;
+  }
 
-        h3 {
-            font-size: 1.25rem;
-            color: var(--accent-green);
-            margin-bottom: 0.75rem;
-        }
+  ul {
+    text-align: left;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    font-size: 1.05rem;
+  }
 
-        p, li {
-            font-size: 1.15rem;
-            line-height: 1.6;
-            color: var(--text-main);
-        }
+  .instructor {
+    margin-top: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
 
-        .highlight-box {
-            background: var(--bg-card);
-            border-left: 4px solid var(--accent-blue);
-            padding: 1.25rem;
-            border-radius: 0 8px 8px 0;
-            margin: 1rem 0;
-            font-size: 1.2rem;
-        }
+  .controls {
+    margin-top: 24px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
 
-        .highlight-box.green { border-color: var(--accent-green); }
-        .highlight-box.amber { border-color: var(--accent-amber); }
-        .highlight-box.purple { border-color: var(--accent-purple); }
-        .highlight-box.rose { border-color: var(--accent-rose); }
+  button {
+    background-color: var(--accent);
+    color: #0f172a;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
 
-        /* Grids & Cards */
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-top: 1rem;
-        }
+  button:hover {
+    background-color: var(--accent-hover);
+    color: #ffffff;
+  }
 
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.25rem;
-            margin-top: 1rem;
-        }
-
-        .card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 1.25rem;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card h4 {
-            color: var(--accent-blue);
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Tables */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-            background-color: var(--bg-card);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        th, td {
-            padding: 0.85rem 1rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-            font-size: 1rem;
-        }
-
-        th {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: var(--accent-blue);
-            font-weight: 600;
-        }
-
-        /* Code Blocks & ASCII Diagrams */
-        pre {
-            background-color: #090d16;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            font-family: var(--font-code);
-            font-size: 0.95rem;
-            color: #e2e8f0;
-            overflow-x: auto;
-            margin-top: 0.75rem;
-            line-height: 1.4;
-        }
-
-        code {
-            font-family: var(--font-code);
-            color: var(--accent-amber);
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 0.1rem 0.3rem;
-            border-radius: 4px;
-        }
-
-        ul, ol {
-            margin-left: 1.5rem;
-            margin-top: 0.5rem;
-        }
-
-        li {
-            margin-bottom: 0.5rem;
-        }
-
-        /* Controls / Navigation Bar */
-        .controls {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background-color: #090d16;
-            border-top: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 2rem;
-            z-index: 100;
-        }
-
-        .nav-btn {
-            background: var(--bg-card);
-            color: var(--text-main);
-            border: 1px solid var(--border);
-            padding: 0.5rem 1.25rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .nav-btn:hover {
-            background: var(--accent-blue);
-            color: #000;
-            border-color: var(--accent-blue);
-        }
-
-        .slide-number {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        /* Centered Slide layout option */
-        .slide-center {
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-
-        .title-sub {
-            font-size: 1.5rem;
-            color: var(--accent-blue);
-            margin-top: 0.5rem;
-        }
-
-        .title-meta {
-            margin-top: 2rem;
-            color: var(--text-muted);
-            font-size: 1.1rem;
-        }
-    </style>
+  .slide-number {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+</style>
 </head>
 <body>
 
-<div class="deck-container">
+<div class="slide-container">
+  <!-- Slide 1 -->
+  <div class="slide active">
+    <span class="badge">BSCS – Major in Data Science</span>
+    <h1>Midterm Lesson 1: Data Warehousing</h1>
+    <h2>Meeting 1: Introduction to Data Warehousing & Architecture</h2>
+    <p class="instructor">Instructor: MKDB</p>
+  </div>
 
-    <!-- SLIDE 1: Title -->
-    <div class="slide slide-center active">
-        <p class="slide-tag">BSCS – Major in Data Science</p>
-        <h1>DATA WAREHOUSING</h1>
-        <p class="title-sub">3-Meeting Comprehensive Lecture Series</p>
-        <div class="title-meta">
-            <p><strong>Course Learning Outcomes & Comprehensive Concepts</strong></p>
-            <p>Organize → Clean → Govern → Optimize → Analyze → Predict</p>
-        </div>
-    </div>
+  <!-- Slide 2 -->
+  <div class="slide">
+    <h2>Agenda for Meeting 1</h2>
+    <ul>
+      <li>What is a Data Warehouse (DW)?</li>
+      <li>OLTP vs. OLAP Systems</li>
+      <li>Core Architectural Components</li>
+      <li>Basic DW Architecture Models</li>
+    </ul>
+  </div>
 
-    <!-- SLIDE 2: CLOs -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Course Learning Outcomes</h2>
-            <span class="slide-tag">Overview</span>
-        </div>
-        <div class="grid-3">
-            <div class="card">
-                <h4>CLO 1 — Implement & Use Data Warehousing</h4>
-                <p>Understand how data warehouses are designed and used to support reporting, analytics, and data science infrastructure.</p>
-            </div>
-            <div class="card">
-                <h4>CLO 2 — Apply Data Quality & Governance</h4>
-                <p>Identify, clean, validate, document, and manage data using industry-standard quality frameworks and governance principles.</p>
-            </div>
-            <div class="card">
-                <h4>CLO 3 — Performance Optimization</h4>
-                <p>Optimize analytical queries, tables, storage structures, ETL pipelines, and high-volume workloads for max efficiency.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 3: Meeting 1 Title -->
-    <div class="slide slide-center">
-        <p class="slide-tag">Meeting 1</p>
-        <h1>Data Warehouse Concepts & Architecture</h1>
-        <p class="title-sub">Foundations of Analytical Data Systems</p>
-    </div>
-
-    <!-- SLIDE 4: M1 Part 1 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>What Is a Data Warehouse?</h2>
-            <span class="slide-tag">Meeting 1 • Part 1</span>
-        </div>
-        <p>A <strong>Data Warehouse</strong> is a centralized system used to store and organize large amounts of data from different sources for analysis and decision-making.</p>
-        <div class="highlight-box green">
-            "A database is mainly designed to <strong>run</strong> the business. A data warehouse is mainly designed to <strong>analyze</strong> the business."
-        </div>
-        <h3>Real-World E-Commerce Example</h3>
-        <p>An online retailer generates daily data across distinct, isolated platforms:</p>
-        <p><em>Website orders, Mobile Apps, Payments, Inventory, Shipping, Marketing...</em></p>
-        <p><strong>Questions Management Asks:</strong> Which product sells most? Which region has highest yield? What is the multi-year customer growth trajectory?</p>
-    </div>
-
-    <!-- SLIDE 5: M1 Part 2 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Why Do We Need a Data Warehouse?</h2>
-            <span class="slide-tag">Meeting 1 • Part 2</span>
-        </div>
-        <p>Without a centralized warehouse, data remains isolated across distinct transactional silos. Centralization enables unified Business Intelligence (BI).</p>
-        <pre>
-Website ───────┐
-Mobile App ────┤
-Payments ──────┤
-Inventory ─────┼───► DATA WAREHOUSE ───► ANALYTICS / BI ───► BUSINESS DECISIONS
-CRM ───────────┤
-               │
-Sensors / APIs ┘
-        </pre>
-    </div>
-
-    <!-- SLIDE 6: M1 Part 3 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Database vs. Data Warehouse</h2>
-            <span class="slide-tag">Meeting 1 • Part 3</span>
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Feature</th>
-                    <th>Traditional Database (Operational)</th>
-                    <th>Data Warehouse (Analytical)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td><strong>Primary Purpose</strong></td><td>Supports daily operations</td><td>Supports enterprise analytics</td></tr>
-                <tr><td><strong>Data State</strong></td><td>Frequently updated (real-time)</td><td>Historical, integrated, read-heavy</td></tr>
-                <tr><td><strong>Data Model</strong></td><td>Normalized (3NF)</td><td>Dimensional (Star/Snowflake)</td></tr>
-                <tr><td><strong>Workload Type</strong></td><td>Many quick, small transactions</td><td>Complex aggregations across millions of rows</td></tr>
-                <tr><td><strong>Core Question</strong></td><td>"Did Maria buy this product?"</td><td>"How much did 18–25 age group spend in 3 years?"</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- SLIDE 7: M1 Part 4 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>OLTP vs. OLAP</h2>
-            <span class="slide-tag">Meeting 1 • Part 4</span>
-        </div>
-        <div class="grid-2">
-            <div class="card">
-                <h4>OLTP (Online Transaction Processing)</h4>
-                <ul>
-                    <li>Used for everyday operational tasks.</li>
-                    <li>Examples: Buying a product, booking tickets, registering students, updating addresses.</li>
-                    <li><strong>Key Focus:</strong> High concurrency, fast execution of simple operations.</li>
-                </ul>
-                <div class="highlight-box amber" style="margin-top:auto">
-                    <strong>OLTP = RUN THE BUSINESS</strong>
-                </div>
-            </div>
-            <div class="card">
-                <h4>OLAP (Online Analytical Processing)</h4>
-                <ul>
-                    <li>Used for complex analytical insights.</li>
-                    <li>Examples: Monthly sales analysis, revenue forecasting, cohort retention tracking.</li>
-                    <li><strong>Key Focus:</strong> Processing massive volumes for insights.</li>
-                </ul>
-                <div class="highlight-box green" style="margin-top:auto">
-                    <strong>OLAP = STUDY THE BUSINESS</strong>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 8: M1 Part 5 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Data Warehouse Architecture</h2>
-            <span class="slide-tag">Meeting 1 • Part 5</span>
-        </div>
-        <pre>
-          DATA SOURCES           ETL / ELT        ANALYTICAL STORAGE        CONSUMPTION
-       ┌─────────────────┐       ┌───────┐       ┌──────────────────┐     ┌──────────────┐
-       │ Databases, CSVs,│ ───►  │ Extract       │  Data Warehouse  │ ──► │ Dashboards   │
-       │ APIs, Sensors   │       │ Transform ──► │  / Lakehouse /   │     │ BI Reports   │
-       └─────────────────┘       │ Load  │       │  Data Marts      │     │ Data Science │
-                                 └───────┘       └──────────────────┘     └──────────────┘
-        </pre>
-        <div class="grid-2">
-            <div class="card">
-                <h4>1. Data Sources</h4>
-                <p>Raw operational systems (MySQL, APIs, Logs, ERPs).</p>
-            </div>
-            <div class="card">
-                <h4>2. Pipeline & Warehouse</h4>
-                <p>ETL/ELT converts raw data into structured dimensional tables.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 9: M1 Parts 6 & 7 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>ETL vs. ELT Data Ingestion</h2>
-            <span class="slide-tag">Meeting 1 • Parts 6 & 7</span>
-        </div>
-        <div class="grid-2">
-            <div class="card">
-                <h4>ETL (Extract ➔ Transform ➔ Load)</h4>
-                <pre>
-SOURCE ──► EXTRACT ──► TRANSFORM ──► LOAD ──► WAREHOUSE
-                </pre>
-                <p>Data is modified on an external staging server <em>before</em> loading into target storage. Traditional enterprise standard.</p>
-            </div>
-            <div class="card">
-                <h4>ELT (Extract ➔ Load ➔ Transform)</h4>
-                <pre>
-SOURCE ──► EXTRACT ──► LOAD ──► PLATFORM ──► TRANSFORM
-                </pre>
-                <p>Raw data is dumped directly into modern cloud engines (Lakehouse/Databricks), transforming natively using cloud compute.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 10: M1 Part 8 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>ETL vs ELT Comparison</h2>
-            <span class="slide-tag">Meeting 1 • Part 8</span>
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Property</th>
-                    <th>ETL</th>
-                    <th>ELT</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td><strong>Transformation Order</strong></td><td>Transform before loading</td><td>Load before transforming</td></tr>
-                <tr><td><strong>Platform Alignment</strong></td><td>Traditional Data Warehouse</td><td>Modern Cloud Lakehouses / Storage</td></tr>
-                <tr><td><strong>Processing Location</strong></td><td>External Staging Engine</td><td>Target System Native Compute Engine</td></tr>
-                <tr><td><strong>Flexibility</strong></td><td>Rigid schema definitions required</td><td>Raw retention allows on-demand transformation</td></tr>
-            </tbody>
-        </table>
-        <div class="highlight-box purple">
-            "Neither pattern is inherently superior. Choice depends on target compute power, network infrastructure, security regulations, and data structures."
-        </div>
-    </div>
-
-    <!-- SLIDE 11: M1 Part 9 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Dimensional Modeling: Fact Tables</h2>
-            <span class="slide-tag">Meeting 1 • Part 9</span>
-        </div>
-        <p>A <strong>Fact Table</strong> stores numerical measurements (measures) recorded from discrete, real-world business events.</p>
-        <p>Example: <code>FACT_SALES</code></p>
-        <table>
-            <thead>
-                <tr><th>Sale_ID</th><th>Customer_ID</th><th>Product_ID</th><th>Date_ID</th><th>Quantity</th><th>Sales_Amount</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>1001</td><td>C001</td><td>P001</td><td>D001</td><td>2</td><td>50,000</td></tr>
-                <tr><td>1002</td><td>C002</td><td>P003</td><td>D002</td><td>1</td><td>8,000</td></tr>
-                <tr><td>1003</td><td>C001</td><td>P002</td><td>D002</td><td>3</td><td>9,000</td></tr>
-            </tbody>
-        </table>
-        <p style="margin-top:0.5rem"><strong>Key Metrics (Measures):</strong> <em>Quantity, Revenue, Cost, Profit, Discount, Taxes.</em></p>
-    </div>
-
-    <!-- SLIDE 12: M1 Part 10 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Dimensional Modeling: Dimension Tables</h2>
-            <span class="slide-tag">Meeting 1 • Part 10</span>
-        </div>
-        <p><strong>Dimension Tables</strong> store contextual attributes that describe, filter, and group the numerical metrics in Fact Tables.</p>
-        <div class="grid-3">
-            <div class="card">
-                <h4>DIM_CUSTOMER</h4>
-                <p><code>Customer_ID</code>: C001<br><code>Name</code>: Maria<br><code>City</code>: Manila<br><code>Region</code>: NCR</p>
-            </div>
-            <div class="card">
-                <h4>DIM_PRODUCT</h4>
-                <p><code>Product_ID</code>: P001<br><code>Product</code>: Laptop<br><code>Category</code>: Electronics</p>
-            </div>
-            <div class="card">
-                <h4>DIM_DATE</h4>
-                <p><code>Date_ID</code>: D001<br><code>Date</code>: Jan 5, 2026<br><code>Month</code>: January<br><code>Year</code>: 2026</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 13: M1 Part 11 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Fact vs Dimension: Easy Rule</h2>
-            <span class="slide-tag">Meeting 1 • Part 11</span>
-        </div>
-        <div class="grid-2">
-            <div class="card">
-                <h4>FACT</h4>
-                <div class="highlight-box amber"><strong>What happened?</strong></div>
-                <p>Stores measurable numerical quantities, transactions, and FK references.</p>
-            </div>
-            <div class="card">
-                <h4>DIMENSION</h4>
-                <div class="highlight-box green"><strong>Describes what happened.</strong></div>
-                <p>Provides context (Who, What, Where, When, Why, How).</p>
-            </div>
-        </div>
-        <div class="highlight-box purple" style="margin-top:1.5rem">
-            <strong>Real-world breakdown:</strong> "A customer purchased 3 laptops for ₱150,000 in Manila."<br>
-            • <strong>Facts (Metrics):</strong> Quantity = 3, Sales = ₱150,000<br>
-            • <strong>Dimensions (Context):</strong> Customer = Maria, Product = Laptop, Location = Manila
-        </div>
-    </div>
-
-    <!-- SLIDE 14: M1 Part 12 & 13 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Star Schema</h2>
-            <span class="slide-tag">Meeting 1 • Parts 12 & 13</span>
-        </div>
-        <pre>
-                             DIM_DATE
-                                │
-                                │
-          DIM_CUSTOMER ─── FACT_SALES ─── DIM_PRODUCT
-                                │
-                                │
-                            DIM_STORE
-        </pre>
-        <h3>Why Use a Star Schema?</h3>
-        <ul>
-            <li>Simplified analytics structure: Denormalized design minimizes complex SQL join paths.</li>
-            <li>Enables efficient multi-dimensional aggregation queries across business domains.</li>
-        </ul>
-    </div>
-
-    <!-- SLIDE 15: M1 Part 14 & 15 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Snowflake Schema & Comparison</h2>
-            <span class="slide-tag">Meeting 1 • Parts 14 & 15</span>
-        </div>
-        <p>In a <strong>Snowflake Schema</strong>, dimension tables are normalized into multiple sub-tables (e.g., <code>Product ➔ Category ➔ Department</code>).</p>
-        <table>
-            <thead>
-                <tr><th>Star Schema</th><th>Snowflake Schema</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>Denormalized dimension tables</td><td>Normalized dimension structures</td></tr>
-                <tr><td>Fewer joins required (Faster read performance)</td><td>More complex JOIN relationships</td></tr>
-                <tr><td>Higher storage redundancy</td><td>Reduces data redundancy / lower disk usage</td></tr>
-                <tr><td>Ideal for general analytical queries</td><td>Ideal for specific strict structural hierarchies</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- SLIDE 16: M1 Part 16 & Databricks -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Data Warehousing & Data Science</h2>
-            <span class="slide-tag">Meeting 1 • Part 16</span>
-        </div>
-        <p>Data science models rely entirely on structured, unified operational pipelines.</p>
-        <pre>
-Raw Data ──► Data Integration ──► Cleaning ──► Warehouse ──► Feature Prep ──► Machine Learning
-        </pre>
-        <div class="highlight-box green">
-            <strong>Databricks Ecosystem Connection:</strong> Provides cloud environments (Delta Lake, PySpark, SQL) to manage big data warehousing, analytical queries, and model training in a single lakehouse.
-        </div>
-    </div>
-
-    <!-- SLIDE 17: M1 Check -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Meeting 1 — Quick Knowledge Check</h2>
-            <span class="slide-tag">Review</span>
-        </div>
-        <div class="grid-2">
-            <div class="card">
-                <ol>
-                    <li>Define a Data Warehouse.</li>
-                    <li>Contrast OLTP and OLAP goals.</li>
-                    <li>Distinguish ETL vs. ELT execution.</li>
-                    <li>What are Fact and Dimension tables?</li>
-                </ol>
-            </div>
-            <div class="card">
-                <ol start="5">
-                    <li>What is the core visual structure of a Star Schema?</li>
-                    <li>How does a Snowflake schema differ from a Star schema?</li>
-                    <li>Why is a data warehouse essential for machine learning pipelines?</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 18: Meeting 2 Title -->
-    <div class="slide slide-center">
-        <p class="slide-tag">Meeting 2</p>
-        <h1>Data Quality, Cleaning, and Governance</h1>
-        <p class="title-sub">Trustworthy Analytics and Enterprise Standards</p>
-    </div>
-
-    <!-- SLIDE 19: M2 Part 1 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>The Most Important Question</h2>
-            <span class="slide-tag">Meeting 2 • Part 1</span>
-        </div>
-        <div class="highlight-box rose">
-            <strong>"What happens if the underlying enterprise data is wrong?"</strong>
-        </div>
-        <p>If financial reports state Sales = ₱10 Million, but actual real revenues were ₱8 Million, executive management executes strategy based on erroneous indicators.</p>
-        <ul>
-            <li>Flawed budget allocations & incorrect financial projections</li>
-            <li>Faulty automated operational strategies</li>
-            <li>Inaccurate business intelligence metrics</li>
-        </ul>
-        <div class="highlight-box amber">
-            <strong>GIGO: Garbage In, Garbage Out.</strong> Bad data guarantees failed Machine Learning models.
-        </div>
-    </div>
-
-    <!-- SLIDE 20: M2 Part 2 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>What Is Data Quality?</h2>
-            <span class="slide-tag">Meeting 2 • Part 2</span>
-        </div>
-        <p><strong>Data Quality</strong> measures how suitable and reliable a dataset is for its intended analytical purpose.</p>
-        <p>A dataset with 100,000,000 rows does not guarantee value if it contains missing, distorted, or corrupted entries.</p>
-        <div class="grid-3" style="margin-top:1.5rem">
-            <div class="card"><h4>Is it Accurate?</h4></div>
-            <div class="card"><h4>Is it Complete?</h4></div>
-            <div class="card"><h4>Is it Consistent?</h4></div>
-            <div class="card"><h4>Is it Valid?</h4></div>
-            <div class="card"><h4>Is it Unique?</h4></div>
-            <div class="card"><h4>Is it Timely?</h4></div>
-        </div>
-    </div>
-
-    <!-- SLIDE 21: M2 Part 3 (1-3) -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Dimensions of Data Quality (1 - 3)</h2>
-            <span class="slide-tag">Meeting 2 • Part 3</span>
-        </div>
-        <div class="grid-3">
-            <div class="card">
-                <h4>1. Accuracy</h4>
-                <p>Does data reflect real-world values?</p>
-                <p><em>Error:</em> Storing student age as <code>91</code> instead of <code>21</code>.</p>
-            </div>
-            <div class="card">
-                <h4>2. Completeness</h4>
-                <p>Are mandatory values present?</p>
-                <p><em>Error:</em> Missing <code>Age = NULL</code> fields in demographic models.</p>
-            </div>
-            <div class="card">
-                <h4>3. Consistency</h4>
-                <p>Are values formatted uniformly across sources?</p>
-                <p><em>Error:</em> Mixing <code>PH</code>, <code>PHL</code>, <code>Phil.</code>, and <code>Philippines</code>.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 22: M2 Part 3 (4-6) -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Dimensions of Data Quality (4 - 6)</h2>
-            <span class="slide-tag">Meeting 2 • Part 3</span>
-        </div>
-        <div class="grid-3">
-            <div class="card">
-                <h4>4. Validity</h4>
-                <p>Does data obey specified domain rules?</p>
-                <p><em>Error:</em> Negative ages like <code>Age = -5</code> or invalid dates.</p>
-            </div>
-            <div class="card">
-                <h4>5. Uniqueness</h4>
-                <p>Are duplicate entities present?</p>
-                <p><em>Error:</em> Duplicate transaction IDs inflating revenue metrics.</p>
-            </div>
-            <div class="card">
-                <h4>6. Timeliness</h4>
-                <p>Is the data current enough for actionable use?</p>
-                <p><em>Error:</em> Using 5-year-old weather data to predict today's logistics.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 23: M2 Part 4 & 5 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Profiling & Handling Missing Data</h2>
-            <span class="slide-tag">Meeting 2 • Parts 4 & 5</span>
-        </div>
-        <p><strong>Data Profiling:</strong> Inspecting structural properties, missingness, distributions, and value frequencies before performing analytical operations.</p>
-        <h3>Handling Missing (NULL) Data:</h3>
-        <div class="grid-2">
-            <div class="card">
-                <h4>Option A: Record Removal</h4>
-                <p>Drop rows when missingness percentage is negligible and non-systemic.</p>
-            </div>
-            <div class="card">
-                <h4>Option B: Imputation</h4>
-                <p>Replace null values with statistical metrics (Mean, Median, Mode) or domain heuristics.</p>
-            </div>
-        </div>
-        <div class="highlight-box rose" style="margin-top:1rem">
-            <strong>Warning:</strong> Never blindly replace missing entries without understanding the underlying root cause.
-        </div>
-    </div>
-
-    <!-- SLIDE 24: M2 Part 6 & 7 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Duplicates & Cleaning Operations</h2>
-            <span class="slide-tag">Meeting 2 • Parts 6 & 7</span>
-        </div>
-        <p>Systemic duplicate records artificially inflate aggregate analytical metrics:</p>
-        <div class="highlight-box rose">
-            <strong>Actual Sales:</strong> ₱10,000 &nbsp;|&nbsp; <strong>With Duplicates:</strong> ₱30,000 (Severe Error)
-        </div>
-        <h3>Core Data Cleaning Operations</h3>
-        <div class="grid-2">
-            <div class="card">
-                <ul>
-                    <li>Deduplicating unique entity records</li>
-                    <li>Handling missing field values</li>
-                    <li>Standardizing string / date formats</li>
-                </ul>
-            </div>
-            <div class="card">
-                <ul>
-                    <li>Enforcing schema type casting</li>
-                    <li>Correcting domain constraint violations</li>
-                    <li>Removing noisy / irrelevant fields</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 25: M2 Part 8 & 9 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Data Validation & Rule Specifications</h2>
-            <span class="slide-tag">Meeting 2 • Parts 8 & 9</span>
-        </div>
-        <p><strong>Cleaning</strong> fixes bad data. <strong>Validation</strong> tests data against predefined business constraints.</p>
-        <table>
-            <thead>
-                <tr><th>Field</th><th>Validation Rule</th><th>Evaluation Test</th></tr>
-            </thead>
-            <tbody>
-                <tr><td><code>Customer_ID</code></td><td>MUST NOT BE NULL</td><td>Pass / Fail</td></tr>
-                <tr><td><code>Age</code></td><td>0 &le; Age &le; 120</td><td><code>Age = -4</code> ➔ INVALID</td></tr>
-                <tr><td><code>Quantity</code></td><td>Quantity &gt; 0</td><td><code>Quantity = 0</code> ➔ INVALID</td></tr>
-                <tr><td><code>Price</code></td><td>Price &ge; 0.00</td><td>Non-negative floating point check</td></tr>
-                <tr><td><code>Email</code></td><td>Regex pattern match</td><td><code>user@domain.com</code> pattern check</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- SLIDE 26: M2 Part 10 & 11 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Data Governance Frameworks</h2>
-            <span class="slide-tag">Meeting 2 • Parts 10 & 11</span>
-        </div>
-        <p><strong>Data Governance</strong> is the holistic framework of rules, roles, standards, and controls applied to manage data assets securely and effectively.</p>
-        <div class="grid-2" style="margin-top:1rem">
-            <div class="card">
-                <h4>Core Questions Governance Answers</h4>
-                <ul>
-                    <li>Who has authorized access to sensitive student records?</li>
-                    <li>Who is directly accountable for correcting flawed entries?</li>
-                    <li>What standardization formats govern dates and money?</li>
-                    <li>What is the mandatory legal retention policy for log data?</li>
-                </ul>
-            </div>
-            <div class="card">
-                <div class="highlight-box purple">
-                    Without governance, data management degrades into fragmented, unorganized silos with significant security, compliance, and operational risks.
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 27: M2 Part 12 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Components of Data Governance</h2>
-            <span class="slide-tag">Meeting 2 • Part 12</span>
-        </div>
-        <div class="grid-3">
-            <div class="card">
-                <h4>Data Ownership</h4>
-                <p>Individuals accountable for specific domain datasets.</p>
-            </div>
-            <div class="card">
-                <h4>Data Stewardship</h4>
-                <p>Tactical roles managing data quality rules and pipelines.</p>
-            </div>
-            <div class="card">
-                <h4>Data Security</h4>
-                <p>Access control rules, role-based controls, and encryption policies.</p>
-            </div>
-            <div class="card">
-                <h4>Data Privacy</h4>
-                <p>Compliance with regulations governing sensitive information.</p>
-            </div>
-            <div class="card">
-                <h4>Data Standards</h4>
-                <p>Shared naming formats, schema types, and metric definitions.</p>
-            </div>
-            <div class="card">
-                <h4>Data Lifecycle</h4>
-                <p>Policies for long-term archiving, retention, and deletion.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 28: M2 Part 13 & 14 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Metadata: Data About Data</h2>
-            <span class="slide-tag">Meeting 2 • Parts 13 & 14</span>
-        </div>
-        <p><strong>Metadata</strong> provides context, structure, and definition for stored raw data.</p>
-        <div class="grid-2" style="margin-top:1rem">
-            <div class="card">
-                <h4>Example Field: <code>Revenue</code></h4>
-                <p>Without metadata, users don't know if values represent gross revenue, net revenue, or local currency metrics.</p>
-                <div class="highlight-box green">
-                    <strong>Metadata Context:</strong> "Total net sales value of completed customer transactions, measured in PHP (₱), excluding local VAT."
-                </div>
-            </div>
-            <div class="card">
-                <h4>Why Data Scientists Need Metadata</h4>
-                <p>Merging two datasets containing an <code>income</code> column can corrupt ML models if Dataset A stores <em>monthly income</em> while Dataset B stores <em>annual income</em>.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 29: M2 Part 15 & Databricks -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Data Quality in ML & Databricks</h2>
-            <span class="slide-tag">Meeting 2 • Part 15</span>
-        </div>
-        <p>Data preparation and validation account for the majority of a Data Scientist's effort.</p>
-        <div class="grid-2">
-            <div class="card">
-                <h4>Machine Learning Impact</h4>
-                <p>Missing income entries, duplicate customer identities, and erratic values directly distort machine learning model predictions.</p>
-            </div>
-            <div class="card">
-                <h4>Profiling in Databricks</h4>
-                <p>Using PySpark & SQL capabilities to evaluate datasets:</p>
-                <pre><code>df.printSchema()
-df.describe().show()
-SELECT COUNT(*) FROM sales;</code></pre>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 30: M2 Check -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Meeting 2 — Quick Knowledge Check</h2>
-            <span class="slide-tag">Review</span>
-        </div>
-        <div class="grid-2">
-            <div class="card">
-                <ol>
-                    <li>Define Data Quality.</li>
-                    <li>What takes place during Data Profiling?</li>
-                    <li>List 6 core data quality dimensions.</li>
-                    <li>Contrast data cleaning with data validation.</li>
-                </ol>
-            </div>
-            <div class="card">
-                <ol start="5">
-                    <li>Define Data Governance and name 3 components.</li>
-                    <li>Why is metadata essential for multi-source integration?</li>
-                    <li>How does bad input data degrade machine learning models?</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 31: Meeting 3 Title -->
-    <div class="slide slide-center">
-        <p class="slide-tag">Meeting 3</p>
-        <h1>Performance Optimization</h1>
-        <p class="title-sub">Scalable Data Processing & Efficiency</p>
-    </div>
-
-    <!-- SLIDE 32: M3 Part 1 & 2 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>What Is Performance Optimization?</h2>
-            <span class="slide-tag">Meeting 3 • Parts 1 & 2</span>
-        </div>
-        <p><strong>Performance Optimization</strong> improves data processing efficiency, reducing runtime, resource usage, and platform cost.</p>
-        <div class="grid-2" style="margin-top:1rem">
-            <div class="card">
-                <h4>Small Scale (1 Million Rows)</h4>
-                <p>Execution runtime: ~2 seconds.</p>
-                <div class="highlight-box green">Acceptable performance level.</div>
-            </div>
-            <div class="card">
-                <h4>Big Data Scale (500 Million Rows)</h4>
-                <p>Execution runtime: 10+ minutes.</p>
-                <div class="highlight-box rose">Requires query optimization.</div>
-            </div>
-        </div>
-        <p style="margin-top:1rem">Data scientists work with social media streams, financial ledgers, and sensor logs that easily scale into billions of rows.</p>
-    </div>
-
-    <!-- SLIDE 33: M3 Part 3 & 4 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Query Performance: Avoid SELECT *</h2>
-            <span class="slide-tag">Meeting 3 • Parts 3 & 4</span>
-        </div>
-        <p>Requesting all columns across massive tables forces expensive disk I/O and network overhead.</p>
-        <div class="grid-2" style="margin-top:1rem">
-            <div class="card">
-                <h4>Inefficient Query</h4>
-                <pre><code>SELECT * 
-FROM sales;</code></pre>
-                <p>Scans all 50 columns across 500M rows unnecessarily.</p>
-            </div>
-            <div class="card">
-                <h4>Optimized Query</h4>
-                <pre><code>SELECT 
-    product_id, 
-    quantity, 
-    sales_amount 
-FROM sales;</code></pre>
-                <p>Reads only the 3 specific columns required.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 34: M3 Part 5 & 6 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Filtering & Aggregation Strategies</h2>
-            <span class="slide-tag">Meeting 3 • Parts 5 & 6</span>
-        </div>
-        <div class="grid-2">
-            <div class="card">
-                <h4>Early Filtering (WHERE)</h4>
-                <pre><code>SELECT product_id, sales_amount
-FROM sales
-WHERE order_date >= '2026-01-01';</code></pre>
-                <p>Reduces the volume of data processed early in the query lifecycle.</p>
-            </div>
-            <div class="card">
-                <h4>Aggregation Pushdown</h4>
-                <pre><code>SELECT 
-    Month, 
-    SUM(sales_amount) 
-FROM sales 
-GROUP BY Month;</code></pre>
-                <p>Summarizes raw records into compact metric rollups.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 35: M3 Part 7 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Optimizing Table Joins</h2>
-            <span class="slide-tag">Meeting 3 • Part 7</span>
-        </div>
-        <p>Joining un-indexed or unstructured large tables causes massive computational and memory strain.</p>
-        <pre><code>SELECT 
-    p.category, 
-    SUM(f.sales_amount) AS total_sales
-FROM fact_sales f
-JOIN dim_product p ON f.product_id = p.product_id
-GROUP BY p.category;</code></pre>
-        <div class="highlight-box amber">
-            <strong>Join Guideline:</strong> Filter tables <em>before</em> executing join operations, and ensure join keys are appropriately indexed or aligned in storage.
-        </div>
-    </div>
-
-    <!-- SLIDE 36: M3 Part 8 & 9 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Query Execution Plans & EXPLAIN</h2>
-            <span class="slide-tag">Meeting 3 • Parts 8 & 9</span>
-        </div>
-        <pre>
-SQL Query ──► Query Planner ──► Execution Plan ──► Engine Execution ──► Output Result
-        </pre>
-        <p>Database engines evaluate multiple physical strategies to run a query. Use <code>EXPLAIN</code> to view the underlying plan.</p>
-        <pre><code>EXPLAIN 
-SELECT category, SUM(sales_amount) 
-FROM sales 
-GROUP BY category;</code></pre>
-        <div class="highlight-box purple">
-            Analyze plans to spot full table scans, expensive shuffles, and costly join operations.
-        </div>
-    </div>
-
-    <!-- SLIDE 37: M3 Part 10 & 11 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Indexing Data Structures</h2>
-            <span class="slide-tag">Meeting 3 • Parts 10 & 11</span>
-        </div>
-        <p>An <strong>Index</strong> is a data structure that speeds up row lookups, similar to an index in a textbook.</p>
-        <div class="grid-2" style="margin-top:1rem">
-            <div class="card">
-                <h4>When Indexes Help</h4>
-                <ul>
-                    <li>Columns used frequently in <code>WHERE</code> filters</li>
-                    <li>Foreign Key columns evaluated in <code>JOIN</code> conditions</li>
-                    <li>Primary lookup fields (e.g., <code>customer_id</code>)</li>
-                </ul>
-            </div>
-            <div class="card">
-                <h4>Trade-offs & Costs</h4>
-                <ul>
-                    <li>Consumes additional disk storage space</li>
-                    <li>Adds overhead during write operations (<code>INSERT/UPDATE</code>)</li>
-                    <li>Requires ongoing index maintenance</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 38: M3 Part 12 & 13 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Partitioning Concepts</h2>
-            <span class="slide-tag">Meeting 3 • Parts 12 & 13</span>
-        </div>
-        <p><strong>Partitioning</strong> physically divides large tables into distinct directories or segments based on column values (e.g., <code>Year</code>).</p>
-        <pre>
-Sales Table Storage
-├── Year=2024 (30 Million Rows)
-├── Year=2025 (30 Million Rows)
-└── Year=2026 (40 Million Rows)
-        </pre>
-        <div class="highlight-box green">
-            <strong>Partition Pruning:</strong> When querying 2026 sales, the engine skips the 2024 and 2025 directories entirely, scanning only 40M rows instead of 100M rows.
-        </div>
-    </div>
-
-    <!-- SLIDE 39: M3 Part 14 & 15 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Over-Partitioning & Aggregations</h2>
-            <span class="slide-tag">Meeting 3 • Parts 14 & 15</span>
-        </div>
-        <div class="grid-2">
-            <div class="card">
-                <h4>Partitioning Warning</h4>
-                <p>Creating millions of tiny partitions causes significant metadata management overhead and degrades performance.</p>
-                <p><em>Strategy:</em> Choose partition keys with appropriate cardinality (e.g., Date vs. User ID).</p>
-            </div>
-            <div class="card">
-                <h4>Pre-Aggregation Optimizations</h4>
-                <pre>
-RAW TRANSACTIONS
-      ↓
-DAILY SUMMARIES
-      ↓
-MONTHLY ROLLUPS
-                </pre>
-                <p>Pre-calculating rollups prevents re-computing metrics over billions of raw rows repeatedly.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 40: M3 Part 16 & 17 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>ETL Tuning & Incremental Processing</h2>
-            <span class="slide-tag">Meeting 3 • Parts 16 & 17</span>
-        </div>
-        <p>ETL pipelines running for hours delay business analytics and insights.</p>
-        <div class="grid-2" style="margin-top:1rem">
-            <div class="card">
-                <h4>Full Batch Load (Inefficient)</h4>
-                <p>Re-processing all 1 Billion historical records every night to add 10,000 new transactions.</p>
-            </div>
-            <div class="card">
-                <h4>Incremental Load (Optimized)</h4>
-                <p>Processing only the 10,000 new or modified records introduced today, leaving historical data intact.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 41: M3 Part 18, 19, & 20 -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Databricks, Costs, & Strategy</h2>
-            <span class="slide-tag">Meeting 3 • Parts 18 - 20</span>
-        </div>
-        <div class="grid-3">
-            <div class="card">
-                <h4>Databricks & Delta</h4>
-                <p>Leverage commands like <code>OPTIMIZE</code> and <code>Z-ORDER</code> to compact files and index multi-dimensional data.</p>
-            </div>
-            <div class="card">
-                <h4>Performance vs. Cost</h4>
-                <p>Balance compute resource expenses against required runtime SLA targets.</p>
-            </div>
-            <div class="card">
-                <h4>Optimization Strategy</h4>
-                <ol>
-                    <li>Measure baseline</li>
-                    <li>Identify bottlenecks</li>
-                    <li>Change ONE variable</li>
-                    <li>Measure & evaluate</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 42: M3 Check -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Meeting 3 — Quick Knowledge Check</h2>
-            <span class="slide-tag">Review</span>
-        </div>
-        <div class="grid-2">
-            <div class="card">
-                <ol>
-                    <li>Why is <code>SELECT *</code> bad practice in production?</li>
-                    <li>What is Partition Pruning?</li>
-                    <li>What information does <code>EXPLAIN</code> reveal?</li>
-                    <li>Explain the trade-offs of database indexes.</li>
-                </ol>
-            </div>
-            <div class="card">
-                <ol start="5">
-                    <li>What operational risks stem from over-partitioning?</li>
-                    <li>Contrast full batch processing with incremental loading.</li>
-                    <li>Describe the systematic 7-step optimization strategy.</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 43: Synthesis -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Three-Meeting Synthesis</h2>
-            <span class="slide-tag">Summary Architecture</span>
-        </div>
-        <pre>
-                                    OPERATIONAL DATA SOURCES
-                                               │
-                                               ▼
-                                      ETL / ELT PIPELINE
-                                               │
-                                               ▼
-                                   ┌──────────────────────┐
-                                   │    DATA WAREHOUSE    │
-                                   │ Fact & Dim Tables    │
-                                   └───────────┬──────────┘
-                                               │
-                       ┌───────────────────────┴───────────────────────┐
-                       ▼                                               ▼
-              DATA QUALITY CHECKS                             DATA GOVERNANCE
-                       │                                               │
-                       └───────────────────────┬───────────────────────┘
-                                               ▼
-                                     PERFORMANCE OPTIMIZATION
-                                     (Indexing, Partitions)
-                                               │
-                                               ▼
-                                    ANALYTICS & DATA SCIENCE
-                                (BI, Feature Store, ML Models)
-        </pre>
-    </div>
-
-    <!-- SLIDE 44: Concept Table -->
-    <div class="slide">
-        <div class="slide-header">
-            <h2>Core Concepts Master List</h2>
-            <span class="slide-tag">Glossary</span>
-        </div>
-        <div style="max-height: 70vh; overflow-y: auto;">
-            <table>
-                <thead>
-                    <tr><th>Concept</th><th>Definition</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td><strong>Data Warehouse</strong></td><td>Centralized analytical storage built for reporting & business intelligence.</td></tr>
-                    <tr><td><strong>OLTP vs. OLAP</strong></td><td>Operational transaction systems vs. analytical processing engines.</td></tr>
-                    <tr><td><strong>ETL vs. ELT</strong></td><td>Transforming data prior to storage vs. transforming inside the cloud engine.</td></tr>
-                    <tr><td><strong>Fact / Dimension</strong></td><td>Numerical event measurements vs. contextual attributes describing events.</td></tr>
-                    <tr><td><strong>Star / Snowflake</strong></td><td>Denormalized dimensional model vs. normalized dimension hierarchies.</td></tr>
-                    <tr><td><strong>Data Quality</strong></td><td>Assessment of data accuracy, completeness, validity, and consistency.</td></tr>
-                    <tr><td><strong>Data Governance</strong></td><td>Policies, roles, standards, and security controlling enterprise data assets.</td></tr>
-                    <tr><td><strong>Partition Pruning</strong></td><td>Skipping irrelevant table file directories to accelerate query filtering.</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- SLIDE 45: Final Message -->
-    <div class="slide slide-center">
-        <p class="slide-tag">Course Conclusion</p>
-        <h1>Data Science Foundation</h1>
-        <div class="highlight-box green" style="max-width: 800px; margin-top: 2rem;">
-            <h3>ORGANIZE ➔ CLEAN ➔ GOVERN ➔ OPTIMIZE ➔ ANALYZE ➔ PREDICT</h3>
-            <p style="margin-top: 1rem;">"Data Science is not only about building machine learning models. Before a model can make predictions, we need reliable data. Before we can trust data, we must clean and govern it. Before we process big data, we must optimize systems. If the foundation is weak, everything built on top becomes unreliable."</p>
-        </div>
-    </div>
-
+  <!-- Slide 3 -->
+  <div class="slide">
+    <h2>What is a Data Warehouse?</h2>
+    <p>A subject-oriented, integrated, time-variant, and non-volatile collection of data in support of management's decision-making process.</p>
+  </div>
 </div>
 
-<!-- Navigation Bar -->
 <div class="controls">
-    <button class="nav-btn" id="prevBtn" onclick="prevSlide()">&larr; Previous</button>
-    <div class="slide-number" id="slideNum">Slide 1 / 45</div>
-    <button class="nav-btn" id="nextBtn" onclick="nextSlide()">Next &rarr;</button>
+  <button onclick="prevSlide()">Previous</button>
+  <span class="slide-number" id="slide-num">Slide 1 of 3</span>
+  <button onclick="nextSlide()">Next</button>
 </div>
 
 <script>
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.slide');
-    const slideNumDisplay = document.getElementById('slideNum');
-    const totalSlides = slides.length;
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const slideNumDisplay = document.getElementById('slide-num');
 
-    function updateSlides() {
-        slides.forEach((slide, index) => {
-            if (index === currentSlide) {
-                slide.classList.add('active');
-            } else {
-                slide.classList.remove('active');
-            }
-        });
-        slideNumDisplay.textContent = `Slide ${currentSlide + 1} / ${totalSlides}`;
-    }
-
-    function nextSlide() {
-        if (currentSlide < totalSlides - 1) {
-            currentSlide++;
-            updateSlides();
-        }
-    }
-
-    function prevSlide() {
-        if (currentSlide > 0) {
-            currentSlide--;
-            updateSlides();
-        }
-    }
-
-    // Keyboard Navigation
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight' || e.key === ' ') {
-            nextSlide();
-        } else if (e.key === 'ArrowLeft') {
-            prevSlide();
-        }
+  function updateSlide() {
+    slides.forEach((slide, index) => {
+      slide.classList.toggle('active', index === currentSlide);
     });
+    slideNumDisplay.textContent = `Slide ${currentSlide + 1} of ${slides.length}`;
+  }
 
-    // Touch Support for Mobile/Tablet Swiping
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    document.addEventListener('touchstart', e => {
-        touchStartX = e.changedTouches[0].screenX;
-    });
-
-    document.addEventListener('touchend', e => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    });
-
-    function handleSwipe() {
-        if (touchEndX < touchStartX - 50) nextSlide();
-        if (touchEndX > touchStartX + 50) prevSlide();
+  function nextSlide() {
+    if (currentSlide < slides.length - 1) {
+      currentSlide++;
+      updateSlide();
     }
+  }
+
+  function prevSlide() {
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlide();
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') nextSlide();
+    if (e.key === 'ArrowLeft') prevSlide();
+  });
 </script>
 
 </body>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Warehousing Lessons 2–5 | Databricks</title>
+  <style>
+    :root{--navy:#101b36;--blue:#2563eb;--cyan:#06b6d4;--orange:#ff6b35;--ink:#172033;--muted:#5e6b85;--paper:#f7f9fc;--line:#dce3ef;--green:#0f9f6e;--red:#dc3545}
+    *{box-sizing:border-box}html,body{margin:0;height:100%;font-family:Inter,Segoe UI,Arial,sans-serif;background:#07111f;color:var(--ink);overflow:hidden}
+    .deck{height:100%;position:relative}.slide{position:absolute;inset:0;display:none;background:var(--paper);padding:5.2vh 6vw 7vh;overflow:auto}.slide.active{display:block}
+    .slide::after{content:attr(data-section);position:absolute;right:4vw;top:2.5vh;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#8290a8}
+    h1{font-size:clamp(38px,5.3vw,76px);line-height:1.02;margin:0 0 22px;color:var(--navy)}h2{font-size:clamp(30px,3.7vw,54px);line-height:1.08;margin:0 0 25px;color:var(--navy)}h3{font-size:clamp(19px,2vw,29px);margin:10px 0;color:var(--blue)}
+    p,li,td,th{font-size:clamp(16px,1.55vw,24px);line-height:1.42}p{max-width:1050px}ul,ol{padding-left:1.25em;margin:.5em 0}li{margin:.28em 0}.lead{font-size:clamp(21px,2.25vw,34px);color:var(--muted);max-width:980px}.small{font-size:clamp(13px,1.15vw,18px)}
+    .cover{background:linear-gradient(130deg,#0d1832 0%,#152a57 60%,#17477b 100%);color:white;display:none;align-items:center}.cover.active{display:flex}.cover h1,.cover h2{color:white}.cover::after{color:#bcd3ff}.accent{color:#63ddff}.orange{color:#ff936a}
+    .section{background:linear-gradient(135deg,var(--navy),#153f75);color:white;display:none;align-items:center}.section.active{display:flex}.section h1,.section h2{color:white}.section .num{font-size:clamp(90px,18vw,230px);font-weight:900;color:rgba(255,255,255,.08);position:absolute;right:7vw;bottom:0}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.card{background:white;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 10px 28px rgba(20,40,80,.08)}.card h3{margin-top:0}.callout{border-left:7px solid var(--orange);background:#fff3ed;padding:18px 22px;border-radius:0 14px 14px 0;font-size:clamp(18px,1.8vw,27px)}
+    table{width:100%;border-collapse:collapse;background:white;border-radius:14px;overflow:hidden;box-shadow:0 8px 24px rgba(20,40,80,.07)}th{background:var(--navy);color:white;text-align:left}th,td{padding:12px 15px;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:0}.compact td,.compact th{font-size:clamp(13px,1.15vw,18px);padding:9px 12px}
+    pre{background:#111a2d;color:#e7f1ff;padding:20px 24px;border-radius:16px;overflow:auto;font-size:clamp(12px,1.12vw,18px);line-height:1.42;box-shadow:0 10px 24px rgba(0,0,0,.16);white-space:pre-wrap}code{font-family:Consolas,Monaco,monospace}.sql{color:#74d7ff}.kw{color:#ff9e77}.cm{color:#90a3bf}.flow{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin:5vh auto}.flow span{padding:18px 22px;background:white;border:2px solid #bdd0ec;border-radius:14px;font-weight:800;font-size:clamp(15px,1.45vw,22px)}.flow b{font-size:28px;color:var(--orange)}
+    .tag{display:inline-block;background:#e8f1ff;color:#174ea6;border-radius:999px;padding:6px 12px;font-weight:800;font-size:14px;margin:3px}.activity{border-top:8px solid var(--green)}.question{background:#eef7ff;border:2px dashed #7eb6ed;border-radius:16px;padding:18px 22px}.warning{background:#fff4e5;border-left:7px solid #f59e0b;padding:16px 20px;border-radius:0 12px 12px 0}
+    .footer{position:fixed;left:0;right:0;bottom:0;height:52px;background:#07111f;color:white;display:flex;align-items:center;gap:14px;padding:0 18px;z-index:20}.footer button{border:0;background:#1e3a66;color:white;border-radius:9px;padding:8px 15px;font-weight:800;cursor:pointer}.footer button:hover{background:#2e5a97}.progress{height:7px;background:#26354d;flex:1;border-radius:9px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--orange),var(--cyan))}.counter{min-width:70px;text-align:center;font-size:14px}.hint{font-size:12px;color:#aab7ca}
+    @media(max-width:850px){.grid2,.grid3{grid-template-columns:1fr}.slide{padding:5vh 5vw 9vh}.hint{display:none}}
+    @media print{html,body{overflow:visible;background:white}.deck{height:auto}.slide,.cover,.section{position:relative;display:block!important;width:100%;height:100vh;page-break-after:always;overflow:hidden}.footer{display:none}}
+  </style>
+</head>
+<body>
+<main class="deck" id="deck">
+  <section class="slide cover active" data-section="Data Warehousing">
+    <div><span class="tag">DATBRICKS SQL + PYSPARK</span><h1>Data Warehousing<br><span class="accent">Lessons 2–5</span></h1><p class="lead" style="color:#d4e4ff">Data Quality, OLAP, Business Intelligence, and Performance Optimization</p><p>Short discussions, connected examples, and laboratory activities</p></div>
+  </section>
+
+  <section class="slide" data-section="Course Map"><h2>Four connected lessons</h2><div class="grid2"><div class="card"><h3>Lesson 2</h3><p>Clean unreliable source data before analysis.</p></div><div class="card"><h3>Lesson 3</h3><p>Analyze warehouse data from different perspectives.</p></div><div class="card"><h3>Lesson 4</h3><p>Turn query results into KPIs, charts, and decisions.</p></div><div class="card"><h3>Lesson 5</h3><p>Make analytical queries faster and more efficient.</p></div></div><div class="callout" style="margin-top:28px">One sales dataset connects every demonstration.</div></section>
+
+  <section class="slide" data-section="Databricks Setup"><h2>Shared sales dataset</h2><p>The raw table intentionally contains missing values, duplicates, invalid quantities, and inconsistent formats.</p><pre><code><span class="kw">CREATE OR REPLACE TABLE</span> sales_raw <span class="kw">AS SELECT</span> * <span class="kw">FROM VALUES</span>
+(1,'2026-01-05','Laptop','Electronics','Manila',2,45000.00,'Completed'),
+(2,'2026/01/06','Mouse','electronics','Makati',5,500.00,'completed'),
+(3,'2026-02-10','Keyboard','Electronics','Manila',3,1200.00,'Completed'),
+(4,'2026-02-15','Chair','Furniture','Cavite',2,3500.00,'Completed'),
+(5,'2026-03-01','Desk','Furniture','Laguna',1,6500.00,'Pending'),
+(6,'2026-03-08',NULL,'Electronics','Manila',2,2500.00,'Completed'),
+(7,'2026-03-10','Monitor','Electronic','Makati',-1,8500.00,'Completed'),
+(7,'2026-03-10','Monitor','Electronic','Makati',-1,8500.00,'Completed'),
+(8,NULL,'Webcam','Electronics','Cavite',4,1800.00,'Complete'),
+(9,'2026-04-02','Laptop','Electronics','Manila',1,45000.00,'Completed')
+<span class="kw">AS</span> sales_raw(sale_id,sale_date,product,category,city,quantity,unit_price,status);</code></pre></section>
+
+  <section class="slide section" data-section="Yan and Padilla"><div><p class="accent">LESSON 2</p><h1>Data Quality and<br>Data Cleansing</h1><p class="lead" style="color:#d4e4ff">Reliable analysis begins with reliable data.</p></div><div class="num">02</div></section>
+  <section class="slide" data-section="Lesson 2"><h2>Data quality in simple terms</h2><p class="lead">Data has quality when it is correct, complete, consistent, and suitable for its purpose.</p><div class="grid2"><div class="card"><h3>Operational data</h3><ul><li>Supports daily transactions</li><li>Changes frequently</li><li>Example: recording one sale</li></ul></div><div class="card"><h3>Analytical data</h3><ul><li>Supports reports and decisions</li><li>Often includes historical records</li><li>Example: comparing yearly sales</li></ul></div></div><div class="callout" style="margin-top:28px"><b>GIGO:</b> Garbage In, Garbage Out. Poor input produces unreliable reports.</div></section>
+  <section class="slide" data-section="Lesson 2"><h2>Seven dimensions of data quality</h2><table class="compact"><tr><th>Dimension</th><th>Question</th><th>Example</th></tr><tr><td>Accuracy</td><td>Is the value correct?</td><td>Quantity is 5, not 50.</td></tr><tr><td>Completeness</td><td>Are required values present?</td><td>Product is not NULL.</td></tr><tr><td>Consistency</td><td>Do values follow one standard?</td><td>Use “Electronics” everywhere.</td></tr><tr><td>Validity</td><td>Does the value follow a rule?</td><td>Quantity must exceed zero.</td></tr><tr><td>Uniqueness</td><td>Is each record represented once?</td><td>One row per sale ID.</td></tr><tr><td>Timeliness</td><td>Is the data available when needed?</td><td>Today’s sales appear today.</td></tr><tr><td>Integrity</td><td>Do related records connect correctly?</td><td>Every sale uses a valid customer ID.</td></tr></table></section>
+  <section class="slide" data-section="Lesson 2"><h2>Common data quality problems</h2><div class="grid3"><div class="card"><h3>Missing</h3><p>NULL date or product</p></div><div class="card"><h3>Repeated</h3><p>Duplicate sale ID</p></div><div class="card"><h3>Invalid</h3><p>Negative quantity</p></div><div class="card"><h3>Inconsistent</h3><p>Electronic vs. Electronics</p></div><div class="card"><h3>Incorrect type</h3><p>Text stored in a number column</p></div><div class="card"><h3>Unusual value</h3><p>An extreme price or quantity</p></div></div><p class="question"><b>Look at sales_raw:</b> Which problems could change the total revenue?</p></section>
+  <section class="slide" data-section="Lesson 2"><h2>Data profiling finds problems</h2><div class="grid2"><pre><code><span class="cm">-- Table structure</span>
+<span class="kw">DESCRIBE</span> sales_raw;
+
+<span class="cm">-- Missing values</span>
+<span class="kw">SELECT</span>
+ SUM(<span class="kw">CASE WHEN</span> sale_date <span class="kw">IS NULL THEN</span> 1 <span class="kw">ELSE</span> 0 <span class="kw">END</span>) missing_dates,
+ SUM(<span class="kw">CASE WHEN</span> product <span class="kw">IS NULL THEN</span> 1 <span class="kw">ELSE</span> 0 <span class="kw">END</span>) missing_products
+<span class="kw">FROM</span> sales_raw;</code></pre><pre><code><span class="cm">-- Duplicate IDs</span>
+<span class="kw">SELECT</span> sale_id, COUNT(*) records
+<span class="kw">FROM</span> sales_raw
+<span class="kw">GROUP BY</span> sale_id
+<span class="kw">HAVING</span> COUNT(*) &gt; 1;
+
+<span class="cm">-- Distinct spellings</span>
+<span class="kw">SELECT DISTINCT</span> category, status
+<span class="kw">FROM</span> sales_raw;</code></pre></div></section>
+  <section class="slide" data-section="Lesson 2"><h2>Data cleansing process</h2><div class="flow"><span>Profile</span><b>›</b><span>Define rules</span><b>›</b><span>Correct</span><b>›</b><span>Remove duplicates</span><b>›</b><span>Validate</span><b>›</b><span>Document</span></div><div class="grid2"><div><h3>Possible rules</h3><ul><li>Quantity must exceed zero.</li><li>Every sale needs a date.</li><li>One sale ID represents one transaction.</li><li>Category names use approved values.</li></ul></div><div class="warning"><b>Business meaning matters.</b><p>Never delete or replace a value simply because it looks unusual. Confirm what the field means and how the organization uses it.</p></div></div></section>
+  <section class="slide" data-section="Lesson 2"><h2>Missing data requires judgment</h2><table><tr><th>Method</th><th>When it may work</th></tr><tr><td>Delete the row</td><td>The record is unusable and only a small number are affected.</td></tr><tr><td>Mean or median</td><td>A missing numeric value needs a reasonable estimate.</td></tr><tr><td>Mode</td><td>A missing category can use the most common value.</td></tr><tr><td>“Unknown”</td><td>The value matters, but the true value cannot be recovered.</td></tr><tr><td>Recover from a source</td><td>A reliable system contains the correct original value.</td></tr></table><p class="question">Would you replace a missing student grade with zero? Explain the effect on the student and the class average.</p></section>
+  <section class="slide" data-section="Lesson 2"><h2>Standardization and validation</h2><div class="grid2"><div class="card"><h3>Standardization</h3><ul><li>electronic → Electronics</li><li>complete → Completed</li><li>Convert dates to YYYY-MM-DD</li><li>Use one measurement unit</li><li>Apply consistent capitalization</li></ul></div><div class="card"><h3>Validation</h3><ul><li>Range check: quantity &gt; 0</li><li>Format check: valid email or date</li><li>Type check: price is numeric</li><li>Required-field check</li><li>Referential integrity check</li><li>Business-rule check</li></ul></div></div></section>
+  <section class="slide" data-section="Lesson 2"><h2>Create a cleaned Delta table</h2><pre><code><span class="kw">CREATE OR REPLACE TABLE</span> sales_clean <span class="kw">AS</span>
+<span class="kw">WITH</span> prepared <span class="kw">AS</span> (
+ <span class="kw">SELECT</span> *, ROW_NUMBER() <span class="kw">OVER</span>(PARTITION BY sale_id ORDER BY sale_id) rn
+ <span class="kw">FROM</span> sales_raw
+)
+<span class="kw">SELECT</span>
+ sale_id,
+ COALESCE(TRY_CAST(sale_date AS DATE), TRY_TO_DATE(sale_date,'yyyy/MM/dd')) sale_date,
+ COALESCE(TRIM(product),'Unknown') product,
+ <span class="kw">CASE WHEN</span> LOWER(TRIM(category)) <span class="kw">IN</span> ('electronic','electronics')
+      <span class="kw">THEN</span> 'Electronics' <span class="kw">ELSE</span> INITCAP(TRIM(category)) <span class="kw">END</span> category,
+ INITCAP(TRIM(city)) city, quantity, unit_price,
+ <span class="kw">CASE WHEN</span> LOWER(TRIM(status)) <span class="kw">IN</span> ('complete','completed')
+      <span class="kw">THEN</span> 'Completed' <span class="kw">ELSE</span> INITCAP(TRIM(status)) <span class="kw">END</span> status,
+ quantity * unit_price total_amount
+<span class="kw">FROM</span> prepared
+<span class="kw">WHERE</span> rn=1 <span class="kw">AND</span> quantity&gt;0 <span class="kw">AND</span> unit_price&gt;=0
+ <span class="kw">AND</span> COALESCE(TRY_CAST(sale_date AS DATE),TRY_TO_DATE(sale_date,'yyyy/MM/dd')) <span class="kw">IS NOT NULL</span>;</code></pre></section>
+  <section class="slide activity" data-section="Lesson 2 Lab"><h2>Laboratory: Data quality investigation</h2><div class="grid2"><div><ol><li>Count all records.</li><li>Find NULL values.</li><li>Find duplicate IDs.</li><li>List inconsistent categories and statuses.</li><li>Identify invalid quantities or prices.</li><li>Create and validate <code>sales_clean</code>.</li></ol></div><div class="card"><h3>Submit</h3><ul><li>Databricks notebook</li><li>Result screenshots</li><li>Cleaned table</li><li>Five cleansing rules</li><li>Short explanation of changes</li></ul></div></div></section>
+
+  <section class="slide section" data-section="Ligtas and Corpuz"><div><p class="accent">LESSON 3</p><h1>OLAP and<br>Multidimensional Analysis</h1><p class="lead" style="color:#d4e4ff">Explore warehouse data from different perspectives.</p></div><div class="num">03</div></section>
+  <section class="slide" data-section="Lesson 3"><h2>OLAP answers analytical questions</h2><p class="lead"><b>Online Analytical Processing</b> supports fast, flexible analysis of historical data.</p><div class="grid2"><div class="card"><h3>OLTP</h3><ul><li>Records daily transactions</li><li>Uses current detailed data</li><li>Example: save one sale</li></ul></div><div class="card"><h3>OLAP</h3><ul><li>Finds trends and comparisons</li><li>Uses detailed and summarized data</li><li>Example: compare monthly sales</li></ul></div></div><p class="question">Which city earned the most? Which category improved? These are OLAP questions.</p></section>
+  <section class="slide" data-section="Lesson 3"><h2>Facts, measures, and dimensions</h2><table><tr><th>Concept</th><th>Meaning</th><th>Sales example</th></tr><tr><td>Fact</td><td>A business event</td><td>A completed sale</td></tr><tr><td>Measure</td><td>A numeric value for analysis</td><td>Quantity or total amount</td></tr><tr><td>Dimension</td><td>A viewpoint for organizing facts</td><td>Product, time, or city</td></tr><tr><td>Hierarchy</td><td>Related levels in a dimension</td><td>Year, quarter, month, day</td></tr><tr><td>Granularity</td><td>The level of detail</td><td>One row per transaction</td></tr></table></section>
+  <section class="slide" data-section="Lesson 3"><h2>The data cube</h2><div class="grid2"><div><p class="lead">A data cube organizes a measure using several dimensions.</p><ul><li><b>Measure:</b> total sales</li><li><b>Product:</b> Laptop, Keyboard, Chair</li><li><b>Time:</b> Month or year</li><li><b>Location:</b> Manila, Makati, Cavite</li></ul></div><div class="card"><h3>Example question</h3><p>What were the monthly sales of each product category in every city?</p><p><span class="tag">TIME</span><span class="tag">PRODUCT</span><span class="tag">LOCATION</span></p></div></div><div class="callout" style="margin-top:26px">“Cube” is a concept. A model may contain more than three dimensions.</div></section>
+  <section class="slide" data-section="Lesson 3"><h2>Five OLAP operations</h2><table><tr><th>Operation</th><th>Purpose</th><th>Example</th></tr><tr><td>Roll-up</td><td>Summarize details</td><td>Month to year</td></tr><tr><td>Drill-down</td><td>Show more detail</td><td>Year to individual day</td></tr><tr><td>Slice</td><td>Select one dimension value</td><td>Electronics only</td></tr><tr><td>Dice</td><td>Filter several dimensions</td><td>Electronics in Manila during Q1</td></tr><tr><td>Pivot</td><td>Rearrange the viewpoint</td><td>Turn city values into columns</td></tr></table></section>
+  <section class="slide" data-section="Lesson 3"><h2>Roll-up and drill-down</h2><div class="grid2"><pre><code><span class="cm">-- Roll-up: monthly totals</span>
+<span class="kw">SELECT</span>
+ YEAR(sale_date) year,
+ MONTH(sale_date) month,
+ SUM(total_amount) total_sales
+<span class="kw">FROM</span> sales_clean
+<span class="kw">GROUP BY</span> YEAR(sale_date),
+         MONTH(sale_date)
+<span class="kw">ORDER BY</span> year, month;</code></pre><pre><code><span class="cm">-- Drill-down: daily details</span>
+<span class="kw">SELECT</span>
+ sale_date, product, city,
+ quantity, total_amount
+<span class="kw">FROM</span> sales_clean
+<span class="kw">WHERE</span> YEAR(sale_date)=2026
+<span class="kw">ORDER BY</span> sale_date;</code></pre></div></section>
+  <section class="slide" data-section="Lesson 3"><h2>Slice and dice</h2><div class="grid2"><pre><code><span class="cm">-- Slice: one category</span>
+<span class="kw">SELECT</span> *
+<span class="kw">FROM</span> sales_clean
+<span class="kw">WHERE</span> category='Electronics';</code></pre><pre><code><span class="cm">-- Dice: several filters</span>
+<span class="kw">SELECT</span> *
+<span class="kw">FROM</span> sales_clean
+<span class="kw">WHERE</span> category='Electronics'
+ <span class="kw">AND</span> city <span class="kw">IN</span> ('Manila','Makati')
+ <span class="kw">AND</span> sale_date <span class="kw">BETWEEN</span>
+     '2026-01-01' <span class="kw">AND</span> '2026-03-31';</code></pre></div><p class="question"><b>Quick check:</b> Why is the second query “dice” instead of “slice”?</p></section>
+  <section class="slide" data-section="Lesson 3"><h2>Pivot-style comparison</h2><pre><code><span class="kw">SELECT</span> category,
+ SUM(<span class="kw">CASE WHEN</span> city='Manila' <span class="kw">THEN</span> total_amount <span class="kw">ELSE</span> 0 <span class="kw">END</span>) Manila,
+ SUM(<span class="kw">CASE WHEN</span> city='Makati' <span class="kw">THEN</span> total_amount <span class="kw">ELSE</span> 0 <span class="kw">END</span>) Makati,
+ SUM(<span class="kw">CASE WHEN</span> city='Cavite' <span class="kw">THEN</span> total_amount <span class="kw">ELSE</span> 0 <span class="kw">END</span>) Cavite,
+ SUM(<span class="kw">CASE WHEN</span> city='Laguna' <span class="kw">THEN</span> total_amount <span class="kw">ELSE</span> 0 <span class="kw">END</span>) Laguna
+<span class="kw">FROM</span> sales_clean
+<span class="kw">GROUP BY</span> category;</code></pre><p>Each city becomes a column, making location comparisons easier.</p></section>
+  <section class="slide" data-section="Lesson 3"><h2>Three OLAP storage approaches</h2><table><tr><th>Type</th><th>How it works</th><th>Strength</th><th>Limitation</th></tr><tr><td>MOLAP</td><td>Uses multidimensional cubes</td><td>Fast analysis</td><td>Needs cube storage</td></tr><tr><td>ROLAP</td><td>Uses relational tables</td><td>Handles large datasets</td><td>Complex queries may run slower</td></tr><tr><td>HOLAP</td><td>Combines cube and relational storage</td><td>Balances speed and capacity</td><td>More complex to manage</td></tr></table></section>
+  <section class="slide activity" data-section="Lesson 3 Lab"><h2>Laboratory: OLAP operations</h2><div class="grid2"><ol><li>Total sales by month and category</li><li>Average amount by city</li><li>Roll-up from month to year</li><li>Drill-down from category to product</li><li>Slice for Furniture</li><li>Dice by city, category, and date</li><li>Pivot-style city comparison</li></ol><div class="card"><h3>Interpretation</h3><p>Write three business observations supported by query results.</p><p>Every observation must include a value, comparison, or visible pattern.</p></div></div></section>
+
+  <section class="slide section" data-section="Cabral, Blanco, and Bernal"><div><p class="accent">LESSON 4</p><h1>Business Intelligence<br>Systems</h1><p class="lead" style="color:#d4e4ff">Turn warehouse data into understandable decisions.</p></div><div class="num">04</div></section>
+  <section class="slide" data-section="Lesson 4"><h2>Business Intelligence</h2><p class="lead">BI combines processes and tools that turn data into useful information for decision-making.</p><div class="flow"><span>Data</span><b>›</b><span>Information</span><b>›</b><span>Insight</span><b>›</b><span>Decision</span></div><div class="callout"><b>Example:</b> Transactions show Manila has the highest revenue. Management may increase stock or marketing in Manila.</div></section>
+  <section class="slide" data-section="Lesson 4"><h2>From source system to decision</h2><div class="flow"><span>Sources</span><b>›</b><span>ETL / ELT</span><b>›</b><span>Warehouse</span><b>›</b><span>Analytics</span><b>›</b><span>Dashboard</span><b>›</b><span>Decision</span></div><div class="grid2"><div><h3>BI architecture layers</h3><ul><li>Data source layer</li><li>Integration layer</li><li>Storage layer</li><li>Analytics layer</li><li>Presentation layer</li></ul></div><div class="card"><h3>Core components</h3><p>Sources supply data. ETL or ELT prepares it. The warehouse stores it. Queries analyze it. Reports and dashboards communicate the findings.</p></div></div></section>
+  <section class="slide" data-section="Lesson 4"><h2>Reports and dashboards serve different needs</h2><table><tr><th>Report</th><th>Dashboard</th></tr><tr><td>Often provides detailed information</td><td>Shows the most important information quickly</td></tr><tr><td>May contain several pages</td><td>Usually designed for one screen</td></tr><tr><td>Can support investigation or documentation</td><td>Supports monitoring and quick decisions</td></tr><tr><td>May be static</td><td>Often includes filters and interaction</td></tr></table></section>
+  <section class="slide" data-section="Lesson 4"><h2>Metrics and KPIs</h2><div class="grid2"><div class="card"><h3>Metric</h3><p>Any measurable value, such as the number of website visits.</p></div><div class="card"><h3>KPI</h3><p>An important metric tied to a goal, such as monthly revenue against a target.</p></div></div><h3 style="margin-top:30px">Useful KPI examples</h3><p><span class="tag">TOTAL REVENUE</span><span class="tag">PASSING RATE</span><span class="tag">CUSTOMER RETENTION</span><span class="tag">INVENTORY TURNOVER</span></p><div class="callout">A useful KPI has a clear definition, a time period, and a connection to a decision.</div></section>
+  <section class="slide" data-section="Lesson 4"><h2>Four types of BI analysis</h2><table><tr><th>Type</th><th>Question</th><th>Example</th></tr><tr><td>Descriptive</td><td>What happened?</td><td>Revenue decreased in March.</td></tr><tr><td>Diagnostic</td><td>Why did it happen?</td><td>Two popular items went out of stock.</td></tr><tr><td>Predictive</td><td>What might happen?</td><td>Demand may rise next month.</td></tr><tr><td>Prescriptive</td><td>What should we do?</td><td>Restock before the expected increase.</td></tr></table></section>
+  <section class="slide" data-section="Lesson 4"><h2>Choose a chart that answers the question</h2><table class="compact"><tr><th>Question</th><th>Recommended visual</th></tr><tr><td>Which category is largest?</td><td>Bar chart</td></tr><tr><td>How did sales change over time?</td><td>Line chart</td></tr><tr><td>What is the total revenue?</td><td>KPI card or counter</td></tr><tr><td>What are the exact detailed values?</td><td>Table</td></tr><tr><td>How do two numeric variables relate?</td><td>Scatter plot</td></tr><tr><td>Where do values form a pattern?</td><td>Heatmap</td></tr></table><p class="warning"><b>Pie chart caution:</b> Avoid it when there are many categories or the values are difficult to compare.</p></section>
+  <section class="slide" data-section="Lesson 4"><h2>Databricks dashboard queries</h2><div class="grid2"><pre><code><span class="cm">-- KPI cards</span>
+<span class="kw">SELECT</span>
+ SUM(total_amount) total_revenue,
+ COUNT(*) number_of_sales,
+ ROUND(AVG(total_amount),2)
+   average_transaction
+<span class="kw">FROM</span> sales_clean;</code></pre><pre><code><span class="cm">-- Category bar chart</span>
+<span class="kw">SELECT</span> category,
+ SUM(total_amount) total_sales
+<span class="kw">FROM</span> sales_clean
+<span class="kw">GROUP BY</span> category
+<span class="kw">ORDER BY</span> total_sales <span class="kw">DESC</span>;</code></pre></div></section>
+  <section class="slide" data-section="Lesson 4"><h2>Trend and location queries</h2><div class="grid2"><pre><code><span class="cm">-- Monthly line chart</span>
+<span class="kw">SELECT</span>
+ DATE_TRUNC('MONTH',sale_date) sales_month,
+ SUM(total_amount) total_sales
+<span class="kw">FROM</span> sales_clean
+<span class="kw">GROUP BY</span> DATE_TRUNC('MONTH',sale_date)
+<span class="kw">ORDER BY</span> sales_month;</code></pre><pre><code><span class="cm">-- City comparison</span>
+<span class="kw">SELECT</span> city,
+ SUM(total_amount) total_sales
+<span class="kw">FROM</span> sales_clean
+<span class="kw">GROUP BY</span> city
+<span class="kw">ORDER BY</span> total_sales <span class="kw">DESC</span>;</code></pre></div></section>
+  <section class="slide" data-section="Lesson 4"><h2>Effective dashboard design</h2><div class="grid2"><div><ul><li>Give the dashboard one clear purpose.</li><li>Place important KPIs at the top.</li><li>Use charts that match the questions.</li><li>Apply consistent labels and colors.</li><li>Add useful filters.</li><li>Leave enough space between visuals.</li></ul></div><div class="card"><h3>Avoid</h3><ul><li>Too many charts</li><li>Decorative graphics without meaning</li><li>Unclear labels</li><li>Unnecessary colors</li><li>Charts that distort comparisons</li></ul></div></div></section>
+  <section class="slide activity" data-section="Lesson 4 Lab"><h2>Laboratory: Databricks BI dashboard</h2><div class="grid2"><div><h3>Required visuals</h3><ul><li>Total revenue KPI</li><li>Number of sales KPI</li><li>Average transaction KPI</li><li>Sales by category</li><li>Monthly sales trend</li><li>Sales by city</li><li>At least one filter</li></ul></div><div class="card"><h3>Written interpretation</h3><p>Provide three findings and one recommended business action.</p><p>Support every finding with a chart or KPI from the dashboard.</p></div></div></section>
+
+  <section class="slide section" data-section="Arevalo, Aboabo, and Abella"><div><p class="accent">LESSON 5</p><h1>Performance<br>Optimization</h1><p class="lead" style="color:#d4e4ff">Improve query speed, scalability, and resource use.</p></div><div class="num">05</div></section>
+  <section class="slide" data-section="Lesson 5"><h2>Why warehouse performance matters</h2><div class="grid2"><div><p class="lead">Optimization helps queries return useful results with less time and fewer resources.</p><ul><li>Faster dashboards</li><li>Timely reports</li><li>Better support for growing data</li><li>Lower resource cost</li></ul></div><div class="card"><h3>Common causes of delay</h3><ul><li>Very large tables</li><li>Full-table scans</li><li>Too many joins</li><li>Unnecessary columns</li><li>Repeated calculations</li><li>Poor file organization</li></ul></div></div></section>
+  <section class="slide" data-section="Lesson 5"><h2>Basic query optimization</h2><div class="grid2"><div><h3>Less efficient</h3><pre><code><span class="kw">SELECT</span> *
+<span class="kw">FROM</span> sales_clean
+<span class="kw">WHERE</span> YEAR(sale_date)=2026;</code></pre></div><div><h3>More focused</h3><pre><code><span class="kw">SELECT</span> sale_date, product,
+       category, total_amount
+<span class="kw">FROM</span> sales_clean
+<span class="kw">WHERE</span> sale_date&gt;='2026-01-01'
+  <span class="kw">AND</span> sale_date&lt;'2027-01-01';</code></pre></div></div><p class="callout">Select required columns, filter early, and avoid calculations on the filtered column when possible.</p></section>
+  <section class="slide" data-section="Lesson 5"><h2>Efficient joins and indexes</h2><div class="grid2"><div><h3>JOIN guidance</h3><ul><li>Join using the correct key.</li><li>Select only needed columns.</li><li>Filter data before an expensive join.</li><li>Remove unnecessary joins.</li><li>Check for duplicate keys.</li></ul></div><div class="card"><h3>Index concept</h3><p>An index works like a book index. It helps locate records without checking every page.</p><p>Indexes require storage and maintenance. Databricks also uses data skipping and optimized layout to reduce the data read.</p></div></div></section>
+  <section class="slide" data-section="Lesson 5"><h2>Partitioning reduces unnecessary reading</h2><pre><code><span class="kw">CREATE OR REPLACE TABLE</span> sales_partitioned
+<span class="kw">USING DELTA PARTITIONED BY</span> (sales_year)
+<span class="kw">AS SELECT</span> *, YEAR(sale_date) sales_year
+<span class="kw">FROM</span> sales_clean;
+
+<span class="kw">SELECT</span> category, SUM(total_amount) total_sales
+<span class="kw">FROM</span> sales_partitioned
+<span class="kw">WHERE</span> sales_year=2026
+<span class="kw">GROUP BY</span> category;</code></pre><div class="warning"><b>Avoid excessive partitioning.</b> Small tables and columns with many unique values may create too many small files.</div></section>
+  <section class="slide" data-section="Lesson 5"><h2>Storage layout supports analysis</h2><div class="grid2"><div class="card"><h3>Parquet</h3><p>Columnar storage lets a query read only the required columns.</p></div><div class="card"><h3>Delta Lake</h3><p>Adds reliable transactions, schema checks, table history, updates, and optimization features.</p></div></div><div class="callout" style="margin-top:30px">If a query needs only category and total amount, columnar storage can avoid reading unrelated columns.</div></section>
+  <section class="slide" data-section="Lesson 5"><h2>Pre-aggregation avoids repeated work</h2><pre><code><span class="kw">CREATE OR REPLACE TABLE</span> monthly_sales_summary <span class="kw">AS</span>
+<span class="kw">SELECT</span>
+ DATE_TRUNC('MONTH',sale_date) sales_month,
+ category,
+ SUM(total_amount) total_sales,
+ COUNT(*) number_of_sales
+<span class="kw">FROM</span> sales_clean
+<span class="kw">GROUP BY</span> DATE_TRUNC('MONTH',sale_date), category;</code></pre><p>Dashboards can query the smaller summary table instead of recalculating the same totals from detailed transactions.</p></section>
+  <section class="slide" data-section="Lesson 5"><h2>Databricks optimization tools</h2><div class="grid2"><pre><code><span class="cm">-- Reuse frequent data</span>
+<span class="kw">CACHE TABLE</span> sales_clean;
+
+<span class="cm">-- Release cached data</span>
+<span class="kw">UNCACHE TABLE</span> sales_clean;
+
+<span class="cm">-- Compact Delta files</span>
+<span class="kw">OPTIMIZE</span> sales_clean;</code></pre><div><h3>What they do</h3><ul><li><b>Cache:</b> speeds repeated access but uses resources.</li><li><b>OPTIMIZE:</b> combines small Delta files for more efficient reading.</li><li><b>Data skipping:</b> avoids files that cannot match a filter.</li><li><b>Photon:</b> accelerates supported SQL and DataFrame workloads when enabled.</li></ul></div></div></section>
+  <section class="slide" data-section="Lesson 5"><h2>Query plans expose expensive work</h2><pre><code><span class="kw">EXPLAIN FORMATTED</span>
+<span class="kw">SELECT</span> category, SUM(total_amount) total_sales
+<span class="kw">FROM</span> sales_clean
+<span class="kw">WHERE</span> sale_date&gt;='2026-01-01'
+<span class="kw">GROUP BY</span> category;</code></pre><p>Inspect the plan for table scans, filters, joins, aggregations, and large data exchanges.</p><div class="callout">Measure execution time before and after a change. A change counts as an improvement only when evidence supports it.</div></section>
+  <section class="slide" data-section="Lesson 5"><h2>Optimization involves trade-offs</h2><table><tr><th>Technique</th><th>Benefit</th><th>Cost or risk</th></tr><tr><td>Summary table</td><td>Faster repeated reports</td><td>More storage and refresh work</td></tr><tr><td>Cache</td><td>Faster reuse</td><td>Consumes memory</td></tr><tr><td>Partitioning</td><td>Reads fewer files</td><td>May create many small files</td></tr><tr><td>More compute</td><td>May finish sooner</td><td>Higher cost</td></tr><tr><td>Precomputation</td><td>Quick results</td><td>Less flexibility</td></tr></table></section>
+  <section class="slide activity" data-section="Lesson 5 Lab"><h2>Laboratory: Before-and-after optimization</h2><div class="grid2"><ol><li>Run the original query and record its time.</li><li>Inspect it using <code>EXPLAIN FORMATTED</code>.</li><li>Select only required columns.</li><li>Apply a direct date range filter.</li><li>Create a summary table.</li><li>Test cache or <code>OPTIMIZE</code> where available.</li><li>Run the improved query and compare.</li></ol><div class="card"><h3>Submit</h3><ul><li>Original and improved queries</li><li>Execution plans</li><li>Before-and-after times</li><li>Three techniques used</li><li>Five-sentence conclusion</li></ul></div></div><p class="warning">A small classroom dataset may show little difference. Performance gains become clearer with larger datasets.</p></section>
+
+  <section class="slide" data-section="Summary"><h2>How the lessons work together</h2><div class="flow"><span>Clean the data</span><b>›</b><span>Analyze dimensions</span><b>›</b><span>Present insights</span><b>›</b><span>Optimize performance</span></div><div class="grid2"><div class="card"><h3>Final reflection</h3><p>How do data cleansing, OLAP, Business Intelligence, and performance optimization help an organization make reliable and timely decisions?</p></div><div class="card"><h3>Expected answer</h3><p>Connect the four lessons. Include at least one example from the Databricks sales dataset.</p></div></div></section>
+  <section class="slide cover" data-section="End"><div><h1>Questions?</h1><p class="lead" style="color:#d4e4ff">Open the Databricks notebook and test each concept with data.</p><p><span class="tag">SQL</span> <span class="tag">DELTA</span> <span class="tag">DASHBOARDS</span></p></div></section>
+</main>
+<nav class="footer"><button id="prev" aria-label="Previous slide">◀</button><button id="next" aria-label="Next slide">Next ▶</button><div class="progress"><i id="bar"></i></div><span class="counter" id="counter"></span><span class="hint">← → keys · Home/End · P to print</span></nav>
+<script>
+  const slides=[...document.querySelectorAll('.slide')]; let current=0;
+  function show(n){current=Math.max(0,Math.min(n,slides.length-1));slides.forEach((s,i)=>s.classList.toggle('active',i===current));document.getElementById('counter').textContent=`${current+1} / ${slides.length}`;document.getElementById('bar').style.width=`${(current+1)/slides.length*100}%`;location.hash=`slide-${current+1}`;}
+  document.getElementById('prev').onclick=()=>show(current-1);document.getElementById('next').onclick=()=>show(current+1);
+  document.addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key))show(current+1);if(['ArrowLeft','PageUp'].includes(e.key))show(current-1);if(e.key==='Home')show(0);if(e.key==='End')show(slides.length-1);if(e.key.toLowerCase()==='p')window.print();});
+  document.addEventListener('click',e=>{if(e.target.closest('button,a,pre'))return;if(e.clientX>innerWidth*.72)show(current+1);else if(e.clientX<innerWidth*.28)show(current-1)});
+  const hash=location.hash.match(/slide-(\d+)/);show(hash?Number(hash[1])-1:0);
+</script>
+</body>
+</html>
